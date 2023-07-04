@@ -1,17 +1,12 @@
-package com.lender.baseservice.payload.response;
+package com.lender.authservice.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.UtilityClass;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+//@UtilityClass
 @Component
 public class ResponseFactory {
 
@@ -22,12 +17,12 @@ public class ResponseFactory {
                 .data(data)
                 .dateTime(LocalDateTime.now())
                 .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
     public <T> ResponseEntity<BaseResponse<T>> fail(HttpStatus status, String message, T data) {
-        BaseResponse response = BaseResponse.<T>builder()
+        BaseResponse<T> response = BaseResponse.<T>builder()
                 .status(status)
                 .message(message)
                 .data(data)
