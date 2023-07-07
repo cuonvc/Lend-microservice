@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 public class JwtTokenProvider {
 
-    private static final String SECRET_KEY = "fsdfdfs";
+    private static final String SECRET_KEY = "bGVuZGVyLW1pY3Jvc2VydmljZQ==";
     private static final int expireTime = 10000;
 
     private final UserRepository userRepository;
