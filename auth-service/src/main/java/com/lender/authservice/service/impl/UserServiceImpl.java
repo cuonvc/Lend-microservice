@@ -58,12 +58,12 @@ public class UserServiceImpl implements UserService {
             throw new APIException(HttpStatus.BAD_REQUEST, "Password incorrect");
         }
 
-        Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+//        Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+//        );
 
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtTokenProvider.generateToken(authentication);
+        String token = jwtTokenProvider.generateToken(request.getEmail());
 
         return responseFactory.success("Success", token);
     }

@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 public class JwtTokenProvider {
 
-    private static final String SECRET_KEY = "bGVuZGVyLW1pY3Jvc2VydmljZQ==";
+    private static final String SECRET_KEY = "SnNvbiB3ZWIgdG9rZW4gZm9yIG1pY3Jvc2VydmljZSBwcm9qZWN0";
     private static final int expireTime = 10000;
 
     private final UserRepository userRepository;
@@ -56,8 +56,8 @@ public class JwtTokenProvider {
         }
     }
 
-    public String generateToken(Authentication authentication) {
-        String email = authentication.getName();
+    public String generateToken(String email) {
+//        String email = authentication.getName();
         Date currentDate = new Date();
         Date expire = new Date(currentDate.getTime() + expireTime);
 
@@ -66,7 +66,7 @@ public class JwtTokenProvider {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(expire)
-                .signWith(getSignKey(), SignatureAlgorithm.ES256).compact();
+                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
     private Map<String, Object> claimsBuilder(String email) {
         User user = userRepository.findByEmail(email)
@@ -81,7 +81,6 @@ public class JwtTokenProvider {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 }
