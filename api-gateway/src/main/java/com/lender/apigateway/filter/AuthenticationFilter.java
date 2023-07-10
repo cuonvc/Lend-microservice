@@ -47,9 +47,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
 
                 boolean isValid = Boolean.TRUE.equals(restTemplate.getForObject("http://AUTH-SERVICE//valid?token=" + authHeader, Boolean.class));
-                if (!isValid) {
-                    throw new APIException(HttpStatus.UNAUTHORIZED, "Unauthorized access to application!");
-                }
+//                if (isValid) {
+//
+//                }
             }
 
             return chain.filter(exchange);

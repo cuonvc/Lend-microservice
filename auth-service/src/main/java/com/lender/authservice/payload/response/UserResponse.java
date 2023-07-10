@@ -25,8 +25,14 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String email;
-    private String username;
     private Gender gender;
+    private String avatarUrl;
+    private String coverUrl;
+    private String about;
+    private String country;
+    private String city;
+    private String detailAddress;
+    private Role role;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
     private Status status;

@@ -4,7 +4,9 @@ import com.lender.authservice.config.SecurityConfiguration;
 import com.lender.authservice.config.jwt.JwtTokenProvider;
 import com.lender.authservice.entity.User;
 import com.lender.authservice.mapper.UserMapper;
-import com.lender.authservice.payload.request.UserRequest;
+import com.lender.authservice.payload.request.LoginRequest;
+import com.lender.authservice.payload.request.ProfileRequest;
+import com.lender.authservice.payload.request.RegRequest;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
 import com.lender.authservice.repository.UserRepository;
@@ -36,10 +38,10 @@ public class UserServiceImpl implements UserService {
     private final ResponseFactory responseFactory;
 
     @Override
-    public ResponseEntity<BaseResponse<UserResponse>> register(UserRequest request) {
+    public ResponseEntity<BaseResponse<UserResponse>> register(RegRequest request) {
         Optional<User> entity = userRepository.findByEmail(request.getEmail());
         if (entity.isPresent()) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Account already existed!");
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Account already existed", null);
         }
 
         User user = userMapper.requestToEntity(request);
@@ -50,22 +52,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<String>> login(UserRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
+    public ResponseEntity<BaseResponse<String>> login(LoginRequest request) {
+        Optional<User> user = userRepository.findByEmail(request.getEmail());
+        if (user.isEmpty()) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST,
+                    "User not found with email '" + request.getEmail() + "'", null);
+        }
 
-        if (!validPassword(request.getPassword(), user.getPassword())) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Password incorrect");
+        if (!validPassword(request.getPassword(), user.get().getPassword())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password incorrect", null);
         }
 
 //        Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+//                    new UsernamePasswordAuthenticationToken(user.get().getEmail(), user.get().getPassword())
 //        );
-
+//
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(request.getEmail());
 
         return responseFactory.success("Success", token);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<UserResponse>> editProfile(ProfileRequest request) {
+        String role = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().toList().get(0));
+        return null;
     }
 
     private boolean validPassword(String rawPassword, String archivePassword) {

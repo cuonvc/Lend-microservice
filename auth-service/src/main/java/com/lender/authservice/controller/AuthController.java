@@ -1,12 +1,16 @@
 package com.lender.authservice.controller;
 
-import com.lender.authservice.payload.request.UserRequest;
+import com.lender.authservice.payload.request.LoginRequest;
+import com.lender.authservice.payload.request.ProfileRequest;
+import com.lender.authservice.payload.request.RegRequest;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
 import com.lender.authservice.service.JwtService;
 import com.lender.authservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,12 +29,17 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<BaseResponse<UserResponse>> signup(@RequestBody UserRequest userRequest) {
-        return userService.register(userRequest);
+    public ResponseEntity<BaseResponse<UserResponse>> signup(@Valid @RequestBody RegRequest request) {
+        return userService.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<String>> login(@RequestBody UserRequest userRequest) {
-        return userService.login(userRequest);
+    public ResponseEntity<BaseResponse<String>> login(@Valid @RequestBody LoginRequest request) {
+        return userService.login(request);
+    }
+
+    @PutMapping("/account/edit")
+    public ResponseEntity<BaseResponse<UserResponse>> editProfile(@Valid @RequestBody ProfileRequest request) {
+        return userService.editProfile(request);
     }
 }

@@ -2,6 +2,7 @@ package com.lender.authservice.entity;
 
 
 import com.lender.baseservice.constant.enumerate.Gender;
+import com.lender.baseservice.constant.enumerate.Role;
 import com.lender.baseservice.constant.enumerate.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Table(name = "user_tbl", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email", "username"})
+        @UniqueConstraint(columnNames = {"email"})
 })
 public class User {
 
@@ -43,9 +44,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "password")
     private String password;
 
@@ -53,24 +51,39 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender = Gender.UNDEFINE;
 
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
+    private String avatarUrl;
+
+    @Column(name = "cover_url", columnDefinition = "TEXT")
+    private String coverUrl;
+
+    @Column(name = "about", columnDefinition = "TEXT")
+    private String about;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "province")
+    private String city;
+
+    @Column(name = "postal_code")
+    private String postalCode;
+
+    @Column(name = "detail_address", columnDefinition = "TEXT")
+    private String detailAddress;
+
     @Column(name = "created_date")
-    @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "modified_date")
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDate = LocalDateTime.now();
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;  //pending to active by email
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 
 }

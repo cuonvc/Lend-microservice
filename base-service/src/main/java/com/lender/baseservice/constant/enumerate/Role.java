@@ -4,6 +4,5 @@ public enum Role {
     ROOT,
     ADMIN,
     MODERATOR,
-    LENDER,
-    BORROWER
+    USER
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.util.*;
 
@@ -19,7 +20,7 @@ import java.util.*;
 public class JwtTokenProvider {
 
     private static final String SECRET_KEY = "SnNvbiB3ZWIgdG9rZW4gZm9yIG1pY3Jvc2VydmljZSBwcm9qZWN0";
-    private static final int expireTime = 10000;
+    private static final int expireTime = 3600000;
 
     private final UserRepository userRepository;
 
@@ -29,7 +30,7 @@ public class JwtTokenProvider {
 
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(SECRET_KEY.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
 
@@ -39,9 +40,9 @@ public class JwtTokenProvider {
     //validate JWT token
     public boolean validateToken(String token) {
         try {
-//            Jwts.parser().setSigningKey(SECRET_KEY)
-//                    .parseClaimsJws(token);
-            Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
+            Jwts.parser()
+                    .setSigningKey(SECRET_KEY.getBytes())
+                    .parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             throw new APIException(HttpStatus.BAD_REQUEST, "Invalid JWT signature");
@@ -76,6 +77,7 @@ public class JwtTokenProvider {
         claims.put("id", user.getId());
         claims.put("first_name", user.getFirstName());
         claims.put("last_name", user.getLastName());
+        claims.put("role", user.getRole());
 
         return claims;
     }

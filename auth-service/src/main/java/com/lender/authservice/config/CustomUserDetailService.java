@@ -1,10 +1,9 @@
 package com.lender.authservice.config;
 
-import com.lender.authservice.entity.Role;
 import com.lender.authservice.entity.User;
 import com.lender.authservice.repository.UserRepository;
+import com.lender.baseservice.constant.enumerate.Role;
 import com.lender.baseservice.exception.ResourceNotFoundException;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,12 +26,13 @@ public class CustomUserDetailService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
-        return new CustomerUserDetail(user.getEmail(), user.getPassword(), user.getRoles(), mapRolesToAuthorities(user.getRoles()));
+        return new CustomerUserDetail(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Role role) {
+        List<Role> roles = Collections.singletonList(role);
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(r -> new SimpleGrantedAuthority(r.name()))
                 .collect(Collectors.toList());
     }
 }
