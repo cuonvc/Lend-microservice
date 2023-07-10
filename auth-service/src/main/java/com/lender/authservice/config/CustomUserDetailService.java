@@ -26,7 +26,7 @@ public class CustomUserDetailService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
-        return new CustomerUserDetail(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
+        return new CustomerUserDetail(user.getId(), user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Role role) {

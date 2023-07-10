@@ -46,7 +46,9 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(handle -> handle.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/sign-up", "/auth/login").permitAll()
+                        .requestMatchers("/api/auth/sign-up", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/admin/*").hasAnyAuthority("ROOT", "ADMIN", "MODERATOR")
+                        .requestMatchers(HttpMethod.GET, "/api/auth/account/*").permitAll()
                         .anyRequest()
                         .authenticated())
                         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

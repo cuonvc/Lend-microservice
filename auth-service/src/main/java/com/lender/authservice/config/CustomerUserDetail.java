@@ -8,12 +8,14 @@ import java.util.Set;
 
 public class CustomerUserDetail implements UserDetails {
 
+    private String id;
     private String email;
     private String password;
 
     private Collection<? extends GrantedAuthority> grantedAuthorities;
 
-    public CustomerUserDetail(String email, String password, Collection<? extends GrantedAuthority> grantedAuthorities) {
+    public CustomerUserDetail(String id, String email, String password, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.grantedAuthorities = grantedAuthorities;
@@ -22,6 +24,10 @@ public class CustomerUserDetail implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override

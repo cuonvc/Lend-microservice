@@ -3,18 +3,23 @@ package com.lender.authservice.controller;
 import com.lender.authservice.payload.request.LoginRequest;
 import com.lender.authservice.payload.request.ProfileRequest;
 import com.lender.authservice.payload.request.RegRequest;
+import com.lender.authservice.payload.response.PageResponseUsers;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
 import com.lender.authservice.service.JwtService;
 import com.lender.authservice.service.UserService;
+import com.lender.baseservice.constant.PageConstant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -22,7 +27,7 @@ public class AuthController {
 
     private final JwtService jwtService;
 
-    @GetMapping("/valid")
+    @GetMapping("/valid")  //API valid token for gateway service
     public boolean validateToken(@RequestParam("token") String token) {
         return jwtService.validateToken(token);
 
@@ -41,5 +46,22 @@ public class AuthController {
     @PutMapping("/account/edit")
     public ResponseEntity<BaseResponse<UserResponse>> editProfile(@Valid @RequestBody ProfileRequest request) {
         return userService.editProfile(request);
+    }
+
+    @GetMapping("/account/{userId}")
+    public ResponseEntity<BaseResponse<UserResponse>> getProfile(@PathVariable(name = "userId") String id) {
+        return userService.getById(id);
+    }
+
+    @GetMapping("/admin/account-list")
+    public ResponseEntity<BaseResponse<PageResponseUsers>> getAllAccount(@RequestParam(value = "pageNo",
+                                                                                  defaultValue = PageConstant.PAGE_NO, required = false) Integer pageNo,
+                                                                         @RequestParam(value = "pageSize",
+                                                                                  defaultValue = PageConstant.PAGE_SIZE, required = false) Integer pageSize,
+                                                                         @RequestParam(value = "sortBy",
+                                                                                  defaultValue = PageConstant.SORT_BY, required = false) String sortBy,
+                                                                         @RequestParam(value = "sortDir",
+                                                                                  defaultValue = PageConstant.SORT_DIR, required = false) String sortDir) {
+        return userService.getAll(pageNo, pageSize, sortBy, sortDir);
     }
 }
