@@ -1,6 +1,7 @@
 package com.lender.authservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lender.baseservice.constant.enumerate.Gender;
 import com.lender.baseservice.constant.enumerate.Role;
 import com.lender.baseservice.constant.enumerate.Status;
@@ -31,8 +32,8 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GenericGenerator(name = "custom_id", strategy = "com.lender.authservice.util.CustomIdGenerator")
-    @GeneratedValue(generator = "custom_id")
+    @GenericGenerator(name = "custom_user_id", strategy = "com.lender.authservice.util.CustomUserIdGenerator")
+    @GeneratedValue(generator = "custom_user_id")
     private String id;
 
     @Column(name = "first_name")
@@ -86,4 +87,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
+    private RefreshToken refreshToken;
 }

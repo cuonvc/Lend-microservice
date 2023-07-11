@@ -6,7 +6,7 @@ import org.hibernate.id.IdentifierGenerator;
 
 import java.util.UUID;
 
-public class CustomIdGenerator implements IdentifierGenerator {
+public class CustomUserIdGenerator implements IdentifierGenerator {
 
     @Override
     public Object generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {

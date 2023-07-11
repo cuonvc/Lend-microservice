@@ -1,22 +1,24 @@
 package com.lender.authservice.service.impl;
 
-import com.lender.authservice.config.CustomerUserDetail;
-import com.lender.authservice.config.SecurityConfiguration;
+import com.lender.authservice.config.CustomUserDetail;
 import com.lender.authservice.config.jwt.JwtTokenProvider;
+import com.lender.authservice.entity.RefreshToken;
 import com.lender.authservice.entity.User;
 import com.lender.authservice.mapper.UserMapper;
 import com.lender.authservice.payload.request.LoginRequest;
 import com.lender.authservice.payload.request.ProfileRequest;
 import com.lender.authservice.payload.request.RegRequest;
+import com.lender.authservice.payload.request.TokenObjectRequest;
 import com.lender.authservice.payload.response.PageResponseUsers;
+import com.lender.authservice.payload.response.TokenObjectResponse;
+import com.lender.authservice.repository.RefreshTokenRepository;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
 import com.lender.authservice.repository.UserRepository;
 import com.lender.authservice.response.ResponseFactory;
+import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.baseservice.exception.APIException;
-import com.lender.baseservice.exception.ResourceNotFoundException;
-import com.lender.baseservice.payload.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,17 +27,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +44,8 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository tokenRepository;
+    private final TokenService tokenService;
     private final UserMapper userMapper;
     private final ResponseFactory responseFactory;
 
@@ -58,12 +59,13 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.requestToEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         User saved = userRepository.save(user);
+        tokenService.initRefreshToken(user);
         UserResponse response = userMapper.entityToResponse(saved);
         return responseFactory.success("Success", response);
     }
 
     @Override
-    public ResponseEntity<BaseResponse<String>> login(LoginRequest request) {
+    public ResponseEntity<BaseResponse<TokenObjectResponse>> login(LoginRequest request) {
         Optional<User> user = userRepository.findByEmail(request.getEmail());
         if (user.isEmpty()) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST,
@@ -74,22 +76,43 @@ public class UserServiceImpl implements UserService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password incorrect", null);
         }
 
-//        Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(user.get().getEmail(), user.get().getPassword())
-//        );
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtTokenProvider.generateToken(request.getEmail());
+        String accessToken = jwtTokenProvider.generateToken(request.getEmail());
+        RefreshToken refreshToken = tokenService.generateTokenObject(user.get());
+        TokenObjectResponse response = TokenObjectResponse.builder()
+                .accessToken(accessToken)
+                .tokenType("Bearer")
+                .refreshToken(refreshToken)
+                .build();
 
-        return responseFactory.success("Success", token);
+        return responseFactory.success("Success", response);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request) {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<RefreshToken> refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken());
+
+        if (refreshToken.isEmpty()) {
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Not happen in this case!", null);
+        }
+
+        if (refreshToken.get().getExpireDate().compareTo(new Date()) > 0) {
+            return responseFactory.success("Success",
+                    TokenObjectResponse.builder()
+                            .accessToken(jwtTokenProvider.generateToken(userDetail.getUsername()))
+                            .refreshToken(refreshToken.get())
+                            .build());
+        }
+
+        return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Refresh token has expired", null);
     }
 
     @Override
     public ResponseEntity<BaseResponse<UserResponse>> editProfile(ProfileRequest request) {
-        CustomerUserDetail customerUserDetail = (CustomerUserDetail) SecurityContextHolder
+        CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
 
-        User user = userRepository.findById(customerUserDetail.getId())
+        User user = userRepository.findById(customUserDetail.getId())
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "A unknown error"));  //not happen
 
         user = userMapper.profileToEntity(request, user);

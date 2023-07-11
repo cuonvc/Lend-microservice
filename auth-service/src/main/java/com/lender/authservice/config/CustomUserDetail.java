@@ -4,9 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Set;
 
-public class CustomerUserDetail implements UserDetails {
+public class CustomUserDetail implements UserDetails {
 
     private String id;
     private String email;
@@ -14,7 +13,7 @@ public class CustomerUserDetail implements UserDetails {
 
     private Collection<? extends GrantedAuthority> grantedAuthorities;
 
-    public CustomerUserDetail(String id, String email, String password, Collection<? extends GrantedAuthority> grantedAuthorities) {
+    public CustomUserDetail(String id, String email, String password, Collection<? extends GrantedAuthority> grantedAuthorities) {
         this.id = id;
         this.email = email;
         this.password = password;

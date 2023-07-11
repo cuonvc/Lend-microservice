@@ -3,20 +3,18 @@ package com.lender.authservice.controller;
 import com.lender.authservice.payload.request.LoginRequest;
 import com.lender.authservice.payload.request.ProfileRequest;
 import com.lender.authservice.payload.request.RegRequest;
+import com.lender.authservice.payload.request.TokenObjectRequest;
 import com.lender.authservice.payload.response.PageResponseUsers;
+import com.lender.authservice.payload.response.TokenObjectResponse;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
-import com.lender.authservice.service.JwtService;
+import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.baseservice.constant.PageConstant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,12 +23,11 @@ public class AuthController {
 
     private final UserService userService;
 
-    private final JwtService jwtService;
+    private final TokenService tokenService;
 
     @GetMapping("/valid")  //API valid token for gateway service
     public boolean validateToken(@RequestParam("token") String token) {
-        return jwtService.validateToken(token);
-
+        return tokenService.validateAccessToken(token);
     }
 
     @PostMapping("/sign-up")
@@ -39,8 +36,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<String>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<BaseResponse<TokenObjectResponse>> login(@Valid @RequestBody LoginRequest request) {
         return userService.login(request);
+    }
+
+    @GetMapping("/token/renew")
+    public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(@RequestBody TokenObjectRequest request) {
+        return userService.renewAccessToken(request);
     }
 
     @PutMapping("/account/edit")
