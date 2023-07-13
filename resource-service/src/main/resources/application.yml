@@ -1,0 +1,28 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: RESOURCE-SERVICE
+  kafka:
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      auto-offset-reset: earliest
+  cloud:
+    function:
+      definition: fileHandle
+    stream:
+      bindings:
+        fileHandle-in-0:
+          destination: file-request
+        fileHandle-out-0:
+          destination: file-response
+      #        testHandler-in-0:
+      #          destination: file-topic-after
+      kafka:
+        binder:
+          brokers: localhost:9092
+
+    compatibility-verifier:
+      enabled: false

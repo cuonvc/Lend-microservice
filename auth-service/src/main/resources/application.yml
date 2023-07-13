@@ -16,8 +16,26 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-
+  kafka:
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      auto-offset-reset: earliest
   cloud:
+    function:
+      definition: fileProcess
+    stream:
+      bindings:
+        fileProcess-in-0:
+          destination: file-response
+          content-type: application/json
+#        testHandler-in-0:
+#          destination: file-topic-after
+      kafka:
+        binder:
+          brokers: localhost:9092
+
     compatibility-verifier:
       enabled: false
 

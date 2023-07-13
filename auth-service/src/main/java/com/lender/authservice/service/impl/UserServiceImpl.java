@@ -5,10 +5,7 @@ import com.lender.authservice.config.jwt.JwtTokenProvider;
 import com.lender.authservice.entity.RefreshToken;
 import com.lender.authservice.entity.User;
 import com.lender.authservice.mapper.UserMapper;
-import com.lender.authservice.payload.request.LoginRequest;
-import com.lender.authservice.payload.request.ProfileRequest;
-import com.lender.authservice.payload.request.RegRequest;
-import com.lender.authservice.payload.request.TokenObjectRequest;
+import com.lender.authservice.payload.request.*;
 import com.lender.authservice.payload.response.PageResponseUsers;
 import com.lender.authservice.payload.response.TokenObjectResponse;
 import com.lender.authservice.repository.RefreshTokenRepository;
@@ -19,18 +16,26 @@ import com.lender.authservice.response.ResponseFactory;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.baseservice.exception.APIException;
+import com.lender.baseservice.payload.request.FileObjectRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +53,7 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
     private final UserMapper userMapper;
     private final ResponseFactory responseFactory;
+    private final StreamBridge streamBridge;
 
     @Override
     public ResponseEntity<BaseResponse<UserResponse>> register(RegRequest request) {
@@ -141,6 +147,21 @@ public class UserServiceImpl implements UserService {
         Page<User> users = userRepository.findAll(pageable);
         PageResponseUsers pageResponse = paging(users);
         return responseFactory.success("Success", pageResponse);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<String>> changeAvatar(MultipartFile file) throws IOException {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Message<FileObjectRequest> requestMessage = MessageBuilder
+                .withPayload(FileObjectRequest.builder()
+                        .field("avatarUrl")
+                        .fileBytes(file.getBytes())
+                        .build())
+                .setHeader(KafkaHeaders.KEY, userDetail.getId().getBytes())
+                .build();
+
+        streamBridge.send("file-request", requestMessage);
+        return responseFactory.success("Pending", "Saving image...");
     }
 
     private PageResponseUsers paging(Page<User> users) {

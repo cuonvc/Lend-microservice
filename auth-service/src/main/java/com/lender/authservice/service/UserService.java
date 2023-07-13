@@ -9,7 +9,9 @@ import com.lender.authservice.payload.response.TokenObjectResponse;
 import com.lender.authservice.response.BaseResponse;
 import com.lender.authservice.payload.response.UserResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -24,4 +26,6 @@ public interface UserService {
     ResponseEntity<BaseResponse<UserResponse>> getById(String id);
 
     ResponseEntity<BaseResponse<PageResponseUsers>> getAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
+
+    ResponseEntity<BaseResponse<String>> changeAvatar(MultipartFile file) throws IOException;
 }

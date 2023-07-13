@@ -15,6 +15,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -65,5 +68,10 @@ public class AuthController {
                                                                          @RequestParam(value = "sortDir",
                                                                                   defaultValue = PageConstant.SORT_DIR, required = false) String sortDir) {
         return userService.getAll(pageNo, pageSize, sortBy, sortDir);
+    }
+
+    @PutMapping("/account/avatar")
+    public ResponseEntity<BaseResponse<String>> changeAvatar(@RequestPart(name = "image") MultipartFile file) throws IOException {
+        return userService.changeAvatar(file);
     }
 }
