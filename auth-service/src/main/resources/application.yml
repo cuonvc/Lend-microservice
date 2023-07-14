@@ -39,6 +39,11 @@ spring:
     compatibility-verifier:
       enabled: false
 
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 5MB
+
 eureka:
   client:
     registerWithEureka: false

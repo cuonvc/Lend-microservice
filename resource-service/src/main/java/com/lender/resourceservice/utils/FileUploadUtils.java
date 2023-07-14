@@ -18,6 +18,10 @@ public class FileUploadUtils {
 
     public Path saveFile(String uploadDir, byte[] fileBytes) {
         try {
+            if (fileBytes.length >= 3000000L) {
+                throw new RuntimeException();
+            }
+
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
