@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class FileObjectResponse {
     private String field;
-    private String url;
+    private String path;
 }

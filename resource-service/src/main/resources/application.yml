@@ -4,9 +4,8 @@ spring:
   application:
     name: RESOURCE-SERVICE
   kafka:
-    #    producer:
-    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       auto-offset-reset: earliest
   cloud:
@@ -15,7 +14,7 @@ spring:
     stream:
       bindings:
         fileHandle-in-0:
-          destination: file-request
+          destination: file-request-test1
         fileHandle-out-0:
           destination: file-response
       #        testHandler-in-0:

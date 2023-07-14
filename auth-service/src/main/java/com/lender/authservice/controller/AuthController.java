@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     @PutMapping("/account/avatar")
-    public ResponseEntity<BaseResponse<String>> changeAvatar(@RequestPart(name = "image") MultipartFile file) throws IOException {
-        return userService.changeAvatar(file);
+    public ResponseEntity<BaseResponse<String>> uploadAvatar(@RequestPart(name = "image") MultipartFile file) throws IOException {
+        return userService.uploadAvatar(file);
     }
 }

@@ -19,6 +19,11 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: resource-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/resource/**
+
     compatibility-verifier:
       enabled: false
 

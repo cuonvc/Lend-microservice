@@ -16,6 +16,7 @@ import com.lender.authservice.response.ResponseFactory;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.baseservice.exception.APIException;
+import com.lender.baseservice.exception.ResourceNotFoundException;
 import com.lender.baseservice.payload.request.FileObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -44,6 +45,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final String AVATAR = "avatarUrl";
+    private static final String COVER = "";
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -150,18 +154,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<String>> changeAvatar(MultipartFile file) throws IOException {
+    public ResponseEntity<BaseResponse<String>> uploadAvatar(MultipartFile file) throws IOException {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Message<FileObjectRequest> requestMessage = MessageBuilder
                 .withPayload(FileObjectRequest.builder()
-                        .field("avatarUrl")
+                        .field(AVATAR)
                         .fileBytes(file.getBytes())
                         .build())
                 .setHeader(KafkaHeaders.KEY, userDetail.getId().getBytes())
                 .build();
 
-        streamBridge.send("file-request", requestMessage);
+        streamBridge.send("file-request-test1", requestMessage);
         return responseFactory.success("Pending", "Saving image...");
+    }
+
+    @Override
+    public void saveChangeImage(String userId, String field, String path) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        switch (field) {
+            case AVATAR -> user.setAvatarUrl(path);
+            case COVER -> user.setCoverUrl(path);
+            default -> throw new RuntimeException();
+        }
+
+        user.setModifiedDate(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     private PageResponseUsers paging(Page<User> users) {
