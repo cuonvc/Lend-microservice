@@ -1,6 +1,9 @@
 # Lender-microservice
-_______________________________________________
 
+## Init docker compose
+```sh
+docker compose -f docker-compose.yml up -d
+```
 ## Kafka command uses - kafka-server
 ### Move into Kafka container
 ```sh
