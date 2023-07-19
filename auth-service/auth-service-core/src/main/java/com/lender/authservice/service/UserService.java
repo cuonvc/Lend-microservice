@@ -17,6 +17,8 @@ import java.util.List;
 public interface UserService {
     ResponseEntity<BaseResponse<String>> register(RegRequest request);
 
+    ResponseEntity<BaseResponse<UserResponse>> validate(RegRequest request, String key);
+
     ResponseEntity<BaseResponse<TokenObjectResponse>> login(LoginRequest request);
 
     ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request);

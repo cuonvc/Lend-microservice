@@ -38,6 +38,12 @@ public class AuthController {
         return userService.register(request);
     }
 
+    @PostMapping("/active-account")
+    //client caching RegRequest to browser when user click sign up
+    public ResponseEntity<BaseResponse<UserResponse>> active(@RequestBody RegRequest request, @RequestParam("active_key") String key) {
+        return userService.validate(request, key);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<TokenObjectResponse>> login(@Valid @RequestBody LoginRequest request) {
         return userService.login(request);

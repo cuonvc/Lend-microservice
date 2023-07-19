@@ -81,7 +81,7 @@ public class User {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Status status = Status.PENDING;  //pending to active by email
+    private Status status = Status.ACTIVE;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

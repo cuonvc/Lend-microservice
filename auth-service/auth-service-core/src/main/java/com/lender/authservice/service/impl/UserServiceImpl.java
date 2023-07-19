@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -76,8 +77,15 @@ public class UserServiceImpl implements UserService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Account already existed", null);
         }
 
-        redisTemplate.opsForValue().set(request, String.valueOf(new Random().nextInt(900000) + 100000));
+        String activeCode = String.valueOf(new Random().nextInt(900000) + 100000);
+        redisTemplate.opsForValue().set(request, activeCode);
+        redisTemplate.expire(request, 3, TimeUnit.MINUTES);
         log.info("Redis cached - {}", redisTemplate.opsForValue().get(request));
+
+        Message<String> message = MessageBuilder.withPayload(activeCode)
+                .setHeader(KafkaHeaders.KEY, request.getEmail().getBytes())
+                .build();
+        streamBridge.send("email-active", message);
         return responseFactory.success("Success", "An OPT code send to your email, please check now");
 
 
@@ -87,6 +95,26 @@ public class UserServiceImpl implements UserService {
 //        tokenService.initRefreshToken(user);
 //        UserResponse response = userMapper.entityToResponse(saved);
 //        return responseFactory.success("Success", response);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<UserResponse>> validate(RegRequest request, String code) {
+        String activeCode = redisTemplate.opsForValue().get(request);
+        if (activeCode == null) {
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Activation code has expired!", null);
+        }
+
+        if (!activeCode.equals(code)) {
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Incorrect activation code", null);
+        }
+
+        User user = userMapper.requestToEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User saved = userRepository.save(user);
+        tokenService.initRefreshToken(user);
+        UserResponse response = userMapper.entityToResponse(saved);
+        redisTemplate.delete(request);
+        return responseFactory.success("Account activated successfully!", response);
     }
 
     @Override
