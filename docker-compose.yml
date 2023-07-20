@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  base:
+    image: base
+    build: ./base-service/
+    ports:
+      - "8083:8083"
+    networks:
+      - lendo-db
+      - lendo-customer
+      - lendo-product
+    depends_on:
+      - product-service
+      - auth-service
+      - api-gateway
+      - db
+
+  api-gateway:
+    image: api-gateway
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - lendo-customer
+    depends_on:
+      - db
+      - auth-service
+
+
+  auth-service:
+    image: auth-service
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    networks:
+      - lendo-customer
+      - lendo-db
+    depends_on:
+      - db
+
+  product-service:
+    image: product-service
+    build: ./product-service
+    ports:
+      - "8082:8082"
+    networks:
+      - lendo-db
+      - lendo-product
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    networks:
+      - lendo-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lendo-db
+#    volumes:
+#      - db-data:/var/lib/postgres
+    ports:
+      - "3306:3306"
+
+networks:
+  lendo-db:
+  lendo-customer:
+  lendo-product:
