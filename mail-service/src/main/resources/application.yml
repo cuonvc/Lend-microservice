@@ -24,6 +24,8 @@ spring:
       host: localhost
 
   kafka:
+#    listener: PLAINTEXT://kafka:9092
+    bootstrap-servers: kafka:9092
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
     #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -39,4 +41,4 @@ spring:
           content-type: application/json
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: kafka:9092

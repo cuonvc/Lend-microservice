@@ -1,0 +1,43 @@
+#server:
+#  port: 8084
+#
+#spring:
+#  application:
+#    name: EMAIL-SERVICE
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: cuong.test.development@gmail.com
+#    #    bellow password encoded -> avoid scanner on Github
+#    password: YWttYW5veGd6Z2htaGZycA==
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#
+#  data:
+#    redis:
+#      database: 0
+#      port: 6379
+#      host: localhost
+#
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    #    producer:
+#    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#    consumer:
+#      auto-offset-reset: latest
+#  cloud:
+#    function:
+#      definition: sendEmailProcess
+#    stream:
+#      bindings:
+#        sendEmailProcess-in-0:
+#          destination: email-active
+#          content-type: application/json
+#      kafka:
+#        binder:
+#          brokers: localhost:9092

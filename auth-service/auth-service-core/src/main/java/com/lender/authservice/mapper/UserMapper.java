@@ -1,11 +1,13 @@
 package com.lender.authservice.mapper;
 
+import com.lender.authservice.constant.AppConstant;
 import com.lender.authservice.entity.User;
 import com.lender.authserviceshare.payload.request.ProfileRequest;
 import com.lender.authserviceshare.payload.request.RegRequest;
 import com.lender.authserviceshare.payload.response.UserResponse;
-import com.lender.resourceservice.constants.SharingConstants;
+//import com.lender.resourceservice.constants.SharingConstants;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,6 +28,6 @@ public interface UserMapper {
 
     @Named("pathToUrl")
     static String pathToUrl(String path) {
-        return SharingConstants.RESOURCE_URL + path;
+        return AppConstant.DOMAIN + path;
     }
 }

@@ -1,70 +1,121 @@
 version: "3.8"
 
 services:
-  base:
-    image: base
-    build: ./base-service/
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
     ports:
-      - "8083:8083"
-    networks:
-      - lendo-db
-      - lendo-customer
-      - lendo-product
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
     depends_on:
-      - product-service
-      - auth-service
-      - api-gateway
-      - db
+      - zookeeper
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+  redis:
+    container_name: redis
+    image: "redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-config/redis.conf:/tmp/redis.conf
+    command: redis-server
+
+  base-service:
+    image: base-service
+    build: ./base-service/
+    container_name: base-service
+    ports:
+      - "8088:8088"
 
   api-gateway:
+    container_name: api-gateway
     image: api-gateway
     build: ./api-gateway
     ports:
       - "8080:8080"
-    networks:
-      - lendo-customer
     depends_on:
-      - db
-      - auth-service
+      - base-service
 
 
   auth-service:
+    container_name: auth-service
     image: auth-service
-    build: ./auth-service
+    build: ./auth-service/auth-service-core
     ports:
       - "8081:8081"
-    networks:
-      - lendo-customer
-      - lendo-db
     depends_on:
       - db
+      - base-service
+      - redis
+      - kafka
+      - zookeeper
+    links:
+      - redis
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/lendo-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
 
   product-service:
+    container_name: product-service
     image: product-service
-    build: ./product-service
+    build: ./product-service/product-service-core
     ports:
       - "8082:8082"
-    networks:
-      - lendo-db
-      - lendo-product
     depends_on:
       - db
+      - kafka
+      - base-service
+
+  mail-service:
+    container_name: mail-service
+    image: mail-service
+    build: ./mail-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+      - zookeeper
+
+  resource-service:
+    container_name: resource-service
+    image: resource-service
+    build: ./resource-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
 
   db:
     image: postgres:latest
-    networks:
-      - lendo-db
-    restart: always
+    container_name: db
+#    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: lendo-db
-#    volumes:
-#      - db-data:/var/lib/postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
 
-networks:
-  lendo-db:
-  lendo-customer:
-  lendo-product:
+volumes:
+  redis_data:
+#networks:
+#  lendo:
+#    driver: bridge

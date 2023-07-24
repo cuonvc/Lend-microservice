@@ -8,19 +8,19 @@ spring:
     gateway:
       routes:
         - id: auth-service
-          uri: http://auth-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/api/auth/**
 
         - id: product-service
-          uri: http://product-service:8082
+          uri: http://localhost:8082
           predicates:
             - Path=/api/product/**
           filters:
             - AuthenticationFilter
 
         - id: resource-service
-          uri: http://resource-service:8083
+          uri: http://localhost:8083
           predicates:
             - Path=/resource/**
 
