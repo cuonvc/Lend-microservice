@@ -1,0 +1,138 @@
+version: "3.8"
+
+networks:
+  lender-network:
+
+services:
+  zookeeper:
+    image: cuonvc/zookeeper:v1.0
+    container_name: zookeeper
+    networks:
+      - lender-network
+    ports:
+      - "2181:2181"
+  kafka:
+    image: cuonvc/kafka:v1.0
+    container_name: kafka
+    networks:
+      - lender-network
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+  redis:
+    container_name: redis
+    image: cuonvc/redis:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-config/redis.conf:/tmp/redis.conf
+    command: redis-server
+
+  base-service:
+    image: cuonvc/base-service:v1.0
+    networks:
+      - lender-network
+    container_name: base-service
+    ports:
+      - "8088:8088"
+
+  api-gateway:
+    container_name: api-gateway
+    image: cuonvc/api-gateway:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - base-service
+
+
+  auth-service:
+    container_name: auth-service
+    image: cuonvc/auth-service:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "8081:8081"
+    depends_on:
+      - database
+      - base-service
+      - redis
+      - kafka
+      - zookeeper
+    links:
+      - redis
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/lendo-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  product-service:
+    container_name: product-service
+    image: cuonvc/product-service:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "8082:8082"
+    depends_on:
+      - database
+      - kafka
+      - base-service
+
+  mail-service:
+    container_name: mail-service
+    image: cuonvc/mail-service:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+      - zookeeper
+
+  resource-service:
+    container_name: resource-service
+    image: cuonvc/resource-service:v1.0
+    networks:
+      - lender-network
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  database:
+    container_name: database
+    image: cuonvc/postgres:v1.0
+    #    restart: always
+    networks:
+      - lender-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lendo-db
+    ports:
+      - "5432:5432"
+
+volumes:
+  redis_data:
+#networks:
+#  lendo:
+#    driver: bridge
