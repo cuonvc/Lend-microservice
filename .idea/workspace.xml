@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f121be22-8316-4ad4-aea8-835fc455afa5" name="Changes" comment="Init base project">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,6 +180,7 @@
       <workItem from="1690208475932" duration="13904000" />
       <workItem from="1690255829916" duration="1962000" />
       <workItem from="1690261336319" duration="1961000" />
+      <workItem from="1690264294294" duration="737000" />
     </task>
     <task id="LOCAL-00001" summary="Init base project">
       <option name="closed" value="true" />
