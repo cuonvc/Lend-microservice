@@ -120,7 +120,7 @@ services:
 
   database-auth:
     container_name: database-auth
-    image: cuonvc/postgres:v1.0
+    image: cuonvc/database-auth:v1.0
     #    restart: always
     networks:
       - lender-network
@@ -133,7 +133,7 @@ services:
 
   database-product:
     container_name: database-product
-    image: cuonvc/postgres:v1.0
+    image: cuonvc/database-product:v1.0
     #    restart: always
     networks:
       - lender-network
