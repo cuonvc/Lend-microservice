@@ -6,12 +6,15 @@ import com.lender.authservice.entity.RefreshToken;
 import com.lender.authservice.entity.User;
 import com.lender.authservice.mapper.TokenMapper;
 import com.lender.authservice.mapper.UserMapper;
+import com.lender.authservice.payload.request.PasswordChangeRequest;
+import com.lender.authservice.payload.request.RenewPasswordRequest;
 import com.lender.authservice.repository.RefreshTokenRepository;
-import com.lender.authservice.response.BaseResponse;
+import com.lender.authservice.payload.response.BaseResponse;
 import com.lender.authservice.repository.UserRepository;
-import com.lender.authservice.response.ResponseFactory;
+import com.lender.authservice.payload.response.ResponseFactory;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
+import com.lender.authserviceshare.payload.enumerate.Role;
 import com.lender.authserviceshare.payload.request.LoginRequest;
 import com.lender.authserviceshare.payload.request.ProfileRequest;
 import com.lender.authserviceshare.payload.request.RegRequest;
@@ -31,7 +34,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -44,11 +46,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +68,8 @@ public class UserServiceImpl implements UserService {
     private final TokenMapper tokenMapper;
     private final ResponseFactory responseFactory;
     private final StreamBridge streamBridge;
-    private final RedisTemplate<RegRequest, String> redisTemplate;
+    private final RedisTemplate<RegRequest, String> redisTemplateObject;
+    private final RedisTemplate<String, String> redisTemplateString;
 
     @Override
     public ResponseEntity<BaseResponse<String>> register(RegRequest request) {
@@ -78,15 +79,15 @@ public class UserServiceImpl implements UserService {
         }
 
         String activeCode = String.valueOf(new Random().nextInt(900000) + 100000);
-        redisTemplate.opsForValue().set(request, activeCode);
-        redisTemplate.expire(request, 3, TimeUnit.MINUTES);
-        log.info("Redis cached - {}", redisTemplate.opsForValue().get(request));
+        redisTemplateObject.opsForValue().set(request, activeCode);
+        redisTemplateObject.expire(request, 5, TimeUnit.MINUTES);
+        log.info("Redis cached - {}", redisTemplateObject.opsForValue().get(request));
 
         Message<String> message = MessageBuilder.withPayload(activeCode)
                 .setHeader(KafkaHeaders.KEY, request.getEmail().getBytes())
                 .build();
         streamBridge.send("email-active", message);
-        return responseFactory.success("Success", "An OPT code send to your email, please check now");
+        return responseFactory.success("An OTP code send to your email, please check now", request.getEmail());
 
 
 //        User user = userMapper.requestToEntity(request);
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<UserResponse>> validate(RegRequest request, String code) {
-        String activeCode = redisTemplate.opsForValue().get(request);
+        String activeCode = redisTemplateObject.opsForValue().get(request);
         if (activeCode == null) {
             return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Activation code has expired!", null);
         }
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
         User saved = userRepository.save(user);
         tokenService.initRefreshToken(user);
         UserResponse response = userMapper.entityToResponse(saved);
-        redisTemplate.delete(request);
+        redisTemplateObject.delete(request);
         return responseFactory.success("Account activated successfully!", response);
     }
 
@@ -141,12 +142,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<BaseResponse<String>> logout() {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+
+        tokenService.clearToken(userDetail.getId());
+        return responseFactory.success("Logged out", "Success");
+    }
+
+    @Override
     public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request) {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<RefreshToken> refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken());
 
         if (refreshToken.isEmpty()) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Not happen in this case!", null);
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "You are logged out", null);
         }
 
         if (refreshToken.get().getExpireDate().compareTo(new Date()) > 0) {
@@ -161,6 +171,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<BaseResponse<String>> forgotPasswordRequest(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "User not found", null);
+        }
+
+        String activeCode = String.valueOf(new Random().nextInt(900000) + 100000);
+        redisTemplateString.opsForValue().set(activeCode, email);
+        redisTemplateString.expire(email, 10, TimeUnit.MINUTES);
+        log.info("Redis cached string - {}", redisTemplateString.opsForValue().get(activeCode));
+
+        Message<String> message = MessageBuilder.withPayload(activeCode)
+                .setHeader(KafkaHeaders.KEY, email.getBytes())
+                .build();
+        streamBridge.send("password-forgot", message);
+        return responseFactory.success("An OTP code send to your email, please check now", email);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<String>> renewPassword(RenewPasswordRequest request) {
+        String email = redisTemplateString.opsForValue().get(request.getCode());
+        if (email == null) {
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "OTP code incorrect", null);
+        }
+
+        if (!request.getNewPassword().equals(request.getRetypePassword())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not matches", null);
+        }
+
+        User user = userRepository.findByEmail(email).get();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        redisTemplateString.delete(request.getCode());
+        return responseFactory.success("Redirect to login with new password", email);
+    }
+
+    @Override
     public ResponseEntity<BaseResponse<UserResponse>> editProfile(ProfileRequest request) {
         CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
@@ -172,6 +219,28 @@ public class UserServiceImpl implements UserService {
         user.setModifiedDate(LocalDateTime.now());
         UserResponse response = userMapper.entityToResponse(userRepository.save(user));
         return responseFactory.success("Update successfully!", response);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<String>> changePassword(PasswordChangeRequest request) {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+
+        User user = userRepository.findById(userDetail.getId())
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Unknown error"));
+
+        if (!request.getNewPassword().equals(request.getRetypePassword())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not match", null);
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Incorrect password", null);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return responseFactory.success("Password has been changed", "Success");
     }
 
     @Override
@@ -242,5 +311,34 @@ public class UserServiceImpl implements UserService {
 
     private boolean validPassword(String rawPassword, String archivePassword) {
         return passwordEncoder.matches(rawPassword, archivePassword);
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<String>> assignRole(String role, String userId) {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Trigger - {}", "");
+
+        boolean roleMatch = Stream.of(Role.values())
+                .map(eRole -> eRole.name())
+                .toList()
+                .contains(role);
+        if (!roleMatch) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Role do not match", null);
+        }
+
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return responseFactory.fail(HttpStatus.NOT_FOUND, "User not found", null);
+        }
+
+        int authorRole = Role.valueOf(String.valueOf(userDetail.getAuthorities().stream().toList().get(0))).getNumVal();
+        if (authorRole < Role.valueOf(role).getNumVal()) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Can not assign with role higher", null);
+        }
+
+        user.get().setRole(Role.valueOf(role));
+        userRepository.save(user.get());
+
+        return responseFactory.success("Success", role);
     }
 }

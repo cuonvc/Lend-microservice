@@ -9,5 +9,7 @@ public interface TokenService {
 
     void initRefreshToken(User user);
 
+    void clearToken(String userId);
+
     RefreshToken generateTokenObject(User user);
 }

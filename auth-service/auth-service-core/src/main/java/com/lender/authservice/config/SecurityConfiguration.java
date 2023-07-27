@@ -47,7 +47,10 @@ public class SecurityConfiguration {
                 .exceptionHandling(handle -> handle.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/sign-up", "/api/auth/login", "/api/auth/active-account", "/test").permitAll()
-                        .requestMatchers("/api/auth/admin/*").hasAnyAuthority("ROOT", "ADMIN", "MODERATOR")
+                        .requestMatchers("/api/auth/password/*").permitAll()
+                        .requestMatchers("/api/auth/moderator/*").hasAnyAuthority("ROOT", "ADMIN", "MODERATOR")
+                        .requestMatchers("/api/auth/admin/*").hasAnyAuthority("ROOT", "ADMIN")
+                        .requestMatchers("/api/auth/root/*").hasAnyAuthority("ROOT")
                         .requestMatchers(HttpMethod.GET, "/api/auth/account/*").permitAll()
                         .anyRequest()
                         .authenticated())

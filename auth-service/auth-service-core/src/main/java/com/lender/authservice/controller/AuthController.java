@@ -1,6 +1,8 @@
 package com.lender.authservice.controller;
 
-import com.lender.authservice.response.BaseResponse;
+import com.lender.authservice.payload.request.PasswordChangeRequest;
+import com.lender.authservice.payload.request.RenewPasswordRequest;
+import com.lender.authservice.payload.response.BaseResponse;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.authserviceshare.payload.request.LoginRequest;
@@ -49,35 +51,14 @@ public class AuthController {
         return userService.login(request);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponse<String>> logout() {
+        return userService.logout();
+    }
+
     @GetMapping("/token/renew")
     public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(@RequestBody TokenObjectRequest request) {
         return userService.renewAccessToken(request);
     }
 
-    @PutMapping("/account/edit")
-    public ResponseEntity<BaseResponse<UserResponse>> editProfile(@Valid @RequestBody ProfileRequest request) {
-        return userService.editProfile(request);
-    }
-
-    @GetMapping("/account/{userId}")
-    public ResponseEntity<BaseResponse<UserResponse>> getProfile(@PathVariable(name = "userId") String id) {
-        return userService.getById(id);
-    }
-
-    @GetMapping("/admin/account-list")
-    public ResponseEntity<BaseResponse<PageResponseUsers>> getAllAccount(@RequestParam(value = "pageNo",
-                                                                                  defaultValue = PageConstant.PAGE_NO, required = false) Integer pageNo,
-                                                                         @RequestParam(value = "pageSize",
-                                                                                  defaultValue = PageConstant.PAGE_SIZE, required = false) Integer pageSize,
-                                                                         @RequestParam(value = "sortBy",
-                                                                                  defaultValue = PageConstant.SORT_BY, required = false) String sortBy,
-                                                                         @RequestParam(value = "sortDir",
-                                                                                  defaultValue = PageConstant.SORT_DIR, required = false) String sortDir) {
-        return userService.getAll(pageNo, pageSize, sortBy, sortDir);
-    }
-
-    @PutMapping("/account/avatar")
-    public ResponseEntity<BaseResponse<String>> uploadAvatar(@RequestPart(name = "image") MultipartFile file) throws IOException {
-        return userService.uploadAvatar(file);
-    }
 }

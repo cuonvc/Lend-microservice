@@ -36,6 +36,18 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void clearToken(String userId) {
+        RefreshToken refreshToken = repository.getByUserId(userId).get();
+
+        Date currentDate = new Date();
+        Date expire = new Date(currentDate.getTime() - EXPIRE_DATE);
+
+        refreshToken.setToken("");
+        refreshToken.setExpireDate(expire);
+        repository.save(refreshToken);
+    }
+
+    @Override
     public RefreshToken generateTokenObject(User user) {
         Date currentDate = new Date();
         Date expire = new Date(currentDate.getTime() + EXPIRE_DATE);

@@ -1,4 +1,4 @@
-package com.lender.authservice.response;
+package com.lender.authservice.payload.response;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -16,8 +16,15 @@ import java.time.Duration;
 public class BeanConfiguration {
 
     @Bean
-    public RedisTemplate<RegRequest, String> redisTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate<RegRequest, String> redisTemplateObject(RedisConnectionFactory factory) {
         RedisTemplate<RegRequest, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplateString(RedisConnectionFactory factory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         return template;
     }

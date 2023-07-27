@@ -25,7 +25,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         BaseResponse response = BaseResponse.<String>builder()
                 .status(HttpStatus.NOT_FOUND)
                 .dateTime(LocalDateTime.now())
-                .message(request.getDescription(false))
+                .message(request.getDescription(false) + "\n"
+                    + exception.getMessage())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

@@ -1,4 +1,4 @@
-package com.lender.authservice.response;
+package com.lender.authservice.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
