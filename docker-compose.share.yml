@@ -65,7 +65,7 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - database
+      - database-auth
       - base-service
       - redis
       - kafka
@@ -74,7 +74,7 @@ services:
       - redis
     environment:
       SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/lendo-db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-auth:5432/lendo-db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
@@ -89,7 +89,7 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - database
+      - database-product
       - kafka
       - base-service
 
@@ -118,8 +118,8 @@ services:
     depends_on:
       - kafka
 
-  database:
-    container_name: database
+  database-auth:
+    container_name: database-auth
     image: cuonvc/postgres:v1.0
     #    restart: always
     networks:
@@ -127,9 +127,22 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: lendo-db
+      POSTGRES_DB: auth-db
     ports:
       - "5432:5432"
+
+  database-product:
+    container_name: database-product
+    image: cuonvc/postgres:v1.0
+    #    restart: always
+    networks:
+      - lender-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: product-db
+    ports:
+      - "5433:5433"
 
 volumes:
   redis_data:

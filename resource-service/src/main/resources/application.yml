@@ -21,7 +21,7 @@ spring:
       #          destination: file-topic-after
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: kafka:9092
 
     compatibility-verifier:
       enabled: false

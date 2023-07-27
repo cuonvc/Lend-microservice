@@ -6,26 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="f121be22-8316-4ad4-aea8-835fc455afa5" name="Changes" comment="Init base project">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/BeanConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/BeanConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/exception/ValidationHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/response/BaseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/payload/response/BaseResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/response/ResponseFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/payload/response/ResponseFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/TokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/TokenService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/impl/TokenServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/impl/TokenServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/service/impl/UserServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-share/src/main/java/com/lender/authserviceshare/payload/enumerate/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-share/src/main/java/com/lender/authserviceshare/payload/enumerate/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base-service/src/main/java/com/lender/baseservice/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/base-service/src/main/java/com/lender/baseservice/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base-service/src/main/java/com/lender/baseservice/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/base-service/src/main/java/com/lender/baseservice/exception/ResourceNotFoundException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/src/main/java/com/lender/mailservice/kafkaHandler/SendEmailHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/java/com/lender/mailservice/kafkaHandler/SendEmailHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/base-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.share.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mail-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mail-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,6 +193,7 @@
       <workItem from="1690264294294" duration="930000" />
       <workItem from="1690272734885" duration="30000" />
       <workItem from="1690432960970" duration="2683000" />
+      <workItem from="1690464549482" duration="7799000" />
     </task>
     <task id="LOCAL-00001" summary="Init base project">
       <option name="closed" value="true" />
