@@ -6,6 +6,12 @@
 #    web-application-type: reactive
 #  cloud:
 #    gateway:
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allowedMethods: "*"
+#            allowedHeaders: "*"
 #      routes:
 #        - id: auth-service
 #          uri: http://localhost:8081
