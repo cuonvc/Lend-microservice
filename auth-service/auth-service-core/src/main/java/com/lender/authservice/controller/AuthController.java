@@ -2,7 +2,8 @@ package com.lender.authservice.controller;
 
 import com.lender.authservice.payload.request.PasswordChangeRequest;
 import com.lender.authservice.payload.request.RenewPasswordRequest;
-import com.lender.authservice.payload.response.BaseResponse;
+//import com.lender.authservice.payload.response.BaseResponse;
+import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.authserviceshare.payload.request.LoginRequest;

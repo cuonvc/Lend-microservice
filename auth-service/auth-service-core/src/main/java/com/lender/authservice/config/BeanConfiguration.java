@@ -1,6 +1,7 @@
 package com.lender.authservice.config;
 
 import com.lender.authserviceshare.payload.request.RegRequest;
+import com.lender.baseservice.payload.response.ResponseFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -27,6 +28,11 @@ public class BeanConfiguration {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         return template;
+    }
+
+    @Bean
+    public ResponseFactory responseFactory() {
+        return new ResponseFactory();
     }
 
 //    @Bean

@@ -1,9 +1,9 @@
 package com.lender.authservice.config.jwt;
 
 import com.lender.authservice.entity.User;
+import com.lender.authservice.exception.APIException;
+import com.lender.authservice.exception.ResourceNotFoundException;
 import com.lender.authservice.repository.UserRepository;
-import com.lender.baseservice.exception.APIException;
-import com.lender.baseservice.exception.ResourceNotFoundException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

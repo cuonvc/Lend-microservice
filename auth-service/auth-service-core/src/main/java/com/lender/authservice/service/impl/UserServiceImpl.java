@@ -4,14 +4,18 @@ import com.lender.authservice.config.CustomUserDetail;
 import com.lender.authservice.config.jwt.JwtTokenProvider;
 import com.lender.authservice.entity.RefreshToken;
 import com.lender.authservice.entity.User;
+import com.lender.authservice.exception.APIException;
+import com.lender.authservice.exception.ResourceNotFoundException;
 import com.lender.authservice.mapper.TokenMapper;
 import com.lender.authservice.mapper.UserMapper;
 import com.lender.authservice.payload.request.PasswordChangeRequest;
 import com.lender.authservice.payload.request.RenewPasswordRequest;
 import com.lender.authservice.repository.RefreshTokenRepository;
-import com.lender.authservice.payload.response.BaseResponse;
+//import com.lender.authservice.payload.response.BaseResponse;
+import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.authservice.repository.UserRepository;
-import com.lender.authservice.payload.response.ResponseFactory;
+//import com.lender.authservice.payload.response.ResponseFactory;
+import com.lender.baseservice.payload.response.ResponseFactory;
 import com.lender.authservice.service.TokenService;
 import com.lender.authservice.service.UserService;
 import com.lender.authserviceshare.payload.enumerate.Role;
@@ -22,8 +26,6 @@ import com.lender.authserviceshare.payload.request.TokenObjectRequest;
 import com.lender.authserviceshare.payload.response.PageResponseUsers;
 import com.lender.authserviceshare.payload.response.TokenObjectResponse;
 import com.lender.authserviceshare.payload.response.UserResponse;
-import com.lender.baseservice.exception.APIException;
-import com.lender.baseservice.exception.ResourceNotFoundException;
 import com.lender.baseservice.payload.request.FileObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,8 +75,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> register(RegRequest request) {
-        Optional<User> entity = userRepository.findByEmail(request.getEmail());
-        if (entity.isPresent()) {
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Account already existed", null);
         }
 
@@ -120,18 +122,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<TokenObjectResponse>> login(LoginRequest request) {
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
-        if (user.isEmpty()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST,
-                    "User not found with email '" + request.getEmail() + "'", null);
-        }
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
 
-        if (!validPassword(request.getPassword(), user.get().getPassword())) {
+        if (!validPassword(request.getPassword(), user.getPassword())) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password incorrect", null);
         }
 
         String accessToken = jwtTokenProvider.generateToken(request.getEmail());
-        RefreshToken refreshToken = tokenService.generateTokenObject(user.get());
+        RefreshToken refreshToken = tokenService.generateTokenObject(user);
         TokenObjectResponse response = TokenObjectResponse.builder()
                 .accessToken(accessToken)
                 .tokenType("Bearer")
@@ -152,18 +151,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request) {
+
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<RefreshToken> refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken());
+        RefreshToken refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken())
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "You are logged out"));
 
-        if (refreshToken.isEmpty()) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "You are logged out", null);
-        }
-
-        if (refreshToken.get().getExpireDate().compareTo(new Date()) > 0) {
+        if (refreshToken.getExpireDate().compareTo(new Date()) > 0) {
             return responseFactory.success("Success",
                     TokenObjectResponse.builder()
                             .accessToken(jwtTokenProvider.generateToken(userDetail.getUsername()))
-                            .refreshToken(tokenMapper.mapToDto(refreshToken.get()))
+                            .refreshToken(tokenMapper.mapToDto(refreshToken))
                             .build());
         }
 
@@ -172,10 +169,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> forgotPasswordRequest(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "User not found", null);
-        }
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
         String activeCode = String.valueOf(new Random().nextInt(900000) + 100000);
         redisTemplateString.opsForValue().set(activeCode, email);
@@ -191,20 +186,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> renewPassword(RenewPasswordRequest request) {
-        String email = redisTemplateString.opsForValue().get(request.getCode());
-        if (email == null) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "OTP code incorrect", null);
-        }
 
-        if (!request.getNewPassword().equals(request.getRetypePassword())) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not matches", null);
-        }
+        return (ResponseEntity<BaseResponse<String>>) Optional.ofNullable(redisTemplateString.opsForValue().get(request.getCode()))
+                .map(email -> {
+                    if (!request.getNewPassword().equals(request.getRetypePassword())) {
+                        return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not matches", null);
+                    }
 
-        User user = userRepository.findByEmail(email).get();
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-        redisTemplateString.delete(request.getCode());
-        return responseFactory.success("Redirect to login with new password", email);
+                    User user = userRepository.findByEmail(email).get();
+                    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+                    userRepository.save(user);
+                    redisTemplateString.delete(request.getCode());
+                    return responseFactory.success("Redirect to login with new password", email);
+                })
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "OTP code incorrect"));
     }
 
     @Override
@@ -233,7 +228,7 @@ public class UserServiceImpl implements UserService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not match", null);
         }
 
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!validPassword(request.getOldPassword(), user.getPassword())) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Incorrect password", null);
         }
 
@@ -245,12 +240,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<BaseResponse<UserResponse>> getById(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            return responseFactory.fail(HttpStatus.NOT_FOUND, "User not found with id: " + userId, null);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        return responseFactory.success("Success", userMapper.entityToResponse(user.get()));
+        return responseFactory.success("Success", userMapper.entityToResponse(user));
     }
 
     @Override
@@ -326,18 +319,16 @@ public class UserServiceImpl implements UserService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Role do not match", null);
         }
 
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            return responseFactory.fail(HttpStatus.NOT_FOUND, "User not found", null);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         int authorRole = Role.valueOf(String.valueOf(userDetail.getAuthorities().stream().toList().get(0))).getNumVal();
         if (authorRole < Role.valueOf(role).getNumVal()) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Can not assign with role higher", null);
         }
 
-        user.get().setRole(Role.valueOf(role));
-        userRepository.save(user.get());
+        user.setRole(Role.valueOf(role));
+        userRepository.save(user);
 
         return responseFactory.success("Success", role);
     }

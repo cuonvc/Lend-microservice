@@ -1,9 +1,9 @@
 package com.lender.authservice.config;
 
 import com.lender.authservice.entity.User;
+import com.lender.authservice.exception.ResourceNotFoundException;
 import com.lender.authservice.repository.UserRepository;
 import com.lender.authserviceshare.payload.enumerate.Role;
-import com.lender.baseservice.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

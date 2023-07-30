@@ -1,7 +1,6 @@
 package com.lender.authservice.exception;
 
-import com.lender.baseservice.exception.APIException;
-import com.lender.baseservice.exception.ResourceNotFoundException;
+//import com.lender.authservice.payload.response.BaseResponse;
 import com.lender.baseservice.payload.response.BaseResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class ValidationHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -31,5 +30,29 @@ public class ValidationHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, message);
         });
         return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<BaseResponse<String>> handleAPIException(APIException exception,
+                                                                   WebRequest request) {
+        BaseResponse response = BaseResponse.<String>builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .dateTime(LocalDateTime.now())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<BaseResponse<String>> handleResourceNotFound(ResourceNotFoundException exception,
+                                                                       WebRequest request) {
+        BaseResponse response = BaseResponse.<String>builder()
+                .status(HttpStatus.NOT_FOUND)
+                .dateTime(LocalDateTime.now())
+                .message(exception.getMessage())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }
