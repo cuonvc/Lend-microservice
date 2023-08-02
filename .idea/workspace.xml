@@ -6,11 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="f121be22-8316-4ad4-aea8-835fc455afa5" name="Changes" comment="Init base project">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/com/lender/apigateway/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/com/lender/apigateway/filter/AuthenticationFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/base-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.share.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/BeanConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/BeanConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/java/com/lender/authservice/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,6 +194,7 @@
       <workItem from="1690464549482" duration="8837000" />
       <workItem from="1690630317040" duration="3315000" />
       <workItem from="1690651993502" duration="1588000" />
+      <workItem from="1690992425214" duration="1392000" />
     </task>
     <task id="LOCAL-00001" summary="Init base project">
       <option name="closed" value="true" />

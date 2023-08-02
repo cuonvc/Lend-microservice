@@ -1,6 +1,5 @@
 package com.lender.apigateway.filter;
 
-import com.lender.baseservice.exception.APIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +45,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     authHeader = authHeader.substring(7);
                 }
 
-                boolean isValid = Boolean.TRUE.equals(restTemplate.getForObject("http://AUTH-SERVICE//valid?token=" + authHeader, Boolean.class));
+                boolean isValid = Boolean.TRUE.equals(restTemplate.getForObject("http://AUTH-SERVICE//gateway/valid?token=" + authHeader, Boolean.class));
 //                if (isValid) {
 //
 //                }

@@ -4,6 +4,7 @@ package com.lender.authservice.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lender.authserviceshare.payload.enumerate.Gender;
 import com.lender.authserviceshare.payload.enumerate.Role;
+import com.lender.authserviceshare.payload.enumerate.UserProvider;
 import com.lender.baseservice.constant.enumerate.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -82,6 +83,10 @@ public class User {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
+
+    @Column(name = "user_provider")
+    @Enumerated(EnumType.STRING)
+    private UserProvider provider = UserProvider.SYSTEM;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

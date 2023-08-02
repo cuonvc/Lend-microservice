@@ -31,7 +31,7 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    @GetMapping("/valid")  //API valid token for gateway service
+    @GetMapping("/gateway/valid")  //API valid token for gateway service
     public boolean validateToken(@RequestParam("token") String token) {
         return tokenService.validateAccessToken(token);
     }

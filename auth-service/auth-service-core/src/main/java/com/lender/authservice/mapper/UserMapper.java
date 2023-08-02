@@ -28,6 +28,9 @@ public interface UserMapper {
 
     @Named("pathToUrl")
     static String pathToUrl(String path) {
+        if (path != null && path.contains("http")) {
+            return path;
+        }
         return AppConstant.DOMAIN + path;
     }
 }

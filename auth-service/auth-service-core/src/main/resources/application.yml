@@ -17,6 +17,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 033f662cdda792dd4afd
+            client-secret: ********
+          google:
+            client-id: 73739720220-qblvgnhnm505ovttjsp1eje7qf1ajr0n.apps.googleusercontent.com
+            client-secret: ********
+
   kafka:
 #    listener: PLAINTEXT://kafka:9092
 #    producer:
