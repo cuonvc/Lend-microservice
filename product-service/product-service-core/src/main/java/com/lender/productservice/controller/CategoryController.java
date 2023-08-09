@@ -8,6 +8,8 @@ import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,9 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/moderator")
+    @PostMapping("/moderator/create")
     public ResponseEntity<BaseResponse<CategoryDto>> create(@Valid @RequestBody CategoryDto categoryDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return categoryService.create(categoryDto);
     }
 
@@ -31,12 +34,12 @@ public class CategoryController {
         return categoryService.update(categoryDto);
     }
 
-    @GetMapping("/{categoryId}")
+    @GetMapping("/view/{categoryId}")
     public ResponseEntity<BaseResponse<CategoryDto>> getById(@PathVariable("categoryId") String id) {
         return categoryService.getById(id);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/view/all")
     public ResponseEntity<BaseResponse<PageResponseCategory>> getAllActive(@RequestParam(value = "pageNo",
                                                          defaultValue = PageConstant.PAGE_NO, required = false) Integer pageNo,
                                                                      @RequestParam(value = "pageSize",
@@ -48,7 +51,7 @@ public class CategoryController {
         return categoryService.getAllActive(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @GetMapping("/moderator/list")
+    @GetMapping("/moderator/all")
     public ResponseEntity<BaseResponse<PageResponseCategory>> getAll(@RequestParam(value = "pageNo",
                                                          defaultValue = PageConstant.PAGE_NO, required = false) Integer pageNo,
                                                                      @RequestParam(value = "pageSize",

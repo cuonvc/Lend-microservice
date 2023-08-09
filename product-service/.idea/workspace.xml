@@ -5,24 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../api-gateway/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base-service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/ApiGatewayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/ApiGatewayApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/filter/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/filter/RouteValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/java/com/lender/apigateway/filter/RouteValidator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/config/SecurityConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lender/productservice/ProductServiceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lender/productservice/test/Demo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/lender/productservice/ProductServiceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mail-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mail-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CategoryServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,19 +42,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging main",
-    "last_opened_file_path": "D:/Workspace/Java/Lender-microservice/product-service",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Workspace/Java/Lender-microservice/product-service&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;1e0d1127176b9230f18f4c3af22bcb7d&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="ProductServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="product-service" />
@@ -76,6 +74,8 @@
       <option name="presentableId" value="Default" />
       <updated>1689864571673</updated>
       <workItem from="1689864572665" duration="467000" />
+      <workItem from="1691553836954" duration="21000" />
+      <workItem from="1691553866435" duration="18000" />
     </task>
     <servers />
   </component>

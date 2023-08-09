@@ -1,44 +1,44 @@
-#server:
-#  port: 8080
-#
-#spring:
-#  main:
-#    web-application-type: reactive
-#  cloud:
-#    gateway:
-#      globalcors:
-#        corsConfigurations:
-#          '[/**]':
-#            allowedOrigins:
-#              - "http://127.0.0.1:5500/"
-#              - "http://localhost:5173/"
-#              - "https://168b-59-153-254-53.ngrok-free.app"
-#            allowedMethods: "*"
-#            allowedHeaders: "*"
-#      routes:
-#        - id: auth-service
-#          uri: http://localhost:8081
-#          predicates:
-#            - Path=/api/auth/**
-#
-#        - id: product-service
-#          uri: http://localhost:8082
-#          predicates:
-#            - Path=/api/product/**
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://127.0.0.1:5500/"
+              - "http://localhost:5173/"
+              - "https://168b-59-153-254-53.ngrok-free.app"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+
+        - id: product-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/product/**
 #          filters:
 #            - AuthenticationFilter
-#
-#        - id: resource-service
-#          uri: http://localhost:8083
-#          predicates:
-#            - Path=/resource/**
-#
-#    compatibility-verifier:
-#      enabled: false
-#
-#  application:
-#    name: API-GATEWAY
-#
+
+        - id: resource-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/resource/**
+
+    compatibility-verifier:
+      enabled: false
+
+  application:
+    name: API-GATEWAY
+
 #eureka:
 #  client:
 #    registerWithEureka: false

@@ -1,70 +1,70 @@
-#server:
-#  port: 8081
-#spring:
-#  application:
-#    name: AUTH-SERVICE
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/lender_dev
-#    username: postgres
-#    password: 1234
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
-#        format_sql: true
-#
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          github:
-#            client-id: 033f662cdda792dd4afd
-#            client-secret: *************
-#          google:
-#            client-id: 73739720220-qblvgnhnm505ovttjsp1eje7qf1ajr0n.apps.googleusercontent.com
-#            client-secret: *************
-#
-#  kafka:
-#    #    producer:
-#    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#    consumer:
-#      auto-offset-reset: earliest
-#  cloud:
-#    function:
-#      definition: fileProcess
-#    stream:
-#      bindings:
-#        fileProcess-in-0:
-#          destination: file-response
-#          content-type: application/json
-#      #        testHandler-in-0:
-#      #          destination: file-topic-after
-#      kafka:
-#        binder:
-#          brokers: localhost:9092
-#
-#    compatibility-verifier:
-#      enabled: false
-#
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
-#      database: 0
-#
-#  servlet:
-#    multipart:
-#      max-file-size: 3MB
-#      max-request-size: 5MB
-#
-#eureka:
-#  client:
-#    registerWithEureka: false
-#    fetch-registry: false
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8081
+spring:
+  application:
+    name: AUTH-SERVICE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_service
+    username: postgres
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 033f662cdda792dd4afd
+            client-secret:
+          google:
+            client-id: 73739720220-qblvgnhnm505ovttjsp1eje7qf1ajr0n.apps.googleusercontent.com
+            client-secret:
+
+  kafka:
+    #    producer:
+    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      auto-offset-reset: earliest
+  cloud:
+    function:
+      definition: fileProcess
+    stream:
+      bindings:
+        fileProcess-in-0:
+          destination: file-response
+          content-type: application/json
+      #        testHandler-in-0:
+      #          destination: file-topic-after
+      kafka:
+        binder:
+          brokers: localhost:9092
+
+    compatibility-verifier:
+      enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 5MB
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

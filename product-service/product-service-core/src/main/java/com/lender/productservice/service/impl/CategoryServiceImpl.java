@@ -39,7 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity<BaseResponse<CategoryDto>> create(CategoryDto categoryDto) {
         if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '" + categoryDto.getName() + "' already existed or disabled", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '"
+                    + categoryDto.getName() + "' already existed or disabled", null);
         }
 
         CategoryDto response = categoryMapper
@@ -52,6 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto) {
         Category category = categoryRepository.findById(categoryDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryDto.getId()));
+
+        if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '" + categoryDto.getName()
+                    + "' already existed or disabled", null);
+        }
 
         categoryMapper.dtoToEntity(categoryDto, category);
         CategoryDto response = categoryMapper.entityToDto(categoryRepository.save(category));
