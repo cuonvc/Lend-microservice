@@ -28,7 +28,6 @@ public class ProductResponse {
     private LocalDateTime saleExpireAt;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
-    private String createdBy;
-    private String modifiedBy;
     private Set<CategoryDto> categories;
+    private String userId;
 }

@@ -7,4 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
     ResponseEntity<BaseResponse<ProductResponse>> create(ProductRequest request);
+
+    ResponseEntity<BaseResponse<ProductResponse>> getById(String id);
 }

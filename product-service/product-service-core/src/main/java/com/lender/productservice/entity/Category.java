@@ -1,5 +1,6 @@
 package com.lender.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lender.baseservice.constant.enumerate.Status;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -40,6 +41,7 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Status isActive = Status.ACTIVE;
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<Product> products = new HashSet<>();
+//    @ManyToMany(mappedBy = "categories")
+//    @JsonManagedReference
+//    private Set<Product> products = new HashSet<>();
 }

@@ -17,7 +17,10 @@ import java.util.List;
 @Builder
 public class CustomUserDetail implements Serializable {
 
+    private String id;
+
     private String email;
+
     @JsonProperty(value = "grantedAuthorities")
     private List<String> grantedAuthorities;
 

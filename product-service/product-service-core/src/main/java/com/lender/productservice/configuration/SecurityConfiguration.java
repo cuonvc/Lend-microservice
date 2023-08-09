@@ -25,6 +25,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/product/category/admin/*").hasAnyAuthority("ROOT", "ADMIN")
                         .requestMatchers("/api/product/category/root/*").hasAnyAuthority("ROOT")
                         .requestMatchers("/api/product/category/view/*").permitAll()
+                        .requestMatchers("/api/product/view/*").permitAll()
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

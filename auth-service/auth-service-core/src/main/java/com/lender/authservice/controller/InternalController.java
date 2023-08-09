@@ -7,6 +7,7 @@ import com.lender.authservice.entity.User;
 import com.lender.authservice.exception.ResourceNotFoundException;
 import com.lender.authservice.mapper.UserMapper;
 import com.lender.authservice.payload.response.CustomUserDetailResponse;
+import com.lender.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,17 +31,18 @@ public class InternalController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailService customUserDetailService;
+    private final UserRepository userRepository;
 
     @GetMapping("/check")
     public ResponseEntity<CustomUserDetailResponse> validateToken(@RequestParam("token") String token) {
         if (jwtTokenProvider.validateToken(token)) {
             String email = jwtTokenProvider.getEmailFromToken(token);
             UserDetails userDetails = customUserDetailService.loadUserByUsername(email);
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
             CustomUserDetailResponse userDetailResponse = CustomUserDetailResponse.builder()
-                    .email(userDetails.getUsername())
-                    .grantedAuthorities(userDetails.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.toList()))
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .grantedAuthorities(List.of(user.getRole().toString()))
                     .build();
 
             return ResponseEntity.ok(userDetailResponse);

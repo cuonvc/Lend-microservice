@@ -1,13 +1,15 @@
 package com.lender.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lender.baseservice.constant.enumerate.Status;
 import com.lender.productserviceshare.enumerate.ProductState;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -21,6 +23,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
+@FilterDef(name = "deleteProductFilter", parameters = @ParamDef(name = "status", type = String.class))
+@Filter(name = "deleteProductFilter", condition = "is_active = :status")
 public class Product {
 
     @Id
@@ -66,13 +71,10 @@ public class Product {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
+    @Column(name = "user_id")
+    private String userId;
 
-    @Column(name = "modified_by", nullable = false)
-    private String modifiedBy;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"),

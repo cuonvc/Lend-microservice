@@ -2,6 +2,7 @@ package com.lender.productservice.controller;
 
 import com.lender.baseservice.constant.PageConstant;
 import com.lender.baseservice.payload.response.BaseResponse;
+import com.lender.productservice.configuration.CustomUserDetail;
 import com.lender.productservice.service.CategoryService;
 import com.lender.productserviceshare.payload.CategoryDto;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
@@ -24,6 +25,7 @@ public class CategoryController {
     @PostMapping("/moderator/create")
     public ResponseEntity<BaseResponse<CategoryDto>> create(@Valid @RequestBody CategoryDto categoryDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
         return categoryService.create(categoryDto);
     }
 

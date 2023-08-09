@@ -24,5 +24,5 @@ public class CategoryDto {
 
     private String description;
 
-    private Status status;
+    private Status isActive;
 }

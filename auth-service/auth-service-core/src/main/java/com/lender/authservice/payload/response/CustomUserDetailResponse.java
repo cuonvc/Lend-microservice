@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class CustomUserDetailResponse {
+    private String id;
     private String email;
     private List<String> grantedAuthorities;
 }

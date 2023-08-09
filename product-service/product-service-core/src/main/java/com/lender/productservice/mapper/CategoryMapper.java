@@ -15,6 +15,5 @@ public interface CategoryMapper {
 
     void dtoToEntity(CategoryDto categoryDto, @MappingTarget Category category);
 
-    @Mapping(source = "isActive", target = "status")
     CategoryDto entityToDto(Category category);
 }
