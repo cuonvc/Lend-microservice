@@ -22,7 +22,7 @@ public class FileHandler {
     private final UserService userService;
 
     @Bean
-    public Consumer<Message<FileObjectResponse>> fileProcess() {
+    public Consumer<Message<FileObjectResponse>> avatarProcess() {
         return response -> {
             log.info("Triggerrrrrrr - {}", response.getPayload());
             String userId = new String((byte[]) response.getHeaders().get(KafkaHeaders.RECEIVED_KEY));

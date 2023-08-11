@@ -20,8 +20,15 @@ public class FileImageServiceImpl implements FileImageService {
     private final RestTemplate restTemplate;
 
     @Override
-    public String saveFile(String key, String field, byte[] fileBytes) {
+    public String saveAvatarFile(String key, String field, byte[] fileBytes) {
         String uploadDir = "image/user/avatar/" + key;
+        Path path = fileUploadUtils.saveFile(uploadDir, fileBytes);
+        return path.toString().replace("\\", "/");
+    }
+
+    @Override
+    public String saveProductImage(String key, String field, byte[] fileBytes) {
+        String uploadDir = "image/product/" + key;
         Path path = fileUploadUtils.saveFile(uploadDir, fileBytes);
         return path.toString().replace("\\", "/");
     }

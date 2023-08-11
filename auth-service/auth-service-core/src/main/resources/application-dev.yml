@@ -36,11 +36,11 @@ spring:
       auto-offset-reset: earliest
   cloud:
     function:
-      definition: fileProcess
+      definition: avatarProcess
     stream:
       bindings:
-        fileProcess-in-0:
-          destination: file-response
+        avatarProcess-in-0:
+          destination: user-avatar-response
           content-type: application/json
       #        testHandler-in-0:
       #          destination: file-topic-after
@@ -62,9 +62,9 @@ spring:
       max-file-size: 3MB
       max-request-size: 5MB
 
-eureka:
-  client:
-    registerWithEureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  client:
+#    registerWithEureka: false
+#    fetch-registry: false
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/

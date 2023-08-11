@@ -6,6 +6,7 @@ import com.lender.authserviceshare.payload.request.ProfileRequest;
 import com.lender.authserviceshare.payload.request.RegRequest;
 import com.lender.authserviceshare.payload.response.UserResponse;
 //import com.lender.resourceservice.constants.SharingConstants;
+import com.lender.baseservice.constant.ConstantVariable;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,6 @@ public interface UserMapper {
         if (path != null && path.contains("http")) {
             return path;
         }
-        return AppConstant.DOMAIN + path;
+        return ConstantVariable.BASE_RESOURCE_DOMAIN + path;
     }
 }

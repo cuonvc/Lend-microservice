@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService {
                 .setHeader(KafkaHeaders.KEY, userDetail.getId().getBytes())
                 .build();
 
-        streamBridge.send("file-request-test1", requestMessage);
+        streamBridge.send("user-avatar-request", requestMessage);
         return responseFactory.success("Pending", "Saving image...");
     }
 

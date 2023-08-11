@@ -39,9 +39,3 @@
 #  application:
 #    name: API-GATEWAY
 #
-#eureka:
-#  client:
-#    registerWithEureka: false
-#    fetch-registry: false
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka/

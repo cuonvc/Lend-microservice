@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
@@ -23,11 +25,14 @@ public class ProductController {
         return productService.create(request);
     }
 
-    @PostMapping("/upload/thumb")
-    public ResponseEntity<BaseResponse<String>> uploadImage(@ImageValid @RequestPart("image") MultipartFile file) {
-
-        //sleeping ...
-        return null;
+    @PostMapping("/upload/thumb/{id}")
+    public ResponseEntity<BaseResponse<String>> uploadImage(@PathVariable("id") String id,
+                                                            @ImageValid @RequestPart("image") MultipartFile file) {
+        try {
+            return productService.uploadImage(id, file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/view/{id}")

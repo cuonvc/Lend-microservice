@@ -62,8 +62,12 @@ public class AccountController {
     }
 
     @PutMapping("/account/avatar")
-    public ResponseEntity<BaseResponse<String>> uploadAvatar(@RequestPart(name = "image") MultipartFile file) throws IOException {
-        return userService.uploadAvatar(file);
+    public ResponseEntity<BaseResponse<String>> uploadAvatar(@RequestPart(name = "image") MultipartFile file) {
+        try {
+            return userService.uploadAvatar(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PutMapping("/assign")

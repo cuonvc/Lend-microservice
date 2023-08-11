@@ -15,3 +15,21 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    cloud:
+      function:
+        definition: productImageProcess
+      stream:
+        bindings:
+          productImageProcess-in-0:
+            destination: product-image-response
+            content-type: application/json
+        kafka:
+          binder:
+            brokers: kafka:9092
+
+      compatibility-verifier:
+        enabled: false
