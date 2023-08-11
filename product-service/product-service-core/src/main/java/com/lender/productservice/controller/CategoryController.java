@@ -65,12 +65,12 @@ public class CategoryController {
         return categoryService.getAll(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @DeleteMapping("/admin/{categoryId}")
+    @DeleteMapping("/moderator/{categoryId}")
     public ResponseEntity<BaseResponse<String>> deleteById(@PathVariable("categoryId") String id) {
         return categoryService.delete(id);
     }
 
-    @PostMapping("/moderator/{categoryId}")
+    @PostMapping("/admin/{categoryId}")
     public ResponseEntity<BaseResponse<CategoryDto>> restoreById(@PathVariable("categoryId") String id) {
         return categoryService.restore(id);
     }

@@ -15,6 +15,8 @@ public interface ProductMapper {
 
     Product requestToEntity(ProductRequest productRequest);
 
+    void requestToEntity(ProductRequest productRequest, @MappingTarget Product product);
+
     @Mapping(source = "imageUrl", target = "imageUrl", qualifiedByName = "pathToUrl")
     ProductResponse entityToResponse(Product product);
 

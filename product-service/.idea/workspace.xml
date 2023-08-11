@@ -4,26 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/InternalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/controller/InternalController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/payload/response/CustomUserDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/java/com/lender/authservice/payload/response/CustomUserDetailResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/CustomUserDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/CustomUserDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/SecurityConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Category.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/mapper/CategoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/mapper/CategoryMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/CategoryDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/CategoryDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" afterDir="false" />
-    </list>
+    <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -84,6 +65,7 @@
       <workItem from="1691553866435" duration="18000" />
       <workItem from="1691576029636" duration="197000" />
       <workItem from="1691597831919" duration="265000" />
+      <workItem from="1691747441234" duration="192000" />
     </task>
     <servers />
   </component>

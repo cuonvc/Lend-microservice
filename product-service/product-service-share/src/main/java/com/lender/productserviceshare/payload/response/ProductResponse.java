@@ -1,5 +1,6 @@
 package com.lender.productserviceshare.payload.response;
 
+import com.lender.baseservice.constant.enumerate.Status;
 import com.lender.productserviceshare.enumerate.ProductState;
 import com.lender.productserviceshare.payload.CategoryDto;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class ProductResponse {
     private LocalDateTime saleExpireAt;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
+    private Status isActive;
     private Set<CategoryDto> categories;
     private String userId;
 }
