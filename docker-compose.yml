@@ -80,7 +80,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database-auth:5432/auth-db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       REDIS_HOST: redis
       REDIS_PORT: 6379
 
@@ -96,6 +95,11 @@ services:
       - database-product
       - kafka
       - base-service
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-product:5432/product-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
 
   mail-service:
     container_name: mail-service
@@ -107,6 +111,8 @@ services:
       - "8084:8084"
     environment:
       SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - kafka
       - zookeeper

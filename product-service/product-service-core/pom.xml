@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-		<spring.cloud.version>4.0.4</spring.cloud.version>
+		<spring-cloud-kafka.version>4.0.4</spring-cloud-kafka.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -43,12 +43,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
-			<version>${spring.cloud.version}</version>
+			<version>${spring-cloud-kafka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
-			<version>${spring.cloud.version}</version>
+			<version>${spring-cloud-kafka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.lender</groupId>
