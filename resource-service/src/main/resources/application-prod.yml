@@ -12,7 +12,7 @@
 #    function:
 #      definition:
 #        "userAvatarHandle;\
-#        productImageHandle"
+#          productImageHandle"
 #    stream:
 #      bindings:
 #        userAvatarHandle-in-0:
@@ -27,7 +27,7 @@
 #      #          destination: file-topic-after
 #      kafka:
 #        binder:
-#          brokers: localhost:9092
+#          brokers: kafka:9092
 #
 #    compatibility-verifier:
 #      enabled: false

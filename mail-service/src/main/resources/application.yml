@@ -19,13 +19,13 @@ spring:
 
   data:
     redis:
-      database: 0
-      port: 6379
-      host: localhost
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
+      url: ${REDIS_URL}
 
   kafka:
 #    listener: PLAINTEXT://kafka:9092
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
     #    producer:
     #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
     #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -44,4 +44,4 @@ spring:
           content-type: application/json
       kafka:
         binder:
-          brokers: kafka:9092
+          brokers: ${KAFKA_HOST}:${KAFKA_PORT}

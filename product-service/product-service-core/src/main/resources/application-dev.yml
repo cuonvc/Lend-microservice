@@ -37,3 +37,17 @@
 #
 #    compatibility-verifier:
 #      enabled: false
+
+
+EUREKA_CLIENT_HOST: localhost
+EUREKA_CLIENT_PORT: 6379
+
+DB_HOST: localhost
+DB_PORT: 5432
+DB_NAME: product_service
+DDL_AUTO: update
+DB_USERNAME: postgres
+DB_PASSWORD: 1234
+
+KAFKA_HOST: localhost
+KAFKA_PORT: 9092

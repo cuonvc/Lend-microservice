@@ -4,13 +4,13 @@ spring:
   application:
     name: AUTH-SERVICE
   datasource:
-    url: jdbc:postgresql://database-auth:5432/auth-db
-    username: postgres
-    password: 1234
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${DDL_AUTO}
     show-sql: true
     properties:
       hibernate:
@@ -26,7 +26,7 @@ spring:
             client-secret:
           google:
             client-id: 73739720220-qblvgnhnm505ovttjsp1eje7qf1ajr0n.apps.googleusercontent.com
-            client-secret: 
+            client-secret:
 
   kafka:
 #    listener: PLAINTEXT://kafka:9092
@@ -45,16 +45,16 @@ spring:
           content-type: application/json
       kafka:
         binder:
-          brokers: kafka:9092
+          brokers: ${KAFKA_HOST}:${KAFKA_PORT}
 
     compatibility-verifier:
       enabled: false
 
   data:
     redis:
-      host: redis
-      port: 6379
-      url: redis://redis:6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      url: ${REDIS_URL}
   cache:
     type: redis
 
@@ -68,4 +68,4 @@ eureka:
     registerWithEureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_CLIENT_HOST}:${EUREKA_CLIENT_PORT}/eureka/

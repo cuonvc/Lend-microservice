@@ -4,7 +4,7 @@
 #  application:
 #    name: AUTH-SERVICE
 #  datasource:
-#    url: jdbc:postgresql://localhost:5432/auth_service
+#    url: jdbc:postgresql://database-auth:5432/auth-db
 #    username: postgres
 #    password: 1234
 #
@@ -29,6 +29,7 @@
 #            client-secret:
 #
 #  kafka:
+#    #    listener: PLAINTEXT://kafka:9092
 #    #    producer:
 #    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
 #    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -42,46 +43,47 @@
 #        avatarProcess-in-0:
 #          destination: user-avatar-response
 #          content-type: application/json
-#      #        testHandler-in-0:
-#      #          destination: file-topic-after
 #      kafka:
 #        binder:
-#          brokers: localhost:9092
+#          brokers: kafka:9092
 #
 #    compatibility-verifier:
 #      enabled: false
 #
 #  data:
 #    redis:
-#      host: localhost
+#      host: redis
 #      port: 6379
-#      database: 0
+#      url: redis://redis:6379
+#  cache:
+#    type: redis
 #
 #  servlet:
 #    multipart:
 #      max-file-size: 3MB
 #      max-request-size: 5MB
 #
-##eureka:
-##  client:
-##    registerWithEureka: false
-##    fetch-registry: false
-##    service-url:
-##      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  client:
+#    registerWithEureka: false
+#    fetch-registry: false
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
 
-EUREKA_CLIENT_HOST: localhost
+
+EUREKA_CLIENT_HOST: eureka-server
 EUREKA_CLIENT_PORT: 6379
 
-DB_HOST: localhost
+DB_HOST: database-auth
 DB_PORT: 5432
-DB_NAME: auth_service
+DB_NAME: auth-db
 DDL_AUTO: update
 DB_USERNAME: postgres
-DB_PASSWORD: 1234
+DB_PASSWORD: password
 
-KAFKA_HOST: localhost
+KAFKA_HOST: kafka
 KAFKA_PORT: 9092
 
-REDIS_HOST: localhost
+REDIS_HOST: redis
 REDIS_PORT: 6379
-REDIS_URL:
+REDIS_URL: redis://redis:6379

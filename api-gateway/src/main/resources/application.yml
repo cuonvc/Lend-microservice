@@ -17,19 +17,19 @@ spring:
             allowedHeaders: "*"
       routes:
         - id: auth-service
-          uri: http://auth-service:8081
+          uri: http://${AUTH_URI}:8081
           predicates:
             - Path=/api/auth/**
 
         - id: product-service
-          uri: http://product-service:8082
+          uri: http://${PRODUCT_URI}:8082
           predicates:
             - Path=/api/product/**
 #          filters:
 #            - AuthenticationFilter
 
         - id: resource-service
-          uri: http://resource-service:8083
+          uri: http://${RESOURCE_URI}:8083
           predicates:
             - Path=/resource/**
 

@@ -17,19 +17,19 @@
 #            allowedHeaders: "*"
 #      routes:
 #        - id: auth-service
-#          uri: http://localhost:8081
+#          uri: http://auth-service:8081
 #          predicates:
 #            - Path=/api/auth/**
 #
 #        - id: product-service
-#          uri: http://localhost:8082
+#          uri: http://product-service:8082
 #          predicates:
 #            - Path=/api/product/**
-##          filters:
-##            - AuthenticationFilter
+#        #          filters:
+#        #            - AuthenticationFilter
 #
 #        - id: resource-service
-#          uri: http://localhost:8083
+#          uri: http://resource-service:8083
 #          predicates:
 #            - Path=/resource/**
 #
@@ -40,6 +40,6 @@
 #    name: API-GATEWAY
 
 
-AUTH_URI: localhost
-PRODUCT_URI: localhost
-RESOURCE_URI: localhost
+AUTH_URI: auth-service
+PRODUCT_URI: product-service
+RESOURCE_URI: resource-service

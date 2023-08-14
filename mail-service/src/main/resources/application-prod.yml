@@ -24,7 +24,8 @@
 #      host: localhost
 #
 #  kafka:
-#    bootstrap-servers: localhost:9092
+#    #    listener: PLAINTEXT://kafka:9092
+#    bootstrap-servers: kafka:9092
 #    #    producer:
 #    #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
 #    #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -43,12 +44,11 @@
 #          content-type: application/json
 #      kafka:
 #        binder:
-#          brokers: localhost:9092
+#          brokers: kafka:9092
 
-
-KAFKA_HOST: localhost
+KAFKA_HOST: kafka
 KAFKA_PORT: 9092
 
-REDIS_HOST: localhost
+REDIS_HOST: redis
 REDIS_PORT: 6379
-REDIS_URL:
+REDIS_URL: redis://redis:6379
