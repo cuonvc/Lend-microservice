@@ -23,10 +23,10 @@ spring:
         registration:
           github:
             client-id: 033f662cdda792dd4afd
-            client-secret: 23ca68296d3fd5cf6fb22d4708bb41b52c7682dd
+            client-secret:
           google:
             client-id: 73739720220-qblvgnhnm505ovttjsp1eje7qf1ajr0n.apps.googleusercontent.com
-            client-secret: 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
+            client-secret: 
 
   kafka:
 #    listener: PLAINTEXT://kafka:9092
