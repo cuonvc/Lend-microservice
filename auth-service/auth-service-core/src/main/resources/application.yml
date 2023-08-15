@@ -1,5 +1,11 @@
 server:
   port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_CLIENT_HOST}:${EUREKA_CLIENT_PORT}/eureka/
+
 spring:
   application:
     name: AUTH-SERVICE
@@ -62,10 +68,3 @@ spring:
     multipart:
       max-file-size: 3MB
       max-request-size: 5MB
-
-eureka:
-  client:
-    registerWithEureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://${EUREKA_CLIENT_HOST}:${EUREKA_CLIENT_PORT}/eureka/

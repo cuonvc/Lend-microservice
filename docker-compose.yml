@@ -4,6 +4,15 @@ networks:
   lender-network:
 
 services:
+  eureka-server:
+    image: eureka-server
+    build: ./eureka-server
+    container_name: eureka-server
+    networks:
+      - lender-network
+    ports:
+      - "8761:8761"
+
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
@@ -11,6 +20,7 @@ services:
       - lender-network
     ports:
       - "2181:2181"
+
   kafka:
     image: wurstmeister/kafka
     container_name: kafka

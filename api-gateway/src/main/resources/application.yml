@@ -1,6 +1,11 @@
 server:
   port: 8080
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_CLIENT_HOST}:${EUREKA_CLIENT_PORT}/eureka/
+
 spring:
   main:
     web-application-type: reactive
@@ -17,19 +22,17 @@ spring:
             allowedHeaders: "*"
       routes:
         - id: auth-service
-          uri: http://${AUTH_URI}:8081
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
 
         - id: product-service
-          uri: http://${PRODUCT_URI}:8082
+          uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/api/product/**
-#          filters:
-#            - AuthenticationFilter
 
         - id: resource-service
-          uri: http://${RESOURCE_URI}:8083
+          uri: lb://RESOURCE-SERVICE
           predicates:
             - Path=/resource/**
 

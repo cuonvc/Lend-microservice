@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token)) {
             ResponseEntity<CustomUserDetail> authResponse = restTemplate.getForEntity(
-                    "http://localhost:8081/api/auth/internal/check?token=" + token,
+                    "http://AUTH-SERVICE/api/auth/internal/check?token=" + token,
                     CustomUserDetail.class
             );
 

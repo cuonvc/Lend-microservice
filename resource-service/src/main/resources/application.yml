@@ -1,5 +1,11 @@
 server:
   port: 8083
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_CLIENT_HOST}:${EUREKA_CLIENT_PORT}/eureka/
+
 spring:
   application:
     name: RESOURCE-SERVICE

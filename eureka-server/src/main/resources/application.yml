@@ -6,6 +6,10 @@ spring:
     name: eureka-server
 
 eureka:
+  instance:
+    hostname: eureka-server
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    waitTimeInMsWhenSyncEmpty: 0

@@ -1,36 +1,5 @@
-#server:
-#  port: 8083
-#spring:
-#  application:
-#    name: RESOURCE-SERVICE
-#  kafka:
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#    consumer:
-#      auto-offset-reset: earliest
-#  cloud:
-#    function:
-#      definition:
-#        "userAvatarHandle;\
-#        productImageHandle"
-#    stream:
-#      bindings:
-#        userAvatarHandle-in-0:
-#          destination: user-avatar-request
-#        userAvatarHandle-out-0:
-#          destination: user-avatar-response
-#        productImageHandle-in-0:
-#          destination: product-image-request
-#        productImageHandle-out-0:
-#          destination: product-image-response
-#      #        testHandler-in-0:
-#      #          destination: file-topic-after
-#      kafka:
-#        binder:
-#          brokers: localhost:9092
-#
-#    compatibility-verifier:
-#      enabled: false
+EUREKA_CLIENT_HOST: localhost
+EUREKA_CLIENT_PORT: 8761
 
 KAFKA_HOST: localhost
 KAFKA_PORT: 9092
