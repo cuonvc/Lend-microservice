@@ -6,35 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-gateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../base-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../eureka-server/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../eureka-server/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mail-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mail-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mail-service/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mail-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.share.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/BeanConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/BeanConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

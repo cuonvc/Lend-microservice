@@ -5,34 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f121be22-8316-4ad4-aea8-835fc455afa5" name="Changes" comment="Init base project">
-      <change beforePath="$PROJECT_DIR$/api-gateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/base-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/src/main/java/com/lender/productservice/configuration/BeanConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/src/main/java/com/lender/productservice/configuration/BeanConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/src/main/java/com/lender/productservice/configuration/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource-service/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource-service/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.share.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +56,7 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Workspace/Java/Lender-microservice/base-service",
+    "last_opened_file_path": "D:/Workspace/Java/Lender-microservice",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -216,6 +190,7 @@
       <workItem from="1691048439147" duration="625000" />
       <workItem from="1691056285715" duration="27000" />
       <workItem from="1691077659297" duration="2247000" />
+      <workItem from="1692086458822" duration="37000" />
     </task>
     <task id="LOCAL-00001" summary="Init base project">
       <option name="closed" value="true" />
