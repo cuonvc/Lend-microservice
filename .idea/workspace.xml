@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f121be22-8316-4ad4-aea8-835fc455afa5" name="Changes" comment="Init base project">
-      <change beforePath="$PROJECT_DIR$/docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.share.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/product-service/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -190,7 +190,7 @@
       <workItem from="1691048439147" duration="625000" />
       <workItem from="1691056285715" duration="27000" />
       <workItem from="1691077659297" duration="2247000" />
-      <workItem from="1692086458822" duration="37000" />
+      <workItem from="1692086458822" duration="638000" />
     </task>
     <task id="LOCAL-00001" summary="Init base project">
       <option name="closed" value="true" />

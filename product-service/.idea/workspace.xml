@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.share.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

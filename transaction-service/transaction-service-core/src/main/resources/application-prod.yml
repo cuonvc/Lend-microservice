@@ -1,0 +1,12 @@
+EUREKA_CLIENT_HOST: eureka-server
+EUREKA_CLIENT_PORT: 8761
+
+DB_HOST: database-transaction
+DB_PORT: 5432
+DB_NAME: transaction-db
+DDL_AUTO: update
+DB_USERNAME: postgres
+DB_PASSWORD: password
+
+KAFKA_HOST: kafka
+KAFKA_PORT: 9092
