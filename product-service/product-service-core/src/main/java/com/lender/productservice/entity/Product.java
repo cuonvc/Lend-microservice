@@ -24,7 +24,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
-@FilterDef(name = "deleteProductFilter", parameters = @ParamDef(name = "status", type = String.class))
+@FilterDef(name = "deleteProductFilter",
+        parameters = @ParamDef(name = "status", type = String.class))
 @Filter(name = "deleteProductFilter", condition = "is_active = :status")
 public class Product {
 

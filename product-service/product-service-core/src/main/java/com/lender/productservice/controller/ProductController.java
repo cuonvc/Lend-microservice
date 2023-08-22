@@ -72,7 +72,7 @@ public class ProductController {
         return productService.findAll(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<String>> deleteById(@PathVariable("id") String id) {
         return productService.delete(id);
     }
