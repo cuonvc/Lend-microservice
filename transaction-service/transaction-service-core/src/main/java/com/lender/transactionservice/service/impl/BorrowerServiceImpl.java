@@ -16,7 +16,8 @@ import com.lender.transactionservice.payload.request.TransactionRequest;
 import com.lender.transactionservice.repository.TransactionRepository;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
-import com.lender.transactionservice.service.BorrowService;
+import com.lender.transactionservice.service.BorrowerService;
+import com.lender.transactionservice.service.CommonTransactionService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,9 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -37,13 +36,13 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class BorrowServiceImpl implements BorrowService {
+public class BorrowerServiceImpl implements BorrowerService {
 
     private final TransactionRepository repository;
     private final RestTemplate restTemplate;
     private final TransactionMapper transactionMapper;
     private final ResponseFactory responseFactory;
-    private final EntityManager entityManager;
+    private final CommonTransactionService commonTransactionService;
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> initTransaction(TransactionRequest request) {
@@ -114,40 +113,10 @@ public class BorrowServiceImpl implements BorrowService {
         }
 
         List<TransactionResponseView> transactions = repository.findByBorrowerAndStatus(userDetail.getId(), TransactionStatus.valueOf(status))
-                .stream().map(t -> {
-                    TransactionResponseView view = transactionMapper.entityToView(t);
-                    view.setBorrowerName(getUserName(t.getBorrowerId()));
-                    view.setLenderName(getUserName(t.getLenderId()));
-                    view.setProductName(getProductName(t.getProductId()));
-                    return view;
-                })
+                .stream().map(commonTransactionService::convertEntityToView)
                 .toList();
 
         return responseFactory.success("Success", transactions);
-    }
-
-    private String getUserName(String id) {
-        UserResponse user = Optional
-                .ofNullable(restTemplate.exchange(
-                        "http://AUTH-SERVICE/api/auth/account/" + id,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<BaseResponse<UserResponse>>() {}
-                ).getBody().getData())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-
-        return user.getFirstName() + " " + user.getLastName();
-    }
-
-    private String getProductName(String id) {
-        return Optional
-                .ofNullable(restTemplate.exchange(
-                        "http://PRODUCT-SERVICE/api/internal/product/" + id,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<BaseResponse<ProductResponse>>() {}
-                ).getBody().getData().getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
     }
 
     private Transaction authorize(String id) {

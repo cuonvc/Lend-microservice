@@ -1,11 +1,10 @@
 package com.lender.transactionservice.controller;
 
 import com.lender.baseservice.payload.response.BaseResponse;
-import com.lender.transactionservice.enumerate.TransactionStatus;
 import com.lender.transactionservice.payload.request.TransactionRequest;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
-import com.lender.transactionservice.service.BorrowService;
+import com.lender.transactionservice.service.BorrowerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/transaction")
 @RequiredArgsConstructor
-public class BorrowController {
+public class BorrowerController {
 
-    private final BorrowService borrowService;
+    private final BorrowerService borrowService;
 
     @PostMapping("/init")
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> init(@Valid @RequestBody TransactionRequest request) {
