@@ -2,6 +2,7 @@ package com.lender.transactionservice.service;
 
 import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.transactionservice.payload.request.TransactionRequest;
+import com.lender.transactionservice.response.TransactionResponseDetail;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public interface BorrowerService {
     ResponseEntity<BaseResponse<String>> removeById(String id);
 
     ResponseEntity<BaseResponse<String>> deleteMultiTransaction(String[] ids);
+
+    ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id);
 
     ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByBorrower(String status);
 }

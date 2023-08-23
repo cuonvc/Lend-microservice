@@ -18,6 +18,16 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>com.lender</groupId>
+			<artifactId>auth-service-share</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lender</groupId>
+			<artifactId>product-service-share</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>

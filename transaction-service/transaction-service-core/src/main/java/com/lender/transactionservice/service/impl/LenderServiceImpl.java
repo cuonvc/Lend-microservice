@@ -7,11 +7,13 @@ import com.lender.baseservice.payload.response.ResponseFactory;
 import com.lender.productserviceshare.payload.response.ProductResponse;
 import com.lender.transactionservice.configuration.CustomUserDetail;
 import com.lender.transactionservice.entity.Transaction;
+import com.lender.transactionservice.enumerate.ClientRole;
 import com.lender.transactionservice.enumerate.TransactionStatus;
 import com.lender.transactionservice.exception.APIException;
 import com.lender.transactionservice.exception.ResourceNotFoundException;
 import com.lender.transactionservice.mapper.TransactionMapper;
 import com.lender.transactionservice.repository.TransactionRepository;
+import com.lender.transactionservice.response.TransactionResponseDetail;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
 import com.lender.transactionservice.service.CommonTransactionService;
@@ -39,7 +41,7 @@ public class LenderServiceImpl implements LenderService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> acceptTransaction(String id, String action) {
-        Transaction transaction = Optional.ofNullable(validate(id))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwner(id, ClientRole.LENDER))
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
         switch (action) {
             case "ACCEPT" -> transaction.setAcceptedDate(LocalDateTime.now());
@@ -48,6 +50,15 @@ public class LenderServiceImpl implements LenderService {
         }
 
         return responseFactory.success("Success", transactionMapper.entityToRaw(repository.save(transaction)));
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id) {
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LENDER))
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+
+        TransactionResponseDetail detail = commonTransactionService.convertEntityToDetail(transaction);
+        return responseFactory.success("Success", detail);
     }
 
     @Override
@@ -60,17 +71,4 @@ public class LenderServiceImpl implements LenderService {
         return responseFactory.success("Success", transactions);
     }
 
-
-
-    private Transaction validate(String id) {
-        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", id));
-
-        if (!transaction.getLenderId().equals(userDetail.getId())) {
-            return null;
-        }
-        return transaction;
-    }
 }

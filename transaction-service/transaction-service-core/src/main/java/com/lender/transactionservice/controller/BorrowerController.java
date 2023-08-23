@@ -2,6 +2,7 @@ package com.lender.transactionservice.controller;
 
 import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.transactionservice.payload.request.TransactionRequest;
+import com.lender.transactionservice.response.TransactionResponseDetail;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
 import com.lender.transactionservice.service.BorrowerService;
@@ -19,11 +20,13 @@ public class BorrowerController {
 
     private final BorrowerService borrowService;
 
+    //only owner
     @PostMapping("/init")
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> init(@Valid @RequestBody TransactionRequest request) {
         return borrowService.initTransaction(request);
     }
 
+    //only owner
     @PutMapping("/edit/{id}")
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> edit(@PathVariable("id") String id,
                                                                                 @Valid @RequestBody TransactionRequest request) {
@@ -43,6 +46,11 @@ public class BorrowerController {
     @DeleteMapping("/delete/{ids}")
     public ResponseEntity<BaseResponse<String>> delete(@PathVariable("ids") String[] ids) {
         return null;
+    }
+
+    @GetMapping("/detail/{id}/borrower")
+    public ResponseEntity<BaseResponse<TransactionResponseDetail>> detail(@PathVariable("id") String id) {
+        return borrowService.detailById(id);
     }
 
     @GetMapping("/all/borrower")

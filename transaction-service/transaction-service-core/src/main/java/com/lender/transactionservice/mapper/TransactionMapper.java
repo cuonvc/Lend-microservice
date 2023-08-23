@@ -2,6 +2,7 @@ package com.lender.transactionservice.mapper;
 
 import com.lender.transactionservice.entity.Transaction;
 import com.lender.transactionservice.repository.TransactionRepository;
+import com.lender.transactionservice.response.TransactionResponseDetail;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
 import org.mapstruct.*;
@@ -17,5 +18,7 @@ public interface TransactionMapper {
     TransactionResponseRaw entityToRaw(Transaction transaction);
 
     TransactionResponseView entityToView(Transaction transaction);
+
+    TransactionResponseDetail entityToDetail(Transaction transaction);
 
 }

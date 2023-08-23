@@ -7,6 +7,7 @@ import com.lender.baseservice.payload.response.ResponseFactory;
 import com.lender.productserviceshare.payload.response.ProductResponse;
 import com.lender.transactionservice.configuration.CustomUserDetail;
 import com.lender.transactionservice.entity.Transaction;
+import com.lender.transactionservice.enumerate.ClientRole;
 import com.lender.transactionservice.enumerate.PaymentStatus;
 import com.lender.transactionservice.enumerate.TransactionStatus;
 import com.lender.transactionservice.exception.APIException;
@@ -14,6 +15,7 @@ import com.lender.transactionservice.exception.ResourceNotFoundException;
 import com.lender.transactionservice.mapper.TransactionMapper;
 import com.lender.transactionservice.payload.request.TransactionRequest;
 import com.lender.transactionservice.repository.TransactionRepository;
+import com.lender.transactionservice.response.TransactionResponseDetail;
 import com.lender.transactionservice.response.TransactionResponseRaw;
 import com.lender.transactionservice.response.TransactionResponseView;
 import com.lender.transactionservice.service.BorrowerService;
@@ -78,8 +80,12 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> cancelTransaction(String id) {
-        Transaction transaction = Optional.ofNullable(authorize(id))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+
+        if (transaction.getAcceptedDate() != null) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Transaction accepted", null);
+        }
 
         transaction.setTransactionStatus(TransactionStatus.CANCELED);
         transaction = repository.save(transaction);
@@ -88,8 +94,12 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> removeById(String id) {
-        Transaction transaction = Optional.ofNullable(authorize(id))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+
+        if (transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Cannot delete transaction", null);
+        }
 
         repository.delete(transaction);
         return responseFactory.success("Success", "Delete successfully");
@@ -98,6 +108,15 @@ public class BorrowerServiceImpl implements BorrowerService {
     @Override
     public ResponseEntity<BaseResponse<String>> deleteMultiTransaction(String[] ids) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id) {
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+
+        TransactionResponseDetail detail = commonTransactionService.convertEntityToDetail(transaction);
+        return responseFactory.success("Success", detail);
     }
 
     @Override
@@ -117,20 +136,6 @@ public class BorrowerServiceImpl implements BorrowerService {
                 .toList();
 
         return responseFactory.success("Success", transactions);
-    }
-
-    private Transaction authorize(String id) {
-        Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", id));
-
-        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ((userDetail.getGrantedAuthorities().get(0).equals("USER")
-                && !userDetail.getId().equals(transaction.getBorrowerId()))
-                || transaction.getAcceptedDate() != null) {
-            return null;
-        }
-
-        return transaction;
     }
 
     private String getBillCode() {
