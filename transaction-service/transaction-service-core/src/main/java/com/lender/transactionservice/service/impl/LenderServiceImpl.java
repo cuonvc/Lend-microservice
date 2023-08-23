@@ -42,11 +42,11 @@ public class LenderServiceImpl implements LenderService {
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> acceptTransaction(String id, String action) {
         Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwner(id, ClientRole.LENDER))
-                        .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+                        .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
         switch (action) {
             case "ACCEPT" -> transaction.setAcceptedDate(LocalDateTime.now());
             case "REJECT" -> transaction.setTransactionStatus(TransactionStatus.REJECTED);
-            default -> responseFactory.fail(HttpStatus.BAD_REQUEST, "Method do not match", null);
+            default -> responseFactory.fail(HttpStatus.BAD_REQUEST, "Hành động không phù hợp", null);
         }
 
         return responseFactory.success("Success", transactionMapper.entityToRaw(repository.save(transaction)));
@@ -55,7 +55,7 @@ public class LenderServiceImpl implements LenderService {
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id) {
         Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LENDER))
-                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Access denied"));
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         TransactionResponseDetail detail = commonTransactionService.convertEntityToDetail(transaction);
         return responseFactory.success("Success", detail);

@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity<BaseResponse<CategoryDto>> create(CategoryDto categoryDto) {
         if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '"
-                    + categoryDto.getName() + "' already existed or disabled", null);
+                    + categoryDto.getName() + "' đã tồn tại hoặc bị xóa", null);
         }
 
         CategoryDto response = categoryMapper
@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '" + categoryDto.getName()
-                    + "' already existed or disabled", null);
+                    + "' đã tồn tại hoặc bị xóa", null);
         }
 
         categoryMapper.dtoToEntity(categoryDto, category);
@@ -108,7 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
                         .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
 
         categoryRepository.delete(category);
-        return responseFactory.success("Success", category.getName() + " category deleted");
+        return responseFactory.success("Success", "Đã xóa " + category.getName());
     }
 
     @Override

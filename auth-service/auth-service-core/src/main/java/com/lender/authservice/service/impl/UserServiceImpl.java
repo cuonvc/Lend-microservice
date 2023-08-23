@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<BaseResponse<String>> register(RegRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Account already existed", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Tài khoản đã tồn tại", null);
         }
 
         String activeCode = String.valueOf(new Random().nextInt(900000) + 100000);
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
                 .setHeader(KafkaHeaders.KEY, request.getEmail().getBytes())
                 .build();
         streamBridge.send("email-active", message);
-        return responseFactory.success("An OTP code send to your email, please check now", request.getEmail());
+        return responseFactory.success("Mã xác nhận đã được gửi tới email ", request.getEmail());
 
 
 //        User user = userMapper.requestToEntity(request);
@@ -104,11 +104,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<BaseResponse<UserResponse>> validate(RegRequest request, String code) {
         String activeCode = redisTemplateObject.opsForValue().get(request);
         if (activeCode == null) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Activation code has expired!", null);
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Mã xác nhận đã hết hạn, vui lòng xác thực lại!", null);
         }
 
         if (!activeCode.equals(code)) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Incorrect activation code", null);
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Mã xác thực không chính xác", null);
         }
 
         User user = userMapper.requestToEntity(request);
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
         tokenService.initRefreshToken(user);
         UserResponse response = userMapper.entityToResponse(saved);
         redisTemplateObject.delete(request);
-        return responseFactory.success("Account activated successfully!", response);
+        return responseFactory.success("Kích hoạt tài khoản thành công, vui lòng đăng nhập lại!", response);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
 
         if (!validPassword(request.getPassword(), user.getPassword())) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password incorrect", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Mật khẩu không chính xác", null);
         }
 
         String accessToken = jwtTokenProvider.generateToken(request.getEmail());
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
                 .getContext().getAuthentication().getPrincipal();
 
         tokenService.clearToken(userDetail.getId());
-        return responseFactory.success("Logged out", "Success");
+        return responseFactory.success("Đã đăng xuất", "Success");
     }
 
     @Override
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RefreshToken refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken())
-                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "You are logged out"));
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Bạn đã đăng xuất trước đó"));
 
         if (refreshToken.getExpireDate().compareTo(new Date()) > 0) {
             return responseFactory.success("Success",
@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
                             .build());
         }
 
-        return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Refresh token has expired", null);
+        return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Refresh token đã hết hạn", null);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
                 .setHeader(KafkaHeaders.KEY, email.getBytes())
                 .build();
         streamBridge.send("password-forgot", message);
-        return responseFactory.success("An OTP code send to your email, please check now", email);
+        return responseFactory.success("Mã xác nhận đã được gửi tới email ", email);
     }
 
     @Override
@@ -190,16 +190,16 @@ public class UserServiceImpl implements UserService {
         return (ResponseEntity<BaseResponse<String>>) Optional.ofNullable(redisTemplateString.opsForValue().get(request.getCode()))
                 .map(email -> {
                     if (!request.getNewPassword().equals(request.getRetypePassword())) {
-                        return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not matches", null);
+                        return responseFactory.fail(HttpStatus.BAD_REQUEST, "Mật khẩu không khớp", null);
                     }
 
                     User user = userRepository.findByEmail(email).get();
                     user.setPassword(passwordEncoder.encode(request.getNewPassword()));
                     userRepository.save(user);
                     redisTemplateString.delete(request.getCode());
-                    return responseFactory.success("Redirect to login with new password", email);
+                    return responseFactory.success("Thiết lập mật khẩu thành công, hãy đăng nhập lại", email);
                 })
-                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "OTP code incorrect"));
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Mã xác thực không chính xác"));
     }
 
     @Override
@@ -208,12 +208,12 @@ public class UserServiceImpl implements UserService {
                 .getContext().getAuthentication().getPrincipal();
 
         User user = userRepository.findById(customUserDetail.getId())
-                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "A unknown error"));  //not happen
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Lỗi không xác định, liên hệ admin :D"));  //not happen
 
         user = userMapper.profileToEntity(request, user);
         user.setModifiedDate(LocalDateTime.now());
         UserResponse response = userMapper.entityToResponse(userRepository.save(user));
-        return responseFactory.success("Update successfully!", response);
+        return responseFactory.success("Cập nhập trang cá nhân thành công!", response);
     }
 
     @Override
@@ -222,20 +222,20 @@ public class UserServiceImpl implements UserService {
                 .getContext().getAuthentication().getPrincipal();
 
         User user = userRepository.findById(userDetail.getId())
-                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Unknown error"));
+                .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Lỗi không xác định, liên hệ admin :D"));
 
         if (!request.getNewPassword().equals(request.getRetypePassword())) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Password do not match", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Mật khâu không trùng khớp", null);
         }
 
         if (!validPassword(request.getOldPassword(), user.getPassword())) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Incorrect password", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Mật khẩu không chính xác", null);
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
 
-        return responseFactory.success("Password has been changed", "Success");
+        return responseFactory.success("Thiết lập mật khẩu thành công", "Success");
     }
 
     @Override
@@ -270,7 +270,7 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         streamBridge.send("user-avatar-request", requestMessage);
-        return responseFactory.success("Pending", "Saving image...");
+        return responseFactory.success("Pending", "Upload avatar thành công");
     }
 
     @Override
@@ -316,7 +316,7 @@ public class UserServiceImpl implements UserService {
                 .toList()
                 .contains(role);
         if (!roleMatch) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Role do not match", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Role không phù hợp", null);
         }
 
         User user = userRepository.findById(userId)
@@ -324,7 +324,7 @@ public class UserServiceImpl implements UserService {
 
         int authorRole = Role.valueOf(String.valueOf(userDetail.getAuthorities().stream().toList().get(0))).getNumVal();
         if (authorRole < Role.valueOf(role).getNumVal()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Can not assign with role higher", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Không thể gán quyền cho user có quyền cao hơn bạn", null);
         }
 
         user.setRole(Role.valueOf(role));

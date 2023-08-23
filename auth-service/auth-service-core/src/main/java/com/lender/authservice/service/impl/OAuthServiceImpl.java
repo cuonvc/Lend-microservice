@@ -72,11 +72,11 @@ public class OAuthServiceImpl implements OAuthService {
 
             } else {
                 log.info("Failure...");
-                return responseFactory.fail(HttpStatus.BAD_REQUEST, "Failure... loging", null);
+                return responseFactory.fail(HttpStatus.BAD_REQUEST, "Đăng nhập thất bại...", null);
             }
         } catch (HttpClientErrorException e) {
             log.error("Failed request in try-catch - {}", e.getMessage());
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Failure... loging", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Đăng nhập thất bại...", null);
         }
     }
 
@@ -107,7 +107,7 @@ public class OAuthServiceImpl implements OAuthService {
 
         } else {
             log.info("Failure...");
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Failure... loging", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Đăng nhập thất bại...", null);
         }
     }
 

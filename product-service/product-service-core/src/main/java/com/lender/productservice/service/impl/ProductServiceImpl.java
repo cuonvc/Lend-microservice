@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Product product = productRepository.findByIdAndOwner(id, Status.ACTIVE, userDetail.getId())
-                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Access denied"));
+                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Không được phép truy cập"));
 
         Set<Category> categories = request.getCategoryIds().stream()
                 .map(categoryId -> categoryRepository.findByIdAndStatus(categoryId, Status.ACTIVE)
@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
         CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Product product = productRepository.findByIdAndOwner(id, Status.ACTIVE, customUserDetail.getId())
-                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Access denied"));
+                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Không được phép truy cập"));
 
         Message<FileObjectRequest> message = MessageBuilder
                 .withPayload(FileObjectRequest.builder()
@@ -110,13 +110,13 @@ public class ProductServiceImpl implements ProductService {
                 .build();
 
         streamBridge.send("product-image-request", message);
-        return responseFactory.success("Pending", "Saving image...");
+        return responseFactory.success("Thành công", "Ảnh đang được lưu lại...");
     }
 
     @Override
     public void storeImagePath(String productId, String path) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId)); //not happen
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", productId)); //not happen
 
         product.setImageUrl(path);
         product.setModifiedDate(LocalDateTime.now());
@@ -126,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<BaseResponse<ProductResponse>> getById(String id) {
         Product product = productRepository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
 
         return responseFactory.success("Success", productMapper.entityToResponse(product));
     }
@@ -167,17 +167,17 @@ public class ProductServiceImpl implements ProductService {
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetail.getGrantedAuthorities().get(0).equals("USER") && !userDetail.getId().equals(product.getUserId())) {
-            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Access denied", null);
+            return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Không được phép truy cập", null);
         }
 
         productRepository.delete(product);
-        return responseFactory.success("Success", product.getName() + " has been deleted successfully");
+        return responseFactory.success("Success", "Đã xóa thành công " + product.getName());
     }
 
     @Override
     public ResponseEntity<BaseResponse<ProductResponse>> restore(String id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
 
         product.setIsActive(Status.ACTIVE);
         return responseFactory.success("Success", productMapper.entityToResponse(productRepository.save(product)));

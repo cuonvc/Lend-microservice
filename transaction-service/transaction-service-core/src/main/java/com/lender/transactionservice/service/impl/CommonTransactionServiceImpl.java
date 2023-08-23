@@ -37,7 +37,7 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Giao dịch", "id", id));
 
         if (!getClientRequestId(clientRole, transaction).equals(userDetail.getId())) {
             return null;
@@ -48,7 +48,7 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
     @Override
     public Transaction authorizeOwnerAndManager(String id, ClientRole clientRole) {
         Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Giao dịch", "id", id));
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -66,7 +66,7 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
         } else if (clientRole.equals(ClientRole.LENDER)) {
             return transaction.getLenderId();
         } else {
-            throw new APIException(HttpStatus.UNAUTHORIZED, "Unknown error");
+            throw new APIException(HttpStatus.UNAUTHORIZED, "Không biết tại sao lỗi, vui lòng liên hệ Admin :D");
         }
     }
 
@@ -112,6 +112,6 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
                         null,
                         new ParameterizedTypeReference<BaseResponse<ProductResponse>>() {}
                 ).getBody().getData())
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
     }
 }

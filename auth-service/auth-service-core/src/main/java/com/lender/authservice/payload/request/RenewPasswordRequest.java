@@ -11,10 +11,10 @@ public class RenewPasswordRequest {
 
     private String code;
 
-    @NotBlank(message = "password is blank")
-    @NotNull(message = "Password is null")
-    @NotEmpty(message = "Password is empty")
-    @Size(min = 8, max = 20, message = "Password must be minimum 8 characters and maximum 20 character")
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @NotNull
+    @NotEmpty(message = "Mật khẩu không được để trống")
+    @Size(min = 8, max = 20, message = "Mật khẩu phải chứa từ 8 đến 20 ký tự")
     private String newPassword;
 
     private String retypePassword;
