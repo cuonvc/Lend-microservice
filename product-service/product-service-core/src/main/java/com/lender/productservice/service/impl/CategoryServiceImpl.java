@@ -10,6 +10,7 @@ import com.lender.productservice.mapper.CategoryMapper;
 import com.lender.productservice.repository.CategoryRepository;
 import com.lender.productservice.service.CategoryService;
 import com.lender.productserviceshare.payload.CategoryDto;
+import com.lender.productserviceshare.payload.response.CategoryResponse;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,26 +39,28 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityManager entityManager;
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> create(CategoryDto categoryDto) {
-        if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '"
-                    + categoryDto.getName() + "' đã tồn tại hoặc bị xóa", null);
+    public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto categoryDto) {
+        validateCategory("name", categoryDto.getName());
+        if (categoryDto.getParentId() != null) {
+            validateCategory("id", categoryDto.getParentId());
         }
 
-        CategoryDto response = categoryMapper
-                .entityToDto(categoryRepository.save(categoryMapper.dtoToEntity(categoryDto)));
+        Category category = categoryRepository.save(categoryMapper.dtoToEntity(categoryDto));
+        CategoryResponse response = categoryMapper
+                .entityToResponse();
 
         return responseFactory.success("Success", response);
     }
 
     @Override
     public ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryDto.getId()));
-
-        if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '" + categoryDto.getName()
-                    + "' đã tồn tại hoặc bị xóa", null);
+        Category category = validateCategory("id", categoryDto.getId());
+        validateCategory("name", categoryDto.getName());
+        if (categoryDto.getParentId() != null) {
+            validateCategory("id", categoryDto.getParentId());
+            if (category.getId().equals(categoryDto.getParentId())) {
+                return responseFactory.fail(HttpStatus.BAD_REQUEST, "Một category không thể có hai cấp", null);
+            }
         }
 
         categoryMapper.dtoToEntity(categoryDto, category);
@@ -65,12 +69,27 @@ public class CategoryServiceImpl implements CategoryService {
         return responseFactory.success("Success", response);
     }
 
+    private Category validateCategory(String field, String value) {
+        return switch (field) {
+            case "name" -> {
+                if (categoryRepository.findByName(value).isPresent()) {
+                    throw new APIException(HttpStatus.BAD_REQUEST, "Category '" + value + "' đã tồn tại hoặc tên không hợp lệ");
+                }
+                yield null;
+            }
+
+            case "id" -> categoryRepository.findByIdAndStatus(value, Status.ACTIVE)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", value));
+
+            default -> throw new APIException(HttpStatus.BAD_REQUEST, "Lỗi không xác định, liên hệ Admin");
+        };
+    }
+
     @Override
     public ResponseEntity<BaseResponse<CategoryDto>> getById(String id) {
-        Category category = categoryRepository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-
-        return responseFactory.success("Success", categoryMapper.entityToDto(category));
+        Category category = validateCategory("id", id);
+        CategoryDto dto = categoryMapper.entityToDto(category);
+        return responseFactory.success("Success", dto);
     }
 
     @Override
@@ -104,8 +123,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> delete(String id) {
-        Category category = categoryRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        Category category = validateCategory("id", id);
 
         categoryRepository.delete(category);
         return responseFactory.success("Success", "Đã xóa " + category.getName());
@@ -113,8 +131,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity<BaseResponse<CategoryDto>> restore(String id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        Category category = validateCategory("id", id);
         category.setIsActive(Status.ACTIVE);
         category = categoryRepository.save(category);
 
@@ -122,14 +139,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private PageResponseCategory paging(Page<Category> categoryPage) {
-        List<CategoryDto> categoryDtos = categoryPage.getContent().stream()
-                .map(categoryMapper::entityToDto)
+        List<CategoryResponse> responses = categoryPage.getContent().stream()
+                .map(entity -> {
+                    CategoryResponse response = categoryMapper.entityToResponse(entity);
+                    response.setParent(categoryMapper.entityToDto(validateCategory("id", entity.getId())));
+                    return response;
+                })
                 .toList();
 
         return (PageResponseCategory) PageResponseCategory.builder()
                 .pageNo(categoryPage.getNumber())
-                .pageSize(categoryDtos.size())
-                .content(categoryDtos)
+                .pageSize(responses.size())
+                .content(responses)
                 .totalPages(categoryPage.getTotalPages())
                 .totalItems((int) categoryPage.getTotalElements())
                 .last(categoryPage.isLast())

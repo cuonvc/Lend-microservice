@@ -2,11 +2,12 @@ package com.lender.productservice.service;
 
 import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.productserviceshare.payload.CategoryDto;
+import com.lender.productserviceshare.payload.response.CategoryResponse;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import org.springframework.http.ResponseEntity;
 
 public interface CategoryService {
-    ResponseEntity<BaseResponse<CategoryDto>> create(CategoryDto categoryDto);
+    ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto categoryDto);
 
     ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto);
 

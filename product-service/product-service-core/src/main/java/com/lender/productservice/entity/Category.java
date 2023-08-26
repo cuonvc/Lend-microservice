@@ -31,6 +31,9 @@ public class Category {
     @GeneratedValue(generator = "custom_category_id")
     private String id;
 
+    @Column(name = "parent_id")
+    private String parentId = null;
+
     @Column(name = "name", nullable = false)
     private String name;
 
