@@ -25,7 +25,7 @@ public interface UserService {
 
     ResponseEntity<BaseResponse<String>> logout();
 
-    ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request);
+    ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(String refreshToken);
 
     ResponseEntity<BaseResponse<String>> forgotPasswordRequest(String email);
 

@@ -150,17 +150,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(TokenObjectRequest request) {
+    public ResponseEntity<BaseResponse<TokenObjectResponse>> renewAccessToken(String refreshToken) {
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        RefreshToken refreshToken = tokenRepository.getByUserIdAndToken(userDetail.getId(), request.getRefreshToken())
+        RefreshToken rt = tokenRepository.getByUserIdAndToken(userDetail.getId(), refreshToken)
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Bạn đã đăng xuất trước đó"));
 
-        if (refreshToken.getExpireDate().compareTo(new Date()) > 0) {
+        if (rt.getExpireDate().compareTo(new Date()) > 0) {
             return responseFactory.success("Success",
                     TokenObjectResponse.builder()
                             .accessToken(jwtTokenProvider.generateToken(userDetail.getUsername()))
-                            .refreshToken(tokenMapper.mapToDto(refreshToken))
+                            .refreshToken(tokenMapper.mapToDto(rt))
                             .build());
         }
 
