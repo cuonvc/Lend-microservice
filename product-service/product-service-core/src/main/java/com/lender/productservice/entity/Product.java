@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lender.baseservice.constant.enumerate.Status;
 import com.lender.productserviceshare.enumerate.ProductState;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

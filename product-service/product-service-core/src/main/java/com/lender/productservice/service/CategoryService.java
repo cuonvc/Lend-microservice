@@ -11,7 +11,7 @@ public interface CategoryService {
 
     ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto);
 
-    ResponseEntity<BaseResponse<CategoryDto>> getById(String id);
+    ResponseEntity<BaseResponse<CategoryResponse>> getById(String id);
 
     ResponseEntity<BaseResponse<PageResponseCategory>> getAllActive(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 

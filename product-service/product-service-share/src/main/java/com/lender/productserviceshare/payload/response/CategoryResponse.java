@@ -18,7 +18,7 @@ public class CategoryResponse {
 
     private String id;
 
-    private CategoryResponse parent;
+    private CategoryResponse child;
 
     private String name;
 

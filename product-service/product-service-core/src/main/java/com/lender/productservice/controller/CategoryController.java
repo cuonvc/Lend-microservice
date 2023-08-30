@@ -38,7 +38,7 @@ public class CategoryController {
     }
 
     @GetMapping("/view/{categoryId}")
-    public ResponseEntity<BaseResponse<CategoryDto>> getById(@PathVariable("categoryId") String id) {
+    public ResponseEntity<BaseResponse<CategoryResponse>> getById(@PathVariable("categoryId") String id) {
         return categoryService.getById(id);
     }
 

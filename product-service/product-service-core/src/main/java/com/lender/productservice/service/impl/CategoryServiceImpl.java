@@ -13,11 +13,16 @@ import com.lender.productserviceshare.payload.CategoryDto;
 import com.lender.productserviceshare.payload.response.CategoryResponse;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.metrics.Stat;
+import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.Restriction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,8 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         Category category = categoryRepository.save(categoryMapper.dtoToEntity(categoryDto));
-        CategoryResponse response = categoryMapper
-                .entityToResponse();
+        CategoryResponse response = categoryMapper.entityToResponse(category);
 
         return responseFactory.success("Success", response);
     }
@@ -86,10 +90,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> getById(String id) {
-        Category category = validateCategory("id", id);
-        CategoryDto dto = categoryMapper.entityToDto(category);
-        return responseFactory.success("Success", dto);
+    public ResponseEntity<BaseResponse<CategoryResponse>> getById(String id) {
+        Category entity = validateCategory("id", id);
+        CategoryResponse response = categoryMapper.entityToResponse(entity);
+        fetchChildCategory(entity, response);
+
+        return responseFactory.success("Success", response);
+    }
+
+    private void fetchChildCategory(Category entity, CategoryResponse response) {
+        categoryRepository
+                .findByParentIdAndStatus(entity.getId(), Status.ACTIVE)
+                .ifPresent(childEntity -> {
+                    response.setChild(categoryMapper.entityToResponse(childEntity));
+                    fetchChildCategory(childEntity, response.getChild());
+                });
     }
 
     @Override
@@ -101,11 +116,12 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedCategoryFilter");
-        filter.setParameter("status", Status.ACTIVE.toString());
-        Page<Category> categories = categoryRepository.findAll(pageable);
+        Filter filter1 = session.enableFilter("deletedCategoryFilter");
+        filter1.setParameter("status", Status.ACTIVE.toString());
 
+        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
         session.disableFilter("deletedCategoryFilter");
+        session.close();
         return responseFactory.success("Success", paging(categories));
     }
 
@@ -116,7 +132,7 @@ public class CategoryServiceImpl implements CategoryService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> categories = categoryRepository.findAll(pageable);
+        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
 
         return responseFactory.success("Success", paging(categories));
     }
@@ -139,18 +155,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private PageResponseCategory paging(Page<Category> categoryPage) {
-        List<CategoryResponse> responses = categoryPage.getContent().stream()
+        List<CategoryResponse> responseList = categoryPage.getContent().stream()
                 .map(entity -> {
                     CategoryResponse response = categoryMapper.entityToResponse(entity);
-                    response.setParent(categoryMapper.entityToDto(validateCategory("id", entity.getId())));
+//                    response.setParent(categoryMapper.entityToResponse(validateCategory("id", entity.getId())));
+                    fetchChildCategory(entity, response);
                     return response;
                 })
                 .toList();
 
         return (PageResponseCategory) PageResponseCategory.builder()
                 .pageNo(categoryPage.getNumber())
-                .pageSize(responses.size())
-                .content(responses)
+                .pageSize(responseList.size())
+                .content(responseList)
                 .totalPages(categoryPage.getTotalPages())
                 .totalItems((int) categoryPage.getTotalElements())
                 .last(categoryPage.isLast())
