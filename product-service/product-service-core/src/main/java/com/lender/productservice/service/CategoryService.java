@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 public interface CategoryService {
     ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto categoryDto);
 
-    ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto);
+    ResponseEntity<BaseResponse<CategoryResponse>> update(CategoryDto categoryDto);
 
     ResponseEntity<BaseResponse<CategoryResponse>> getById(String id);
 

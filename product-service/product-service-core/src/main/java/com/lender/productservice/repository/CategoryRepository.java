@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> {
@@ -21,7 +23,7 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     Optional<Category> findByIdAndStatus(String id, Status status);
 
     @Query("SELECT c FROM Category c WHERE c.parentId = :parentId AND c.isActive = :status")
-    Optional<Category> findByParentIdAndStatus(String parentId, Status status);
+    Set<Category> findByParentIdAndStatus(String parentId, Status status);
 
     @Query("SELECT c FROM Category c WHERE c.parentId = null")
     Page<Category> findAllByRoot(Pageable pageable);

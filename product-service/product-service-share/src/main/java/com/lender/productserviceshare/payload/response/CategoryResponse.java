@@ -10,6 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +21,7 @@ public class CategoryResponse {
 
     private String id;
 
-    private CategoryResponse child;
+    private Set<CategoryResponse> children;
 
     private String name;
 

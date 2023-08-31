@@ -31,8 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,31 +47,30 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityManager entityManager;
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto categoryDto) {
-        validateCategory("name", categoryDto.getName());
-        if (categoryDto.getParentId() != null) {
-            validateCategory("id", categoryDto.getParentId());
+    public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto dto) {
+        validateCategory("name", dto.getName());
+        if (dto.getParentId() != null) {
+            validateCategory("id", dto.getParentId());
         }
 
-        Category category = categoryRepository.save(categoryMapper.dtoToEntity(categoryDto));
+        Category category = categoryRepository.save(categoryMapper.dtoToEntity(dto));
         CategoryResponse response = categoryMapper.entityToResponse(category);
 
         return responseFactory.success("Success", response);
     }
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto) {
+    public ResponseEntity<BaseResponse<CategoryResponse>> update(CategoryDto categoryDto) {
         Category category = validateCategory("id", categoryDto.getId());
         validateCategory("name", categoryDto.getName());
         if (categoryDto.getParentId() != null) {
-            validateCategory("id", categoryDto.getParentId());
-            if (category.getId().equals(categoryDto.getParentId())) {
-                return responseFactory.fail(HttpStatus.BAD_REQUEST, "Một category không thể có hai cấp", null);
-            }
+            categoryDto.setParentId(null);
         }
 
         categoryMapper.dtoToEntity(categoryDto, category);
-        CategoryDto response = categoryMapper.entityToDto(categoryRepository.save(category));
+        category = categoryRepository.save(category);
+        CategoryResponse response = categoryMapper.entityToResponse(category);
+        response.setChildren(getResponseWithChildren(category.getId()));
 
         return responseFactory.success("Success", response);
     }
@@ -93,18 +95,33 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity<BaseResponse<CategoryResponse>> getById(String id) {
         Category entity = validateCategory("id", id);
         CategoryResponse response = categoryMapper.entityToResponse(entity);
-        fetchChildCategory(entity, response);
+        response.setChildren(getResponseWithChildren(entity.getId()));
 
         return responseFactory.success("Success", response);
     }
 
-    private void fetchChildCategory(Category entity, CategoryResponse response) {
-        categoryRepository
-                .findByParentIdAndStatus(entity.getId(), Status.ACTIVE)
-                .ifPresent(childEntity -> {
-                    response.setChild(categoryMapper.entityToResponse(childEntity));
-                    fetchChildCategory(childEntity, response.getChild());
+    private Set<CategoryResponse> getResponseWithChildren(String parentId) {
+        Set<CategoryResponse> result = new HashSet<>();
+        categoryRepository.findByParentIdAndStatus(parentId, Status.ACTIVE)
+                .forEach(category -> {
+                    CategoryResponse response = categoryMapper.entityToResponse(category);
+                    fetchChildCategory(response);
+                    result.add(response);
                 });
+
+        return result;
+    }
+
+    private void fetchChildCategory(CategoryResponse response) {
+        Set<CategoryResponse> children = new HashSet<>();
+        categoryRepository.findByParentIdAndStatus(response.getId(), Status.ACTIVE)
+                .forEach(category -> {
+                    CategoryResponse childResponse = categoryMapper.entityToResponse(category);
+                    fetchChildCategory(childResponse);
+                    children.add(childResponse);
+                });
+
+        response.setChildren(children);
     }
 
     @Override
@@ -159,7 +176,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(entity -> {
                     CategoryResponse response = categoryMapper.entityToResponse(entity);
 //                    response.setParent(categoryMapper.entityToResponse(validateCategory("id", entity.getId())));
-                    fetchChildCategory(entity, response);
+                    response.setChildren(getResponseWithChildren(entity.getId()));
                     return response;
                 })
                 .toList();

@@ -30,8 +30,9 @@ public class CategoryController {
         return categoryService.create(categoryDto);
     }
 
+    //just update name and description
     @PutMapping("/moderator/{categoryId}")
-    public ResponseEntity<BaseResponse<CategoryDto>> update(@PathVariable("categoryId") String id,
+    public ResponseEntity<BaseResponse<CategoryResponse>> update(@PathVariable("categoryId") String id,
                                                             @Valid @RequestBody CategoryDto categoryDto) {
         categoryDto.setId(id);
         return categoryService.update(categoryDto);
