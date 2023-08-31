@@ -5,6 +5,6 @@ import com.lender.productserviceshare.payload.CategoryDto;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
-public class PageResponseCategory extends PageResponse<CategoryDto> {
+public class PageResponseCategory extends PageResponse<CategoryResponse> {
 
 }

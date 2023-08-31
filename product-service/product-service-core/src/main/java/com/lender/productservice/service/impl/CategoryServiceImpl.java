@@ -10,13 +10,19 @@ import com.lender.productservice.mapper.CategoryMapper;
 import com.lender.productservice.repository.CategoryRepository;
 import com.lender.productservice.service.CategoryService;
 import com.lender.productserviceshare.payload.CategoryDto;
+import com.lender.productserviceshare.payload.response.CategoryResponse;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.metrics.Stat;
+import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.Restriction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,40 +47,81 @@ public class CategoryServiceImpl implements CategoryService {
     private final EntityManager entityManager;
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> create(CategoryDto categoryDto) {
-        if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '"
-                    + categoryDto.getName() + "' đã tồn tại hoặc bị xóa", null);
+    public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto dto) {
+        validateCategory("name", dto.getName());
+        if (dto.getParentId() != null) {
+            validateCategory("id", dto.getParentId());
         }
 
-        CategoryDto response = categoryMapper
-                .entityToDto(categoryRepository.save(categoryMapper.dtoToEntity(categoryDto)));
+        Category category = categoryRepository.save(categoryMapper.dtoToEntity(dto));
+        CategoryResponse response = categoryMapper.entityToResponse(category);
 
         return responseFactory.success("Success", response);
     }
 
     @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> update(CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryDto.getId()));
-
-        if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Category '" + categoryDto.getName()
-                    + "' đã tồn tại hoặc bị xóa", null);
+    public ResponseEntity<BaseResponse<CategoryResponse>> update(CategoryDto categoryDto) {
+        Category category = validateCategory("id", categoryDto.getId());
+        validateCategory("name", categoryDto.getName());
+        if (categoryDto.getParentId() != null) {
+            categoryDto.setParentId(null);
         }
 
         categoryMapper.dtoToEntity(categoryDto, category);
-        CategoryDto response = categoryMapper.entityToDto(categoryRepository.save(category));
+        category = categoryRepository.save(category);
+        CategoryResponse response = categoryMapper.entityToResponse(category);
+        response.setChildren(getResponseWithChildren(category.getId()));
 
         return responseFactory.success("Success", response);
     }
 
-    @Override
-    public ResponseEntity<BaseResponse<CategoryDto>> getById(String id) {
-        Category category = categoryRepository.findByIdAndStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+    private Category validateCategory(String field, String value) {
+        return switch (field) {
+            case "name" -> {
+                if (categoryRepository.findByName(value).isPresent()) {
+                    throw new APIException(HttpStatus.BAD_REQUEST, "Category '" + value + "' đã tồn tại hoặc tên không hợp lệ");
+                }
+                yield null;
+            }
 
-        return responseFactory.success("Success", categoryMapper.entityToDto(category));
+            case "id" -> categoryRepository.findByIdAndStatus(value, Status.ACTIVE)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", value));
+
+            default -> throw new APIException(HttpStatus.BAD_REQUEST, "Lỗi không xác định, liên hệ Admin");
+        };
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<CategoryResponse>> getById(String id) {
+        Category entity = validateCategory("id", id);
+        CategoryResponse response = categoryMapper.entityToResponse(entity);
+        response.setChildren(getResponseWithChildren(entity.getId()));
+
+        return responseFactory.success("Success", response);
+    }
+
+    private Set<CategoryResponse> getResponseWithChildren(String parentId) {
+        Set<CategoryResponse> result = new HashSet<>();
+        categoryRepository.findByParentIdAndStatus(parentId, Status.ACTIVE)
+                .forEach(category -> {
+                    CategoryResponse response = categoryMapper.entityToResponse(category);
+                    fetchChildCategory(response);
+                    result.add(response);
+                });
+
+        return result;
+    }
+
+    private void fetchChildCategory(CategoryResponse response) {
+        Set<CategoryResponse> children = new HashSet<>();
+        categoryRepository.findByParentIdAndStatus(response.getId(), Status.ACTIVE)
+                .forEach(category -> {
+                    CategoryResponse childResponse = categoryMapper.entityToResponse(category);
+                    fetchChildCategory(childResponse);
+                    children.add(childResponse);
+                });
+
+        response.setChildren(children);
     }
 
     @Override
@@ -82,11 +133,12 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedCategoryFilter");
-        filter.setParameter("status", Status.ACTIVE.toString());
-        Page<Category> categories = categoryRepository.findAll(pageable);
+        Filter filter1 = session.enableFilter("deletedCategoryFilter");
+        filter1.setParameter("status", Status.ACTIVE.toString());
 
+        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
         session.disableFilter("deletedCategoryFilter");
+        session.close();
         return responseFactory.success("Success", paging(categories));
     }
 
@@ -97,15 +149,14 @@ public class CategoryServiceImpl implements CategoryService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> categories = categoryRepository.findAll(pageable);
+        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
 
         return responseFactory.success("Success", paging(categories));
     }
 
     @Override
     public ResponseEntity<BaseResponse<String>> delete(String id) {
-        Category category = categoryRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        Category category = validateCategory("id", id);
 
         categoryRepository.delete(category);
         return responseFactory.success("Success", "Đã xóa " + category.getName());
@@ -113,8 +164,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseEntity<BaseResponse<CategoryDto>> restore(String id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        Category category = validateCategory("id", id);
         category.setIsActive(Status.ACTIVE);
         category = categoryRepository.save(category);
 
@@ -122,14 +172,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private PageResponseCategory paging(Page<Category> categoryPage) {
-        List<CategoryDto> categoryDtos = categoryPage.getContent().stream()
-                .map(categoryMapper::entityToDto)
+        List<CategoryResponse> responseList = categoryPage.getContent().stream()
+                .map(entity -> {
+                    CategoryResponse response = categoryMapper.entityToResponse(entity);
+//                    response.setParent(categoryMapper.entityToResponse(validateCategory("id", entity.getId())));
+                    response.setChildren(getResponseWithChildren(entity.getId()));
+                    return response;
+                })
                 .toList();
 
         return (PageResponseCategory) PageResponseCategory.builder()
                 .pageNo(categoryPage.getNumber())
-                .pageSize(categoryDtos.size())
-                .content(categoryDtos)
+                .pageSize(responseList.size())
+                .content(responseList)
                 .totalPages(categoryPage.getTotalPages())
                 .totalItems((int) categoryPage.getTotalElements())
                 .last(categoryPage.isLast())

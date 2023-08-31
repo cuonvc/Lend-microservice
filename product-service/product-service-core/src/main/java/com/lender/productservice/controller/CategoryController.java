@@ -5,6 +5,7 @@ import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.productservice.configuration.CustomUserDetail;
 import com.lender.productservice.service.CategoryService;
 import com.lender.productserviceshare.payload.CategoryDto;
+import com.lender.productserviceshare.payload.response.CategoryResponse;
 import com.lender.productserviceshare.payload.response.PageResponseCategory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +24,22 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/moderator/create")
-    public ResponseEntity<BaseResponse<CategoryDto>> create(@Valid @RequestBody CategoryDto categoryDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
+    public ResponseEntity<BaseResponse<CategoryResponse>> create(@Valid @RequestBody CategoryDto categoryDto) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
         return categoryService.create(categoryDto);
     }
 
+    //just update name and description
     @PutMapping("/moderator/{categoryId}")
-    public ResponseEntity<BaseResponse<CategoryDto>> update(@PathVariable("categoryId") String id,
+    public ResponseEntity<BaseResponse<CategoryResponse>> update(@PathVariable("categoryId") String id,
                                                             @Valid @RequestBody CategoryDto categoryDto) {
         categoryDto.setId(id);
         return categoryService.update(categoryDto);
     }
 
     @GetMapping("/view/{categoryId}")
-    public ResponseEntity<BaseResponse<CategoryDto>> getById(@PathVariable("categoryId") String id) {
+    public ResponseEntity<BaseResponse<CategoryResponse>> getById(@PathVariable("categoryId") String id) {
         return categoryService.getById(id);
     }
 

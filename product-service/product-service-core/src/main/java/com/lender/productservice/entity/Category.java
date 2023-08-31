@@ -3,6 +3,7 @@ package com.lender.productservice.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lender.baseservice.constant.enumerate.Status;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,14 +23,28 @@ import java.util.Set;
 @Data
 @Builder(toBuilder = true)
 @SQLDelete(sql = "UPDATE category_tbl SET is_active = 'INACTIVE' WHERE id=?")
-@FilterDef(name = "deletedCategoryFilter", parameters = @ParamDef(name = "status", type = String.class))
-@Filter(name = "deletedCategoryFilter", condition = "is_active = :status")
+@FilterDefs({
+        @FilterDef(name = "deletedCategoryFilter", parameters = {
+                @ParamDef(name = "status", type = String.class),
+        }),
+        @FilterDef(name = "rootCategoryFilter", parameters = {
+                @ParamDef(name = "parentId", type = String.class)
+        })
+})
+
+@Filters({
+        @Filter(name = "deletedCategoryFilter", condition = "is_active = :status"),
+        @Filter(name = "rootCategoryFilter", condition = "parent_id = :parentId")
+})
 public class Category {
 
     @Id
     @GenericGenerator(name = "custom_category_id", strategy = "com.lender.productservice.util.CustomCategoryIdGenerator")
     @GeneratedValue(generator = "custom_category_id")
     private String id;
+
+    @Column(name = "parent_id")
+    private String parentId = null;
 
     @Column(name = "name", nullable = false)
     private String name;
