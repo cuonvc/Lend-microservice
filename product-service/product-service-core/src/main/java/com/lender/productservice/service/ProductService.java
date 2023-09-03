@@ -14,8 +14,6 @@ public interface ProductService {
 
     ResponseEntity<BaseResponse<ProductResponse>> update(String id, ProductRequest request);
 
-    ResponseEntity<BaseResponse<String>> uploadImage(String id, MultipartFile file) throws IOException;
-
     void storeImagePath(String productId, String path);
 
     ResponseEntity<BaseResponse<ProductResponse>> getById(String id);

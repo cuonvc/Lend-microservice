@@ -26,17 +26,17 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    cloud:
-      function:
-        definition: productImageProcess
-      stream:
-        bindings:
-          productImageProcess-in-0:
-            destination: product-image-response
-            content-type: application/json
-        kafka:
-          binder:
-            brokers: ${KAFKA_HOST}:${KAFKA_PORT}
+  cloud:
+    function:
+      definition: productImageProcess
+    stream:
+      bindings:
+        productImageProcess-in-0:
+          destination: product-image-response
+          content-type: application/json
+      kafka:
+        binder:
+          brokers: ${KAFKA_HOST}:${KAFKA_PORT}
 
-      compatibility-verifier:
-        enabled: false
+    compatibility-verifier:
+      enabled: false

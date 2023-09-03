@@ -36,10 +36,12 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -59,6 +61,7 @@ public class ProductServiceImpl implements ProductService {
     private final EntityManager entityManager;
 
     @Override
+    @Transactional
     public ResponseEntity<BaseResponse<ProductResponse>> create(ProductRequest request) {
 
         Set<Category> categories = request.getCategoryIds().stream()
@@ -73,6 +76,8 @@ public class ProductServiceImpl implements ProductService {
         product.setUserId(userDetail.getId());
         product.setCode(generateProductCode(request.getState()));
         product.setCategories(categories);
+        entityManager.persist(product);
+        uploadImage(product.getId(), request.getImageValue());
         return responseFactory.success("Success", productMapper.entityToResponse(productRepository.save(product)));
     }
 
@@ -90,27 +95,21 @@ public class ProductServiceImpl implements ProductService {
 
         productMapper.requestToEntity(request, product);
         product.setCategories(categories);
+        uploadImage(product.getId(), request.getImageValue());
 
         return responseFactory.success("Sucess", productMapper.entityToResponse(productRepository.save(product)));
     }
 
-    @Override
-    public ResponseEntity<BaseResponse<String>> uploadImage(String id, MultipartFile file) throws IOException {
-        CustomUserDetail customUserDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Product product = productRepository.findByIdAndOwner(id, Status.ACTIVE, customUserDetail.getId())
-                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Không được phép truy cập"));
-
+    private void uploadImage(String productId, String imageValue) {
         Message<FileObjectRequest> message = MessageBuilder
                 .withPayload(FileObjectRequest.builder()
                         .field(THUMB)
-                        .fileBytes(file.getBytes())
+                        .fileBytes(Base64.getDecoder().decode(imageValue))
                         .build())
-                .setHeader(KafkaHeaders.KEY, product.getId().getBytes())
+                .setHeader(KafkaHeaders.KEY, productId.getBytes())
                 .build();
 
         streamBridge.send("product-image-request", message);
-        return responseFactory.success("Thành công", "Ảnh đang được lưu lại...");
     }
 
     @Override

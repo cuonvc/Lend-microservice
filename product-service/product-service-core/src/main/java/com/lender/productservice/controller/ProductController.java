@@ -33,15 +33,15 @@ public class ProductController {
         return productService.update(id, request);
     }
 
-    @PostMapping("/upload/thumb/{id}")
-    public ResponseEntity<BaseResponse<String>> uploadImage(@PathVariable("id") String id,
-                                                            @ImageValid @RequestPart("image") MultipartFile file) {
-        try {
-            return productService.uploadImage(id, file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @PostMapping("/upload/thumb/{id}")
+//    public ResponseEntity<BaseResponse<String>> uploadImage(@PathVariable("id") String id,
+//                                                            @RequestPart("imageValue") String file) {
+//        try {
+//            return productService.uploadImage(id, file);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @GetMapping("/view/{id}")
     public ResponseEntity<BaseResponse<ProductResponse>> details(@PathVariable("id") String id) {

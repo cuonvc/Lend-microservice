@@ -24,6 +24,8 @@ public class ProductRequest {
     @NotEmpty
     private String name;
 
+    private String imageValue;
+
     private String description;
     private String brand;
     private ProductState state;
