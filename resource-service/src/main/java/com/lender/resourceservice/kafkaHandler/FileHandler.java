@@ -56,7 +56,7 @@ public class FileHandler {
                             .path(imagePath)
                             .field(value.getField())
                             .build())
-                    .setHeader(KafkaHeaders.KEY, key)
+                    .setHeader(KafkaHeaders.KEY, key.split("/")[1])
                     .build();
         };
     }

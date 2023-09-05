@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lender.baseservice.constant.enumerate.Status;
 import com.lender.productserviceshare.enumerate.ProductState;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -14,20 +15,19 @@ import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "product_tbl", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"code"})
-})
+@Table(name = "product_tbl")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
-@FilterDef(name = "deleteProductFilter",
-        parameters = @ParamDef(name = "status", type = String.class))
-@Filter(name = "deleteProductFilter", condition = "is_active = :status")
+//@SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
+//@FilterDef(name = "deleteProductFilter",
+//        parameters = @ParamDef(name = "status", type = String.class))
+//@Filter(name = "deleteProductFilter", condition = "is_active = :status")
 public class Product {
 
     @Id
@@ -38,43 +38,16 @@ public class Product {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code", nullable = false)
-    private String code;
-
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "image_url", columnDefinition = "TEXT")
-    private String imageUrl;
 
     @Column(name = "brand")
     private String brand;
 
-    @Column(name = "state")
-    @Enumerated(EnumType.STRING)
-    private ProductState state = ProductState.OLD;
-
-    @Column(name = "standard_price", nullable = false)
-    private Double standardPrice;
-
-    @Column(name = "sale_price")
-    private Double salePrice;
-
-    @Column(name = "sale_expire_at")
-    private LocalDateTime saleExpireAt;
-
-    @Column(name = "is_active")
-    @Enumerated(EnumType.STRING)
-    private Status isActive = Status.ACTIVE;
-
-    @Column(name = "created_date")
-    private LocalDateTime createdDate = LocalDateTime.now();
-
-    @Column(name = "modified_date")
-    private LocalDateTime modifiedDate = LocalDateTime.now();
-
-    @Column(name = "user_id")
-    private String userId;
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    private Set<ProductResource> productResources = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -83,5 +56,8 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<>();
+
+    @OneToOne(mappedBy = "product")
+    private Commodity commodity;
 
 }

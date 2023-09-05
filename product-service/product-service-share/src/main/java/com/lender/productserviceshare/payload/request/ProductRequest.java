@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,16 +25,12 @@ public class ProductRequest {
     @NotEmpty
     private String name;
 
-    private String imageValue;
-
     private String description;
     private String brand;
-    private ProductState state;
-
-    @NotNull
-    private Double standardPrice;
 
     @NotNull
     @Size(min = 1, max = 5, message = "Categories must be at least 1 item")
-    private Set<String> categoryIds;
+    private List<String> categoryIds;
+
+    private List<String> imageValues;
 }

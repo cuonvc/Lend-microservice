@@ -1,6 +1,7 @@
 package com.lender.productservice.kafkaHandler;
 
 import com.lender.baseservice.payload.response.FileObjectResponse;
+import com.lender.productservice.service.ProductResourceService;
 import com.lender.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class FileHandler {
 
-    private final ProductService productService;
+    private final ProductResourceService resourceService;
 
     @Bean
     public Consumer<Message<FileObjectResponse>> productImageProcess() {
@@ -24,7 +25,7 @@ public class FileHandler {
             String key = new String((byte[]) response.getHeaders().get(KafkaHeaders.RECEIVED_KEY));
             log.info("triggerr - key - {} - value - {}", key, response.getPayload());
 
-            productService.storeImagePath(key, response.getPayload().getPath());
+            resourceService.storeImagePath(key, response.getPayload().getPath());
 
 //            FileObjectResponse objectResponse = response.getPayload();
         };

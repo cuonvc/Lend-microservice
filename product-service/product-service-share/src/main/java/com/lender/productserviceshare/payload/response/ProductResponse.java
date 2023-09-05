@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,17 +20,8 @@ public class ProductResponse {
 
     private String id;
     private String name;
-    private String code;
     private String description;
-    private String imageUrl;
+    private List<String> imageUrls;
     private String brand;
-    private ProductState state;
-    private Double standardPrice;
-    private Double salePrice;
-    private LocalDateTime saleExpireAt;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
-    private Status isActive;
     private Set<CategoryDto> categories;
-    private String userId;
 }

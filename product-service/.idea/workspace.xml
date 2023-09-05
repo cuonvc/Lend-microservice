@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/CategoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/CategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/CategoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CategoryServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/CategoryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/CategoryResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/kafkaHandler/FileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/kafkaHandler/FileHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +42,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "transaction-refactor",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "D:/Workspace/Java/Lender-microservice/product-service",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -77,6 +80,7 @@
       <workItem from="1692710672841" duration="414000" />
       <workItem from="1692865761616" duration="35000" />
       <workItem from="1693408418323" duration="638000" />
+      <workItem from="1693838496451" duration="619000" />
     </task>
     <servers />
   </component>
