@@ -25,11 +25,11 @@ public class CommodityController {
         return commodityService.create(request);
     }
 
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<BaseResponse<ProductResponse>> update(@PathVariable("id") String id,
-//                                                                @Valid @RequestBody ProductRequest request) {
-//        return productService.update(id, request);
-//    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<BaseResponse<CommodityResponse>> update(@PathVariable("id") String id,
+                                                                  @Valid @RequestBody CommodityRequest request) {
+        return commodityService.update(id, request);
+    }
 
 //    @PostMapping("/upload/thumb/{id}")
 //    public ResponseEntity<BaseResponse<String>> uploadImage(@PathVariable("id") String id,

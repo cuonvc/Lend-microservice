@@ -4,6 +4,7 @@ import com.lender.productserviceshare.enumerate.LendType;
 import com.lender.productserviceshare.enumerate.ProductState;
 import com.lender.productserviceshare.enumerate.TimeFrame;
 import com.lender.productserviceshare.enumerate.TransactionMethod;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ import java.util.List;
 public class CommodityRequest {
 
     @NotNull
+    @Valid
     private ProductRequest productRequest;
 
     private ProductState state;

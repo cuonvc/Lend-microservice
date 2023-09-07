@@ -7,9 +7,12 @@ import com.lender.productservice.exception.ResourceNotFoundException;
 import com.lender.productservice.mapper.ProductMapper;
 import com.lender.productservice.repository.ProductResourceRepository;
 import com.lender.productservice.service.ProductResourceService;
+import com.lender.productserviceshare.payload.response.ProductResourceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,10 +22,20 @@ public class ProductResourceServiceImpl implements ProductResourceService {
     private final ProductResourceRepository resourceRepository;
 
     @Override
-    public ProductResource initResource(Product product) {
-        ProductResource resource = new ProductResource();
-        resource.setProduct(product);
-        return resourceRepository.save(resource);
+    public List<ProductResource> initResources(Product product) {
+        List<ProductResource> resources = new ArrayList<>();
+        for (int i = 1; i < 6; i++) {
+            ProductResource resource = new ProductResource();
+            resource.setProduct(product);
+            resources.add(resourceRepository.save(resource));
+        }
+
+        return resources;
+    }
+
+    @Override
+    public List<ProductResource> getByProduct(Product product) {
+        return resourceRepository.findByProductId(product.getId());
     }
 
     @Override
@@ -34,15 +47,28 @@ public class ProductResourceServiceImpl implements ProductResourceService {
         resourceRepository.save(resource);
     }
 
+//    @Override
+//    @Transactional
+//    public void clearImagePath(String productId) {
+//        resourceRepository.deleteByProductId(productId);
+//    }
+
     @Override
-    public List<String> getImageUrls(String productId) {
+    public List<ProductResourceResponse> getImageUrls(String productId) {
         return resourceRepository.findByProductId(productId)
                 .stream().map(element -> {
                     String path = element.getImageUrl();
                     if (path != null && path.contains("http")) {
-                        return path;
+                        return ProductResourceResponse.builder()
+                                .id(element.getId())
+                                .imageUrl(path)
+                                .build();
                     }
-                    return ConstantVariable.BASE_RESOURCE_DOMAIN + path;
+
+                    return ProductResourceResponse.builder()
+                            .id(element.getId())
+                            .imageUrl(ConstantVariable.BASE_RESOURCE_DOMAIN + path)
+                            .build();
                 }).toList();
     }
 }

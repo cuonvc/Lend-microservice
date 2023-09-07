@@ -18,7 +18,7 @@ public class ProductResource {
     @GeneratedValue(generator = "custom_resource_id")
     private String id;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     @ManyToOne

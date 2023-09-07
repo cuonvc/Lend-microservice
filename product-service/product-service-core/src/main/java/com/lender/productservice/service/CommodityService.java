@@ -9,5 +9,7 @@ public interface CommodityService {
 
     ResponseEntity<BaseResponse<CommodityResponse>> create(CommodityRequest request);
 
+    ResponseEntity<BaseResponse<CommodityResponse>> update(String id, CommodityRequest request);
+
     ResponseEntity<BaseResponse<CommodityResponse>> getById(String id);
 }

@@ -4,7 +4,6 @@ import com.lender.baseservice.constant.enumerate.Status;
 import com.lender.baseservice.payload.request.FileObjectRequest;
 import com.lender.baseservice.payload.response.BaseResponse;
 import com.lender.baseservice.payload.response.ResponseFactory;
-import com.lender.productservice.configuration.CustomUserDetail;
 import com.lender.productservice.entity.Category;
 import com.lender.productservice.entity.Product;
 import com.lender.productservice.entity.ProductResource;
@@ -13,42 +12,27 @@ import com.lender.productservice.exception.ResourceNotFoundException;
 import com.lender.productservice.mapper.ProductMapper;
 import com.lender.productservice.repository.CategoryRepository;
 import com.lender.productservice.repository.ProductRepository;
-import com.lender.productservice.repository.ProductResourceRepository;
 import com.lender.productservice.service.ProductResourceService;
 import com.lender.productservice.service.ProductService;
-import com.lender.productserviceshare.enumerate.ProductState;
-import com.lender.productserviceshare.payload.CategoryDto;
 import com.lender.productserviceshare.payload.request.ProductRequest;
-import com.lender.productserviceshare.payload.response.PageResponseCategory;
-import com.lender.productserviceshare.payload.response.PageResponseProduct;
+import com.lender.productserviceshare.payload.request.ProductResourceRequest;
 import com.lender.productserviceshare.payload.response.ProductResponse;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -76,40 +60,58 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
         entityManager.persist(product);
-        request.getImageValues()
-                .forEach(imageValue -> uploadImage(product.getId(), resourceService.initResource(product).getId(), imageValue));
+        handleMapResource(request, product, resourceService.initResources(product));
+
         return productRepository.save(product);
     }
 
-//    @Override
-//    public ResponseEntity<BaseResponse<ProductResponse>> update(String id, ProductRequest request) {
-//        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @Override
+    @Transactional
+    public Product update(Product product, ProductRequest request) {
+        Set<Category> categories = request.getCategoryIds().stream()
+                .map(categoryId -> categoryRepository.findByIdAndStatus(categoryId, Status.ACTIVE)
+                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
+                .collect(Collectors.toSet());
 
-//        Product product = productRepository.findByIdAndOwner(id, Status.ACTIVE, userDetail.getId())
-//                .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Không được phép truy cập"));
-//
-//        Set<Category> categories = request.getCategoryIds().stream()
-//                .map(categoryId -> categoryRepository.findByIdAndStatus(categoryId, Status.ACTIVE)
-//                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
-//                .collect(Collectors.toSet());
-//
-//        productMapper.requestToEntity(request, product);
-//        product.setCategories(categories);
-//        uploadImage(product.getId(), request.getImageValue());
-//
-//        return responseFactory.success("Sucess", productMapper.entityToResponse(productRepository.save(null)));
-//    }
+//        resourceService.clearImagePath(product.getId());
+        productMapper.requestToEntity(request, product);
+        product.setCategories(categories);
+        handleMapResource(request, product, resourceService.getByProduct(product));
+
+        return productRepository.save(product);
+    }
+
+    private void handleMapResource(ProductRequest request, Product product, List<ProductResource> resources) {
+        int sizeRequest = request.getResources().size();
+        if (sizeRequest < 5) {
+            IntStream.range(0, 5 - sizeRequest)
+                    .forEach(item -> request.getResources().add(ProductResourceRequest.builder()
+                            .id(null)
+                            .imageValue("")
+                            .build()));
+        }
+
+        IntStream.range(0, resources.size()).forEach(index -> {
+            String imageValue = request.getResources().get(index).getImageValue();
+            resources.get(index).setImageUrl(imageValue);
+            uploadImage(product.getId(), resources.get(index).getId(), imageValue);
+        });
+    }
 
     private void uploadImage(String productId, String resourceId, String imageValue) {
-        Message<FileObjectRequest> message = MessageBuilder
-                .withPayload(FileObjectRequest.builder()
-                        .field(THUMB)
-                        .fileBytes(Base64.getDecoder().decode(imageValue))
-                        .build())
-                .setHeader(KafkaHeaders.KEY, (productId + "/" + resourceId).getBytes())
-                .build();
+        try {
+            Message<FileObjectRequest> message = MessageBuilder
+                    .withPayload(FileObjectRequest.builder()
+                            .field(THUMB)
+                            .fileBytes(Base64.getDecoder().decode(imageValue))
+                            .build())
+                    .setHeader(KafkaHeaders.KEY, (productId + "/" + resourceId).getBytes())
+                    .build();
 
-        streamBridge.send("product-image-request", message);
+            streamBridge.send("product-image-request", message);
+        } catch (Exception e) {
+            throw new APIException(HttpStatus.BAD_REQUEST, "Invalid image base64 data");
+        }
     }
 
     @Override
@@ -117,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
         ProductResponse response = productMapper.entityToResponse(product);
-        response.setImageUrls(resourceService.getImageUrls(response.getId()));
+        response.setResources(resourceService.getImageUrls(response.getId()));
 
         return responseFactory.success("Success", response);
     }

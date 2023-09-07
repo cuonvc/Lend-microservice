@@ -24,6 +24,10 @@ public interface CommodityMapper {
     @Mapping(source = "state", target = "code", qualifiedByName = "generateCode")
     Commodity requestToEntity(CommodityRequest commodityRequest);
 
+    @Mapping(source = "timeFrames", target = "timeFrames", qualifiedByName = "timeFramestoString")
+    @Mapping(source = "transactionMethods", target = "transactionMethods", qualifiedByName = "transactionMethodsToString")
+    void requestToEntity(CommodityRequest commodityRequest, @MappingTarget Commodity commodity);
+
     @Mapping(source = "timeFrames", target = "timeFrames", qualifiedByName = "timeFramesToList")
     @Mapping(source = "transactionMethods", target = "transactionMethods", qualifiedByName = "transactionMethodsToList")
     CommodityResponse entityToResponse(Commodity commodity);

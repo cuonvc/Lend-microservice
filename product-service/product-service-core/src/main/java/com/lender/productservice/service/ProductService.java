@@ -13,7 +13,7 @@ import java.io.IOException;
 public interface ProductService {
     Product create(ProductRequest request);
 
-//    ResponseEntity<BaseResponse<ProductResponse>> update(String id, ProductRequest request);
+    Product update(Product product, ProductRequest request);
 
     ResponseEntity<BaseResponse<ProductResponse>> getById(String id);
 
