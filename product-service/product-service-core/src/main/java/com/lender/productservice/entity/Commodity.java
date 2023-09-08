@@ -5,9 +5,10 @@ import com.lender.productserviceshare.enumerate.LendType;
 import com.lender.productserviceshare.enumerate.ProductState;
 import com.lender.productserviceshare.enumerate.TimeFrame;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @SQLDelete(sql = "UPDATE commodity_tbl SET is_active = 'INACTIVE' WHERE id=?")
+@FilterDef(name = "deleteCommodityFilter",
+        parameters = @ParamDef(name = "status", type = String.class))
+@Filter(name = "deleteCommodityFilter", condition = "is_active = :status")
 public class Commodity {
 
     @Id

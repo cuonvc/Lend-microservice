@@ -5,22 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8af9ab9a-f9ba-40bb-a8c0-6bbade3c8e9d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CommodityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/controller/CommodityController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/mapper/CommodityMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/mapper/CommodityMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/CommodityRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/CommodityRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductResourceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/repository/ProductResourceRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/CommodityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/CommodityService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductResourceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductResourceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CommodityServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/CommodityServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductResourceServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductResourceServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-core/src/main/java/com/lender/productservice/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/request/ProductRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/product-service-share/src/main/java/com/lender/productserviceshare/payload/response/ProductResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/kafkaHandler/FileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/kafkaHandler/FileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/service/FileImageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/service/FileImageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/service/impl/FileImageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/service/impl/FileImageServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/utils/FileUploadUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/java/com/lender/resourceservice/utils/FileUploadUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +76,7 @@
       <workItem from="1693408418323" duration="638000" />
       <workItem from="1693838496451" duration="619000" />
       <workItem from="1694072594465" duration="31000" />
+      <workItem from="1694094318356" duration="1073000" />
     </task>
     <servers />
   </component>

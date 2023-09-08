@@ -1,5 +1,6 @@
 package com.lender.productservice.entity;
 
+import com.lender.baseservice.constant.enumerate.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,10 @@ public class ProductResource {
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
+
+    @Column(name = "is_active")
+    @Enumerated(EnumType.STRING)
+    private Status isActive = Status.ACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

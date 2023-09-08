@@ -16,12 +16,17 @@ import com.lender.productservice.service.ProductResourceService;
 import com.lender.productservice.service.ProductService;
 import com.lender.productserviceshare.payload.request.ProductRequest;
 import com.lender.productserviceshare.payload.request.ProductResourceRequest;
+import com.lender.productserviceshare.payload.response.PageResponseProduct;
 import com.lender.productserviceshare.payload.response.ProductResponse;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -116,42 +121,42 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<BaseResponse<ProductResponse>> getById(String id) {
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdAndStatus(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
         ProductResponse response = productMapper.entityToResponse(product);
         response.setResources(resourceService.getImageUrls(response.getId()));
 
         return responseFactory.success("Success", response);
     }
-//
-//    @Override
-//    public ResponseEntity<BaseResponse<PageResponseProduct>> findAllByFilter(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
-//        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-//                ? Sort.by(sortBy).ascending()
-//                : Sort.by(sortBy).descending();
-//
-//        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-//        Session session = entityManager.unwrap(Session.class);
-//        Filter filter = session.enableFilter("deleteProductFilter");
-//        filter.setParameter("status", Status.ACTIVE.toString());
-//        Page<Product> productPage = productRepository.findAll(pageable);
-//
-//        session.disableFilter("deleteProductFilter");
-//        return responseFactory.success("Success", paging(productPage));
-//    }
-//
-//    @Override
-//    public ResponseEntity<BaseResponse<PageResponseProduct>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
-//        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-//                ? Sort.by(sortBy).ascending()
-//                : Sort.by(sortBy).descending();
-//
-//        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-//        Page<Product> productPage = productRepository.findAll(pageable);
-//
-//        return responseFactory.success("Success", paging(productPage));
-//    }
-//
+
+    @Override
+    public ResponseEntity<BaseResponse<PageResponseProduct>> findAllByActive(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Session session = entityManager.unwrap(Session.class);
+        Filter filter = session.enableFilter("deleteProductFilter");
+        filter.setParameter("status", Status.ACTIVE.toString());
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        session.disableFilter("deleteProductFilter");
+        return responseFactory.success("Success", paging(productPage));
+    }
+
+    @Override
+    public ResponseEntity<BaseResponse<PageResponseProduct>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        return responseFactory.success("Success", paging(productPage));
+    }
+
 //    @Override
 //    public ResponseEntity<BaseResponse<String>> delete(String id) {
 //
@@ -176,18 +181,18 @@ public class ProductServiceImpl implements ProductService {
 //        return responseFactory.success("Success", productMapper.entityToResponse(productRepository.save(product)));
 //    }
 //
-//    private PageResponseProduct paging(Page<Product> productPage) {
-//        List<ProductResponse> productResponses = productPage.getContent().stream()
-//                .map(productMapper::entityToResponse)
-//                .toList();
-//
-//        return (PageResponseProduct) PageResponseProduct.builder()
-//                .pageNo(productPage.getNumber())
-//                .pageSize(productResponses.size())
-//                .content(productResponses)
-//                .totalPages(productPage.getTotalPages())
-//                .totalItems((int) productPage.getTotalElements())
-//                .last(productPage.isLast())
-//                .build();
-//    }
+    private PageResponseProduct paging(Page<Product> productPage) {
+        List<ProductResponse> productResponses = productPage.getContent().stream()
+                .map(productMapper::entityToResponse)
+                .toList();
+
+        return (PageResponseProduct) PageResponseProduct.builder()
+                .pageNo(productPage.getNumber())
+                .pageSize(productResponses.size())
+                .content(productResponses)
+                .totalPages(productPage.getTotalPages())
+                .totalItems((int) productPage.getTotalElements())
+                .last(productPage.isLast())
+                .build();
+    }
 }

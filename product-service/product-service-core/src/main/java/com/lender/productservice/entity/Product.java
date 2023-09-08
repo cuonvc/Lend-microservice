@@ -24,10 +24,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-//@SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
-//@FilterDef(name = "deleteProductFilter",
-//        parameters = @ParamDef(name = "status", type = String.class))
-//@Filter(name = "deleteProductFilter", condition = "is_active = :status")
+@SQLDelete(sql = "UPDATE product_tbl SET is_active = 'INACTIVE' WHERE id=?")
+@FilterDef(name = "deleteProductFilter",
+        parameters = @ParamDef(name = "status", type = String.class))
+@Filter(name = "deleteProductFilter", condition = "is_active = :status")
 public class Product {
 
     @Id
@@ -43,6 +43,10 @@ public class Product {
 
     @Column(name = "brand")
     private String brand;
+
+    @Column(name = "is_active")
+    @Enumerated(EnumType.STRING)
+    private Status isActive = Status.ACTIVE;
 
     @OneToMany(mappedBy = "product",
             cascade = CascadeType.ALL,

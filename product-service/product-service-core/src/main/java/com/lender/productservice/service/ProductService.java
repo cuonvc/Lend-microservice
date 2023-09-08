@@ -17,9 +17,9 @@ public interface ProductService {
 
     ResponseEntity<BaseResponse<ProductResponse>> getById(String id);
 
-//    ResponseEntity<BaseResponse<PageResponseProduct>> findAllByFilter(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
-//
-//    ResponseEntity<BaseResponse<PageResponseProduct>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
+    ResponseEntity<BaseResponse<PageResponseProduct>> findAllByActive(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
+
+    ResponseEntity<BaseResponse<PageResponseProduct>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 //
 //    ResponseEntity<BaseResponse<String>> delete(String id);
 //
