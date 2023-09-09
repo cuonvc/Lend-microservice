@@ -51,10 +51,10 @@ public class ProductController {
         return productService.findAll(pageNo, pageSize, sortBy, sortDir);
     }
 
-    @GetMapping("")
-    public ResponseEntity<BaseResponse<PageResponseProduct>> getAll(@RequestParam(value = "owner") String id,
-                                                                    ) {
-
-    }
+//    @GetMapping("")
+//    public ResponseEntity<BaseResponse<PageResponseProduct>> getAll(@RequestParam(value = "owner") String id,
+//                                                                    ) {
+//
+//    }
 
 }
