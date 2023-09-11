@@ -8,11 +8,11 @@
 		<version>3.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>resource-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>resource-service</name>
-	<description>Lender resource service project for Spring boot</description>
+	<description>Lend resource service project for Spring boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.1</spring-cloud.version>
@@ -27,7 +27,7 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>base-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

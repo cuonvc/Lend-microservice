@@ -1,7 +1,7 @@
 version: "3.8"
 
 networks:
-  lender-network:
+  lend-network:
 
 services:
   eureka-server:
@@ -9,7 +9,7 @@ services:
     build: ./eureka-server
     container_name: eureka-server
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "8761:8761"
 
@@ -17,7 +17,7 @@ services:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "2181:2181"
 
@@ -25,7 +25,7 @@ services:
     image: wurstmeister/kafka
     container_name: kafka
     networks:
-      - lender-network
+      - lend-network
     depends_on:
       - zookeeper
     ports:
@@ -41,7 +41,7 @@ services:
     container_name: redis
     image: "redis"
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "6379:6379"
     volumes:
@@ -51,7 +51,7 @@ services:
   base-service:
     image: base-service
     networks:
-      - lender-network
+      - lend-network
     build: ./base-service/
     container_name: base-service
     ports:
@@ -61,7 +61,7 @@ services:
     container_name: api-gateway
     image: api-gateway
     networks:
-      - lender-network
+      - lend-network
     build: ./api-gateway
     ports:
       - "8080:8080"
@@ -74,7 +74,7 @@ services:
     image: auth-service
     build: ./auth-service/auth-service-core
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "8081:8081"
     depends_on:
@@ -98,7 +98,7 @@ services:
     image: product-service
     build: ./product-service/product-service-core
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "8082:8082"
     depends_on:
@@ -116,7 +116,7 @@ services:
     image: mail-service
     build: ./mail-service
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "8084:8084"
     environment:
@@ -132,7 +132,7 @@ services:
     image: resource-service
     build: ./resource-service
     networks:
-      - lender-network
+      - lend-network
     ports:
       - "8083:8083"
     environment:
@@ -145,7 +145,7 @@ services:
     container_name: database-auth
 #    restart: always
     networks:
-      - lender-network
+      - lend-network
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -157,7 +157,7 @@ services:
     image: postgres:latest
     container_name: database-product
     networks:
-      - lender-network
+      - lend-network
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password

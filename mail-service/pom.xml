@@ -8,18 +8,18 @@
 		<version>3.0.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>mail-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>mail-service</name>
-	<description>Lender mail service project for Spring Boot</description>
+	<description>Lend mail service project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.1</spring-cloud.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>auth-service-share</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

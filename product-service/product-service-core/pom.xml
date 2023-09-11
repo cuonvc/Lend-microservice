@@ -8,11 +8,11 @@
 		<version>3.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>product-service-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>product-service-core</name>
-	<description>Core Lender product service project for Spring Boot</description>
+	<description>Core Lend product service project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -66,12 +66,12 @@
 			<version>${spring-cloud-kafka.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>base-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>product-service-share</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

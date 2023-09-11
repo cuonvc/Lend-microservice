@@ -1,14 +1,14 @@
 #version: "3.8"
 #
 #networks:
-#  lender-network:
+#  lend-network:
 #
 #services:
 #  eureka-server:
 #    image: cuonvc/eureka-server:v1.0
 #    container_name: eureka-server
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8761:8761"
 #
@@ -16,7 +16,7 @@
 #    image: wurstmeister/zookeeper
 #    container_name: zookeeper
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "2181:2181"
 #
@@ -24,7 +24,7 @@
 #    image: wurstmeister/kafka
 #    container_name: kafka
 #    networks:
-#      - lender-network
+#      - lend-network
 #    depends_on:
 #      - zookeeper
 #    ports:
@@ -40,7 +40,7 @@
 #    container_name: redis
 #    image: "redis"
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "6379:6379"
 #    volumes:
@@ -51,7 +51,7 @@
 #    container_name: api-gateway
 #    image: cuonvc/api-gateway:v1.0
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8080:8080"
 #
@@ -59,7 +59,7 @@
 #    container_name: auth-service
 #    image: cuonvc/auth-service:v1.0
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8081:8081"
 #    depends_on:
@@ -81,7 +81,7 @@
 #    container_name: product-service
 #    image: cuonvc/product-service:v1.0
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8082:8082"
 #    depends_on:
@@ -97,7 +97,7 @@
 #    container_name: mail-service
 #    image: cuonvc/mail-service:v1.0
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8084:8084"
 #    environment:
@@ -112,7 +112,7 @@
 #    container_name: resource-service
 #    image: cuonvc/resource-service:v1.0
 #    networks:
-#      - lender-network
+#      - lend-network
 #    ports:
 #      - "8083:8083"
 #    environment:
@@ -125,7 +125,7 @@
 #    container_name: database-auth
 #    #    restart: always
 #    networks:
-#      - lender-network
+#      - lend-network
 #    environment:
 #      POSTGRES_USER: postgres
 #      POSTGRES_PASSWORD: password
@@ -137,7 +137,7 @@
 #    image: postgres:latest
 #    container_name: database-product
 #    networks:
-#      - lender-network
+#      - lend-network
 #    environment:
 #      POSTGRES_USER: postgres
 #      POSTGRES_PASSWORD: password

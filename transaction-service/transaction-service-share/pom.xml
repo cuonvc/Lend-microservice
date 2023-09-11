@@ -8,22 +8,22 @@
 		<version>3.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>transaction-service-share</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>transaction-service-share</name>
-	<description>Lender share Transaction service project for Spring Boot</description>
+	<description>Lend share Transaction service project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>auth-service-share</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>product-service-share</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

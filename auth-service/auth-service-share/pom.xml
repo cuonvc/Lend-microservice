@@ -8,7 +8,7 @@
 		<version>3.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>auth-service-share</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auth-service-share</name>
@@ -18,7 +18,7 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>base-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

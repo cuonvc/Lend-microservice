@@ -8,11 +8,11 @@
 		<version>3.0.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lender</groupId>
+	<groupId>com.lend</groupId>
 	<artifactId>auth-service-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auth-service-core</name>
-	<description>Lender auth service project for Spring Boot</description>
+	<description>Lend auth service project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -77,17 +77,17 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>base-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>auth-service-share</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.lender</groupId>
+			<groupId>com.lend</groupId>
 			<artifactId>resource-service</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -173,7 +173,7 @@
 <!--						<manifest>-->
 <!--							<addClasspath>true</addClasspath>-->
 <!--							<classpathPrefix>lib/</classpathPrefix>-->
-<!--							<mainClass>com.lender.authservice.AuthServiceApplication</mainClass>-->
+<!--							<mainClass>com.lend.authservice.AuthServiceApplication</mainClass>-->
 <!--						</manifest>-->
 <!--					</archive>-->
 <!--				</configuration>-->
