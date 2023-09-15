@@ -5,6 +5,7 @@ import com.lend.productservice.entity.Product;
 import com.lend.productservice.mapper.ProductMapper;
 import com.lend.productservice.repository.CategoryRepository;
 import com.lend.productservice.repository.ProductRepository;
+import com.lend.productservice.repository.custom.CategoryCustomRepository;
 import com.lend.productservice.service.ProductResourceService;
 import com.lend.productservice.service.ProductService;
 import com.lend.baseservice.constant.enumerate.Status;
@@ -18,10 +19,7 @@ import com.lend.productserviceshare.payload.request.ProductRequest;
 import com.lend.productserviceshare.payload.request.ProductResourceRequest;
 import com.lend.productserviceshare.payload.response.PageResponseProduct;
 import com.lend.productserviceshare.payload.response.ProductResponse;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Filter;
-import org.hibernate.Session;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,25 +44,25 @@ public class ProductServiceImpl implements ProductService {
     private static final String THUMB = "imageUrl";
 
     private final ProductRepository productRepository;
+    private final CategoryCustomRepository categoryCustomRepository;
     private final CategoryRepository categoryRepository;
     private final ProductResourceService resourceService;
     private final ProductMapper productMapper;
     private final ResponseFactory responseFactory;
     private final StreamBridge streamBridge;
-    private final EntityManager entityManager;
 
     @Override
     @Transactional
     public Product create(ProductRequest request) {
 
         Set<Category> categories = request.getCategoryIds().stream()
-                .map(categoryId -> categoryRepository.findByIdAndStatus(categoryId, Status.ACTIVE)
+                .map(categoryId -> categoryRepository.findByIdAndIsActive(categoryId, Status.ACTIVE)
                         .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
                 .collect(Collectors.toSet());
 
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
-        entityManager.persist(product);
+        productRepository.save(product);
         handleMapResource(request, product, resourceService.initResources(product));
 
         return productRepository.save(product);
@@ -74,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Product update(Product product, ProductRequest request) {
         Set<Category> categories = request.getCategoryIds().stream()
-                .map(categoryId -> categoryRepository.findByIdAndStatus(categoryId, Status.ACTIVE)
+                .map(categoryId -> categoryRepository.findByIdAndIsActive(categoryId, Status.ACTIVE)
                         .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
                 .collect(Collectors.toSet());
 
@@ -121,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<BaseResponse<ProductResponse>> getById(String id) {
-        Product product = productRepository.findByIdAndStatus(id, Status.ACTIVE)
+        Product product = productRepository.findByIdAndIsActive(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
         ProductResponse response = productMapper.entityToResponse(product);
         response.setResources(resourceService.getImageUrls(response.getId()));
@@ -136,12 +134,8 @@ public class ProductServiceImpl implements ProductService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deleteProductFilter");
-        filter.setParameter("status", Status.ACTIVE.toString());
-        Page<Product> productPage = productRepository.findAll(pageable);
+        Page<Product> productPage = productRepository.findByIsActive(pageable, Status.ACTIVE);
 
-        session.disableFilter("deleteProductFilter");
         return responseFactory.success("Success", paging(productPage));
     }
 
@@ -183,7 +177,11 @@ public class ProductServiceImpl implements ProductService {
 //
     private PageResponseProduct paging(Page<Product> productPage) {
         List<ProductResponse> productResponses = productPage.getContent().stream()
-                .map(productMapper::entityToResponse)
+                .map(product -> {
+                    ProductResponse response = productMapper.entityToResponse(product);
+                    response.setResources(resourceService.getImageUrls(response.getId()));
+                    return response;
+                })
                 .toList();
 
         return (PageResponseProduct) PageResponseProduct.builder()

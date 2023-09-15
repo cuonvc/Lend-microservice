@@ -2,9 +2,7 @@ package com.lend.productservice.service.impl;
 
 import com.lend.productservice.configuration.CustomUserDetail;
 import com.lend.productservice.entity.Commodity;
-import com.lend.productservice.entity.Commodity_;
 import com.lend.productservice.entity.Product;
-import com.lend.productservice.entity.Product_;
 import com.lend.productservice.exception.APIException;
 import com.lend.productservice.exception.ResourceNotFoundException;
 import com.lend.productservice.mapper.CommodityMapper;
@@ -20,9 +18,8 @@ import com.lend.baseservice.payload.response.ResponseFactory;
 import com.lend.productserviceshare.payload.request.CommodityRequest;
 import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.productserviceshare.payload.response.ProductResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,7 +37,7 @@ public class CommodityServiceImpl implements CommodityService {
     private final ProductRepository productRepository;
     private final ResponseFactory responseFactory;
     private final ProductMapper productMapper;
-    private final EntityManager entityManager;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public ResponseEntity<BaseResponse<CommodityResponse>> create(CommodityRequest request) {
@@ -63,7 +60,7 @@ public class CommodityServiceImpl implements CommodityService {
         CustomUserDetail userDetail = (CustomUserDetail)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Commodity commodity = commodityRepository.findByIdAndOwner(id, userDetail.getId())
+        Commodity commodity = commodityRepository.findByIdAndUserId(id, userDetail.getId())
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
         Product product = productService.update(commodity.getProduct(), request.getProductRequest());
 
@@ -76,8 +73,8 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public ResponseEntity<BaseResponse<CommodityResponse>> getById(String id) {
-        Commodity commodity = commodityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Commodity", "id", id));
+        Commodity commodity = commodityRepository.findByIdAndIsActive(id, Status.ACTIVE)
+                .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", id));
 
         return responseFactory.success("Thông tin sản phẩm", mappingResponse(commodity));
     }
@@ -85,7 +82,7 @@ public class CommodityServiceImpl implements CommodityService {
     @Override
     @Transactional
     public ResponseEntity<BaseResponse<String>> deleteById(String id) {
-        Commodity commodity = commodityRepository.findByIdAndStatus(id, Status.ACTIVE)
+        Commodity commodity = commodityRepository.findByIdAndIsActive(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", id));
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -93,30 +90,38 @@ public class CommodityServiceImpl implements CommodityService {
             return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Không được phép truy cập", null);
         }
 
-        commodityRepository.delete(commodity);
-        productRepository.delete(commodity.getProduct());
+        commodity.setIsActive(Status.INACTIVE);
+        commodity.getProduct().setIsActive(Status.INACTIVE);
+        commodityRepository.save(commodity);
+        productRepository.save(commodity.getProduct());
         return responseFactory.success("Xóa thành công", "Xóa thành công");
     }
 
     @Override
     @Transactional
     public ResponseEntity<BaseResponse<CommodityResponse>> restore(String id) {
-        Commodity commodity = commodityRepository.findByIdAndStatus(id, Status.INACTIVE)
+        Commodity commodity = commodityRepository.findByIdAndIsActive(id, Status.INACTIVE)
                 .orElseThrow(() -> new APIException(HttpStatus.BAD_REQUEST, "Mặt hàng đang online hoặc không tồn tại"));
 
         commodity.setIsActive(Status.ACTIVE);
-        entityManager.persist(commodity);
+        commodityRepository.save(commodity);
 
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Product> criteriaQuery = criteriaBuilder.createQuery(Product.class);
+//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<Product> criteriaQuery = criteriaBuilder.createQuery(Product.class);
+//
+//        Root<Product> root = criteriaQuery.from(Product.class);
+//        Join<Product, Commodity> commodityJoin = root.join(Product_.commodity, JoinType.INNER);
+//        criteriaQuery.where(criteriaBuilder.equal(commodityJoin.get(Commodity_.ID), id));
+//
+//
+//
+//        Product product = entityManager.createQuery(criteriaQuery).getSingleResult();
+//        product.setIsActive(Status.ACTIVE);
+//        entityManager.persist(product);
 
-        Root<Product> root = criteriaQuery.from(Product.class);
-        Join<Product, Commodity> commodityJoin = root.join(Product_.commodity, JoinType.INNER);
-        criteriaQuery.where(criteriaBuilder.equal(commodityJoin.get(Commodity_.ID), id));
-
-        Product product = entityManager.createQuery(criteriaQuery).getSingleResult();
-        product.setIsActive(Status.ACTIVE);
-        entityManager.persist(product);
+        Product product1 = commodity.getProduct();
+        product1.setIsActive(Status.ACTIVE);
+        productRepository.save(product1);
 
         return responseFactory.success("Khôi phục thành công", mappingResponse(commodity));
     }

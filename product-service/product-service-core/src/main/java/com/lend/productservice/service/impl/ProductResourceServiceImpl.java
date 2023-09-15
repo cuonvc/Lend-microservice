@@ -1,5 +1,6 @@
 package com.lend.productservice.service.impl;
 
+import com.lend.productservice.repository.custom.ResourceCustomRepository;
 import com.lend.productservice.service.ProductResourceService;
 import com.lend.baseservice.constant.ConstantVariable;
 import com.lend.productservice.entity.Product;
@@ -18,13 +19,14 @@ import java.util.List;
 public class ProductResourceServiceImpl implements ProductResourceService {
 
     private final ProductResourceRepository resourceRepository;
+    private final ResourceCustomRepository resourceCustomRepository;
 
     @Override
     public List<ProductResource> initResources(Product product) {
         List<ProductResource> resources = new ArrayList<>();
         for (int i = 1; i < 6; i++) {
             ProductResource resource = new ProductResource();
-            resource.setProduct(product);
+            resource.setProductId(product.getId());
             resources.add(resourceRepository.save(resource));
         }
 

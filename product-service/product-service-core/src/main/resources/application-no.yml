@@ -1,0 +1,32 @@
+server:
+  port: 8082
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: PRODUCT-SERVICE
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/lend
+
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+  cloud:
+    function:
+      definition: productImageProcess
+    stream:
+      bindings:
+        productImageProcess-in-0:
+          destination: product-image-response
+          content-type: application/json
+      kafka:
+        binder:
+          brokers: localhost:9092
+
+    compatibility-verifier:
+      enabled: false

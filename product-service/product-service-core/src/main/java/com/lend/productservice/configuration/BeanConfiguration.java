@@ -1,11 +1,10 @@
 package com.lend.productservice.configuration;
 
 import com.lend.baseservice.payload.response.ResponseFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -20,5 +19,10 @@ public class BeanConfiguration {
     @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public Query query() {
+        return new Query();
     }
 }

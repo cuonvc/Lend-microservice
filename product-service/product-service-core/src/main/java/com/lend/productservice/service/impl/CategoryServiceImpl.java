@@ -3,6 +3,7 @@ package com.lend.productservice.service.impl;
 import com.lend.productservice.entity.Category;
 import com.lend.productservice.mapper.CategoryMapper;
 import com.lend.productservice.repository.CategoryRepository;
+import com.lend.productservice.repository.custom.CategoryCustomRepository;
 import com.lend.productservice.service.CategoryService;
 import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.baseservice.payload.response.BaseResponse;
@@ -12,10 +13,7 @@ import com.lend.productservice.exception.ResourceNotFoundException;
 import com.lend.productserviceshare.payload.CategoryDto;
 import com.lend.productserviceshare.payload.response.CategoryResponse;
 import com.lend.productserviceshare.payload.response.PageResponseCategory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Filter;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ResponseFactory responseFactory;
-    private final EntityManager entityManager;
+    private final CategoryCustomRepository categoryCustomRepository;
 
     @Override
     public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto dto) {
@@ -69,13 +68,13 @@ public class CategoryServiceImpl implements CategoryService {
     private Category validateCategory(String field, String value) {
         return switch (field) {
             case "name" -> {
-                if (categoryRepository.findByName(value).isPresent()) {
+                if (categoryRepository.findByNameAndIsActive(value, Status.ACTIVE).isPresent()) {
                     throw new APIException(HttpStatus.BAD_REQUEST, "Category '" + value + "' đã tồn tại hoặc tên không hợp lệ");
                 }
                 yield null;
             }
 
-            case "id" -> categoryRepository.findByIdAndStatus(value, Status.ACTIVE)
+            case "id" -> Optional.ofNullable(categoryCustomRepository.findByIdAndStatus(value, Status.ACTIVE))
                     .orElseThrow(() -> new ResourceNotFoundException("Category", "id", value));
 
             default -> throw new APIException(HttpStatus.BAD_REQUEST, "Lỗi không xác định, liên hệ Admin");
@@ -93,7 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Set<CategoryResponse> getResponseWithChildren(String parentId) {
         Set<CategoryResponse> result = new HashSet<>();
-        categoryRepository.findByParentIdAndStatus(parentId, Status.ACTIVE)
+        categoryCustomRepository.findByParentIdAndStatus(parentId, Status.ACTIVE)
                 .forEach(category -> {
                     CategoryResponse response = categoryMapper.entityToResponse(category);
                     fetchChildCategory(response);
@@ -105,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void fetchChildCategory(CategoryResponse response) {
         Set<CategoryResponse> children = new HashSet<>();
-        categoryRepository.findByParentIdAndStatus(response.getId(), Status.ACTIVE)
+        categoryCustomRepository.findByParentIdAndStatus(response.getId(), Status.ACTIVE)
                 .forEach(category -> {
                     CategoryResponse childResponse = categoryMapper.entityToResponse(category);
                     fetchChildCategory(childResponse);
@@ -123,13 +122,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Session session = entityManager.unwrap(Session.class);
-        Filter filter1 = session.enableFilter("deletedCategoryFilter");
-        filter1.setParameter("status", Status.ACTIVE.toString());
-
-        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
-        session.disableFilter("deletedCategoryFilter");
-        session.close();
+        Page<Category> categories = categoryRepository.findByParentIdAndIsActive(pageable, Status.ACTIVE);
         return responseFactory.success("Success", paging(categories));
     }
 
@@ -140,7 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> categories = categoryRepository.findAllByRoot(pageable);
+        Page<Category> categories = categoryRepository.findByParentId(pageable);
 
         return responseFactory.success("Success", paging(categories));
     }
