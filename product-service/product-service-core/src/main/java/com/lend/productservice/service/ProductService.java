@@ -1,14 +1,16 @@
 package com.lend.productservice.service;
 
+import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
 import com.lend.baseservice.payload.response.BaseResponse;
+import com.lend.productservice.entity.ProductResource;
 import com.lend.productserviceshare.payload.request.ProductRequest;
 import com.lend.productserviceshare.payload.response.PageResponseProduct;
 import com.lend.productserviceshare.payload.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-    Product create(ProductRequest request);
+    Product create(Commodity commodity, ProductRequest request);
 
     Product update(Product product, ProductRequest request);
 

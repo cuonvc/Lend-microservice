@@ -32,6 +32,7 @@ public class CommodityRequest {
     @NotNull
     private Double standardPrice;
 
+    @NotNull
     private Integer remaining;
 
     @NotNull

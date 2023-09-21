@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Document("commodity")
 @Getter
@@ -76,4 +78,7 @@ public class Commodity {
 
     @Field("product")
     private Product product;
+
+    @Field("serial_numbers")
+    private Set<String> serialNumbers = new HashSet<>();
 }

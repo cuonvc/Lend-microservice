@@ -2,6 +2,7 @@ package com.lend.productservice.repository;
 
 import com.lend.productservice.entity.Commodity;
 import com.lend.baseservice.constant.enumerate.Status;
+import com.lend.productservice.entity.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,6 @@ public interface CommodityRepository extends MongoRepository<Commodity, String> 
     Optional<Commodity> findByIdAndIsActive(String id, Status status);
 
     Optional<Commodity> findByIdAndUserId(String id, String userId);
+
+    Optional<Commodity> findByProduct(Product product);
 }

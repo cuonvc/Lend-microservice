@@ -1,11 +1,12 @@
 package com.lend.productservice.service.impl;
 
 import com.lend.productservice.entity.Category;
+import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
 import com.lend.productservice.mapper.ProductMapper;
 import com.lend.productservice.repository.CategoryRepository;
 import com.lend.productservice.repository.ProductRepository;
-import com.lend.productservice.repository.custom.CategoryCustomRepository;
+import com.lend.productservice.service.CommodityService;
 import com.lend.productservice.service.ProductResourceService;
 import com.lend.productservice.service.ProductService;
 import com.lend.baseservice.constant.enumerate.Status;
@@ -44,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     private static final String THUMB = "imageUrl";
 
     private final ProductRepository productRepository;
-    private final CategoryCustomRepository categoryCustomRepository;
+//    private final CategoryCustomRepository categoryCustomRepository;
     private final CategoryRepository categoryRepository;
     private final ProductResourceService resourceService;
     private final ProductMapper productMapper;
@@ -53,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product create(ProductRequest request) {
+    public Product create(Commodity commodity, ProductRequest request) {
 
         Set<Category> categories = request.getCategoryIds().stream()
                 .map(categoryId -> categoryRepository.findByIdAndIsActive(categoryId, Status.ACTIVE)
@@ -62,9 +63,14 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
+        product.setCommodityId(commodity.getId());
         productRepository.save(product);
-        handleMapResource(request, product, resourceService.initResources(product));
 
+        List<ProductResource> resources = resourceService.initResources(product);
+        handleMapResource(request, product, resources);
+
+        product.setResources(new HashSet<>(resources));
+        product.getResources().forEach(resource -> resource.setImageUrl(""));
         return productRepository.save(product);
     }
 

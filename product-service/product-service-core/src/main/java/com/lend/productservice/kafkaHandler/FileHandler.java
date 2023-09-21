@@ -1,7 +1,9 @@
 package com.lend.productservice.kafkaHandler;
 
+import com.lend.productservice.service.CommodityService;
 import com.lend.productservice.service.ProductResourceService;
 import com.lend.baseservice.payload.response.FileObjectResponse;
+import com.lend.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,8 @@ import java.util.function.Consumer;
 public class FileHandler {
 
     private final ProductResourceService resourceService;
+    private final ProductService productService;
+    private final CommodityService commodityService;
 
     @Bean
     public Consumer<Message<FileObjectResponse>> productImageProcess() {

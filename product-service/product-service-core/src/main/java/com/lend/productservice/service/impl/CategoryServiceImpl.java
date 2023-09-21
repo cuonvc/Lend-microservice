@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
                 yield null;
             }
 
-            case "id" -> Optional.ofNullable(categoryCustomRepository.findByIdAndStatus(value, Status.ACTIVE))
+            case "id" -> categoryRepository.findByIdAndIsActive(value, Status.ACTIVE)
                     .orElseThrow(() -> new ResourceNotFoundException("Category", "id", value));
 
             default -> throw new APIException(HttpStatus.BAD_REQUEST, "Lỗi không xác định, liên hệ Admin");
@@ -92,7 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Set<CategoryResponse> getResponseWithChildren(String parentId) {
         Set<CategoryResponse> result = new HashSet<>();
-        categoryCustomRepository.findByParentIdAndStatus(parentId, Status.ACTIVE)
+        categoryRepository.findByParentIdAndIsActive(parentId, Status.ACTIVE)
                 .forEach(category -> {
                     CategoryResponse response = categoryMapper.entityToResponse(category);
                     fetchChildCategory(response);
@@ -104,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void fetchChildCategory(CategoryResponse response) {
         Set<CategoryResponse> children = new HashSet<>();
-        categoryCustomRepository.findByParentIdAndStatus(response.getId(), Status.ACTIVE)
+        categoryRepository.findByParentIdAndIsActive(response.getId(), Status.ACTIVE)
                 .forEach(category -> {
                     CategoryResponse childResponse = categoryMapper.entityToResponse(category);
                     fetchChildCategory(childResponse);
@@ -122,7 +122,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Category> categories = categoryRepository.findByParentIdAndIsActive(pageable, Status.ACTIVE);
+        Page<Category> categories = categoryRepository.findAllByIsActive(pageable, Status.ACTIVE);
         return responseFactory.success("Success", paging(categories));
     }
 
@@ -133,7 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Category> categories = categoryRepository.findByParentId(pageable);
+        Page<Category> categories = categoryRepository.findAll(pageable);
 
         return responseFactory.success("Success", paging(categories));
     }

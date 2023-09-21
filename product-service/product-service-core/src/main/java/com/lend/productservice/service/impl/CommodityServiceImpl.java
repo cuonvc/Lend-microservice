@@ -3,6 +3,7 @@ package com.lend.productservice.service.impl;
 import com.lend.productservice.configuration.CustomUserDetail;
 import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
+import com.lend.productservice.entity.ProductResource;
 import com.lend.productservice.exception.APIException;
 import com.lend.productservice.exception.ResourceNotFoundException;
 import com.lend.productservice.mapper.CommodityMapper;
@@ -26,6 +27,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 @Service
 @RequiredArgsConstructor
 public class CommodityServiceImpl implements CommodityService {
@@ -41,12 +50,14 @@ public class CommodityServiceImpl implements CommodityService {
 
     @Override
     public ResponseEntity<BaseResponse<CommodityResponse>> create(CommodityRequest request) {
-        Product product = productService.create(request.getProductRequest());
-
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Commodity commodity = commodityMapper.requestToEntity(request);
+        commodity = commodityRepository.save(commodity);
+
+        Product product = productService.create(commodity, request.getProductRequest());
         commodity.setUserId(userDetail.getId());
         commodity.setProduct(product);
+        commodity.setSerialNumbers(generateUUIDSet(request.getRemaining()));
         CommodityResponse response = commodityMapper
                 .entityToResponse(commodityRepository
                         .save(commodity));
@@ -69,6 +80,12 @@ public class CommodityServiceImpl implements CommodityService {
         response.setProductResponse(productMapper.entityToResponse(product));
 
         return responseFactory.success("Cập nhật thành công", response);
+    }
+
+    private Set<String> generateUUIDSet(int size) {
+        return IntStream.range(0, size)
+                .mapToObj(i -> UUID.randomUUID().toString())
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -47,4 +48,6 @@ public class CommodityResponse {
     private Double depositAmount;
 
     private ProductResponse productResponse;
+
+    private Set<String> serialNumbers;
 }

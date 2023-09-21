@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,9 +17,9 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
 
     Optional<Category> findByNameAndIsActive(String name, Status status);
 
-    Page<Category> findByParentId(Pageable pageable);
+    Page<Category> findAllByIsActive(Pageable pageable, Status status);
 
-    Page<Category> findByParentIdAndIsActive(Pageable pageable, Status status);
+    List<Category> findByParentIdAndIsActive(String parentId, Status status);
 
     Optional<Category> findByIdAndIsActive(String id, Status status);
 

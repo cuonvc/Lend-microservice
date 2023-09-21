@@ -1,6 +1,7 @@
 package com.lend.productservice.service;
 
 import com.lend.baseservice.payload.response.BaseResponse;
+import com.lend.productservice.entity.Product;
 import com.lend.productserviceshare.payload.request.CommodityRequest;
 import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.productserviceshare.payload.response.PageResponseCommodity;

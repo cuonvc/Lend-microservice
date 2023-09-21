@@ -32,6 +32,9 @@ public class Product {
     @Field("is_active")
     private Status isActive = Status.ACTIVE;
 
+    @Field("commodity_id")
+    private String commodityId;
+
     @Field("resources")
     private Set<ProductResource> resources = new HashSet<>();
 
