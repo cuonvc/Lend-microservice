@@ -1,152 +1,146 @@
-# version: "3.8"
+ version: "3.8"
 
-# networks:
-#  lend-network:
+ networks:
+  lend-network:
 
-# services:
-#  eureka-server:
-#    image: cuonvc/eureka-server:v1.0
-#    container_name: eureka-server
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8761:8761"
+ services:
+  eureka-server:
+    image: cuonvc/eureka-server:v1.0
+    container_name: eureka-server
+    networks:
+      - lend-network
+    ports:
+      - "8761:8761"
 
-#  zookeeper:
-#    image: wurstmeister/zookeeper
-#    container_name: zookeeper
-#    networks:
-#      - lend-network
-#    ports:
-#      - "2181:2181"
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    networks:
+      - lend-network
+    ports:
+      - "2181:2181"
 
-#  kafka:
-#    image: wurstmeister/kafka
-#    container_name: kafka
-#    networks:
-#      - lend-network
-#    depends_on:
-#      - zookeeper
-#    ports:
-#      - "9092:9092"
-#    links:
-#      - zookeeper
-#    environment:
-#      KAFKA_ADVERTISED_HOST_NAME: kafka
-#      #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    networks:
+      - lend-network
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
-#  redis:
-#    container_name: redis
-#    image: "redis"
-#    networks:
-#      - lend-network
-#    ports:
-#      - "6379:6379"
-#    volumes:
-#      - ./redis-config/redis.conf:/tmp/redis.conf
-#    command: redis-server
+  redis:
+    container_name: redis
+    image: "redis"
+    networks:
+      - lend-network
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-config/redis.conf:/tmp/redis.conf
+    command: redis-server
 
-#  api-gateway:
-#    container_name: api-gateway
-#    image: cuonvc/api-gateway:v1.0
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8080:8080"
+  api-gateway:
+    container_name: api-gateway
+    image: cuonvc/api-gateway:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8080:8080"
 
-#  auth-service:
-#    container_name: auth-service
-#    image: cuonvc/auth-service:v1.0
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8081:8081"
-#    depends_on:
-#      - database-auth
-#      - redis
-#      - kafka
-#      - zookeeper
-#    links:
-#      - redis
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://database-auth:5432/auth-db
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: password
-#      REDIS_HOST: redis
-#      REDIS_PORT: 6379
+  auth-service:
+    container_name: auth-service
+    image: cuonvc/auth-service:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8081:8081"
+    depends_on:
+      - database-auth
+      - redis
+      - kafka
+      - zookeeper
+    links:
+      - redis
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-auth:5432/auth-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
 
-#  product-service:
-#    container_name: product-service
-#    image: cuonvc/product-service:v1.0
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8082:8082"
-#    depends_on:
-#      - database-product
-#      - kafka
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://database-product:5432/product-db
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: password
+  product-service:
+    container_name: product-service
+    image: cuonvc/product-service:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8082:8082"
+    depends_on:
+      - database-product
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATA_MONGODB_URI: mongodb://database-product:27017/product-db
 
-#  mail-service:
-#    container_name: mail-service
-#    image: cuonvc/mail-service:v1.0
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8084:8084"
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-#      REDIS_HOST: redis
-#      REDIS_PORT: 6379
-#    depends_on:
-#      - kafka
-#      - zookeeper
+  mail-service:
+    container_name: mail-service
+    image: cuonvc/mail-service:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - kafka
+      - zookeeper
 
-#  resource-service:
-#    container_name: resource-service
-#    image: cuonvc/resource-service:v1.0
-#    networks:
-#      - lend-network
-#    ports:
-#      - "8083:8083"
-#    environment:
-#      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-#    depends_on:
-#      - kafka
+  resource-service:
+    container_name: resource-service
+    image: cuonvc/resource-service:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
 
-#  database-auth:
-#    image: postgres:latest
-#    container_name: database-auth
-#    #    restart: always
-#    networks:
-#      - lend-network
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: password
-#      POSTGRES_DB: auth-db
-#    ports:
-#      - "5432:5432"
+  database-auth:
+    image: postgres:latest
+    container_name: database-auth
+    #    restart: always
+    networks:
+      - lend-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth-db
+    ports:
+      - "5432:5432"
 
-#  database-product:
-#    image: postgres:latest
-#    container_name: database-product
-#    networks:
-#      - lend-network
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: password
-#      POSTGRES_DB: product-db
-#    ports:
-#      - "5433:5433"
+  database-product:
+      image: mongo:6.0
+      container_name: database-product
+      networks:
+        - lend-network
+      ports:
+        - "27017:27017"
 
-# volumes:
-#  redis_data:
-# #networks:
-# #  lendo:
-# #    driver: bridge
+ volumes:
+  redis_data:
+ #networks:
+ #  lendo:
+ #    driver: bridge

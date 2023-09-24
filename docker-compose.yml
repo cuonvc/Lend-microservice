@@ -48,14 +48,14 @@ services:
       - ./redis-config/redis.conf:/tmp/redis.conf
     command: redis-server
 
-  base-service:
-    image: base-service
-    networks:
-      - lend-network
-    build: ./base-service/
-    container_name: base-service
-    ports:
-      - "8088:8088"
+#  base-service:
+#    image: base-service
+#    networks:
+#      - lend-network
+#    build: ./base-service/
+#    container_name: base-service
+#    ports:
+#      - "8088:8088"
 
   api-gateway:
     container_name: api-gateway
@@ -65,8 +65,6 @@ services:
     build: ./api-gateway
     ports:
       - "8080:8080"
-    depends_on:
-      - base-service
 
 
   auth-service:
@@ -79,7 +77,6 @@ services:
       - "8081:8081"
     depends_on:
       - database-auth
-      - base-service
       - redis
       - kafka
       - zookeeper
@@ -104,12 +101,9 @@ services:
     depends_on:
       - database-product
       - kafka
-      - base-service
     environment:
       SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-product:5432/product-db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATA_MONGODB_URI: mongodb://database-product:27017/product-db
 
   mail-service:
     container_name: mail-service
@@ -154,16 +148,16 @@ services:
       - "5432:5432"
 
   database-product:
-    image: postgres:latest
+    image: mongo:6.0
     container_name: database-product
     networks:
       - lend-network
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: product-db
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_DB: product-db
     ports:
-      - "5433:5433"
+      - "27017:27017"
 
 volumes:
   redis_data:
