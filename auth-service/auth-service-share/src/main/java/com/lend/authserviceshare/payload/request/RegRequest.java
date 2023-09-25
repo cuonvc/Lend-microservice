@@ -17,13 +17,13 @@ public class RegRequest implements Serializable {
     @NotNull
     @NotBlank(message = "Firt name can't blank")
     @NotEmpty
-    @Size(min = 3, max = 6, message = "First name must be minimum 3 characters and maximum 6 characters")
+    @Size(min = 1, max = 6, message = "First name must be minimum 3 characters and maximum 6 characters")
     private String firstName;
 
     @NotNull
     @NotBlank(message = "Last name can't blank")
     @NotEmpty
-    @Size(min = 3, max = 6, message = "Last name must be minimum 3 characters and maximum 6 characters")
+    @Size(min = 1, max = 6, message = "Last name must be minimum 3 characters and maximum 6 characters")
     private String lastName;
 
     @Email
