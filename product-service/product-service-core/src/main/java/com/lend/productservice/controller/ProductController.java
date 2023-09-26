@@ -47,6 +47,18 @@ public class ProductController {
         return productService.findAll(pageNo, pageSize, sortBy, sortDir);
     }
 
+    @GetMapping("/owner")
+    public ResponseEntity<BaseResponse<PageResponseProduct>> getByOwner(@RequestParam(value = "pageNo",
+                                                                                defaultValue = PageConstant.PAGE_NO, required = false) Integer pageNo,
+                                                                        @RequestParam(value = "pageSize",
+                                                                                defaultValue = PageConstant.PAGE_SIZE, required = false) Integer pageSize,
+                                                                        @RequestParam(value = "sortBy",
+                                                                                defaultValue = PageConstant.SORT_BY, required = false) String sortBy,
+                                                                        @RequestParam(value = "sortDir",
+                                                                                defaultValue = PageConstant.SORT_DIR, required = false) String sortDir) {
+        return productService.findAllByOwner(pageNo, pageSize, sortBy, sortDir);
+    }
+
 //    @GetMapping("")
 //    public ResponseEntity<BaseResponse<PageResponseProduct>> getAll(@RequestParam(value = "owner") String id,
 //                                                                    ) {

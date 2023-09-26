@@ -17,6 +17,8 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
     Page<Product> findByIsActive(Pageable pageable, Status status);
 
+    Page<Product> findByUserId(Pageable pageable, String userId, Status status);
+
     Optional<Product> findByResources(ProductResource productResource);
 
 //    @Query("UPDATE Product p SET p.isActive = :status WHERE p.commodity.id = :id")

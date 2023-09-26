@@ -21,4 +21,5 @@ public class ProductResponse {
     private List<ProductResourceResponse> resources;
     private String brand;
     private Set<CategoryDto> categories;
+    private String commodityId;
 }

@@ -1,5 +1,6 @@
 package com.lend.productservice.service.impl;
 
+import com.lend.productservice.configuration.CustomUserDetail;
 import com.lend.productservice.entity.Category;
 import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product create(Commodity commodity, ProductRequest request) {
+    public Product create(Commodity commodity, ProductRequest request, String userId) {
 
         Set<Category> categories = request.getCategoryIds().stream()
                 .map(categoryId -> categoryRepository.findByIdAndIsActive(categoryId, Status.ACTIVE)
@@ -64,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
         product.setCommodityId(commodity.getId());
+        product.setUserId(userId);
         productRepository.save(product);
 
         List<ProductResource> resources = resourceService.initResources(product);
@@ -157,7 +160,21 @@ public class ProductServiceImpl implements ProductService {
         return responseFactory.success("Success", paging(productPage));
     }
 
-//    @Override
+    @Override
+    public ResponseEntity<BaseResponse<PageResponseProduct>> findAllByOwner(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
+        CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Product> productPage = productRepository.findByUserId(pageable, userDetail.getId(), Status.ACTIVE);
+
+        return responseFactory.success("Success", paging(productPage));
+    }
+
+    //    @Override
 //    public ResponseEntity<BaseResponse<String>> delete(String id) {
 //
 //        Product product = productRepository.findById(id)

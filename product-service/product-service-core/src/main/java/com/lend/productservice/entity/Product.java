@@ -35,6 +35,9 @@ public class Product {
     @Field("commodity_id")
     private String commodityId;
 
+    @Field("user_id")
+    private String userId;
+
     @Field("resources")
     private Set<ProductResource> resources = new HashSet<>();
 

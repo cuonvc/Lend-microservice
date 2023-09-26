@@ -51,7 +51,7 @@ public class CommodityServiceImpl implements CommodityService {
         Commodity commodity = commodityMapper.requestToEntity(request);
         commodity = commodityRepository.save(commodity);
 
-        Product product = productService.create(commodity, request.getProductRequest());
+        Product product = productService.create(commodity, request.getProductRequest(), userDetail.getId());
         commodity.setUserId(userDetail.getId());
         commodity.setProduct(product);
         commodity.setSerialNumbers(generateUUIDSet(request.getSerialNumbers()));

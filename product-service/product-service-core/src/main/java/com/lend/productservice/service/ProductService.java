@@ -10,7 +10,7 @@ import com.lend.productserviceshare.payload.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-    Product create(Commodity commodity, ProductRequest request);
+    Product create(Commodity commodity, ProductRequest request, String userId);
 
     Product update(Product product, ProductRequest request);
 
@@ -19,7 +19,8 @@ public interface ProductService {
     ResponseEntity<BaseResponse<PageResponseProduct>> findAllByActive(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 
     ResponseEntity<BaseResponse<PageResponseProduct>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
-//
+
+    ResponseEntity<BaseResponse<PageResponseProduct>> findAllByOwner(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 //    ResponseEntity<BaseResponse<String>> delete(String id);
 //
 //    ResponseEntity<BaseResponse<ProductResponse>> restore(String id);
