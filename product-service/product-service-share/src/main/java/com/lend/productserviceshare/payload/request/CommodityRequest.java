@@ -63,5 +63,7 @@ public class CommodityRequest {
 
     private Double depositAmount;
 
+    @NotNull
+    @Size(min = 1, message = "Mặt hàng phải có ít nhất một sản phẩm!")
     private Set<String> serialNumbers;
 }
