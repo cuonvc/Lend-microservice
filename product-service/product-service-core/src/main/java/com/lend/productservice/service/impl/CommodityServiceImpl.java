@@ -27,10 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -57,7 +54,7 @@ public class CommodityServiceImpl implements CommodityService {
         Product product = productService.create(commodity, request.getProductRequest());
         commodity.setUserId(userDetail.getId());
         commodity.setProduct(product);
-        commodity.setSerialNumbers(generateUUIDSet(request.getRemaining()));
+        commodity.setSerialNumbers(generateUUIDSet(request.getSerialNumbers()));
         CommodityResponse response = commodityMapper
                 .entityToResponse(commodityRepository
                         .save(commodity));
@@ -82,9 +79,11 @@ public class CommodityServiceImpl implements CommodityService {
         return responseFactory.success("Cập nhật thành công", response);
     }
 
-    private Set<String> generateUUIDSet(int size) {
-        return IntStream.range(0, size)
-                .mapToObj(i -> UUID.randomUUID().toString())
+    private Set<String> generateUUIDSet(Set<String> serialNumbers) {
+        return serialNumbers.stream()
+//                .filter(Objects::isNull)
+                .map(seri -> Optional.ofNullable(seri)
+                        .orElse("s_" + UUID.randomUUID().toString().substring(0, 7)))
                 .collect(Collectors.toSet());
     }
 

@@ -81,4 +81,5 @@ public class Commodity {
 
     @Field("serial_numbers")
     private Set<String> serialNumbers = new HashSet<>();
+
 }

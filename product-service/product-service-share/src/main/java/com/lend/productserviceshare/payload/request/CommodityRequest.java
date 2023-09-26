@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -31,9 +32,6 @@ public class CommodityRequest {
 
     @NotNull
     private Double standardPrice;
-
-    @NotNull
-    private Integer remaining;
 
     @NotNull
     private LocalDateTime availableDate;
@@ -64,4 +62,6 @@ public class CommodityRequest {
     private boolean depositRequired;
 
     private Double depositAmount;
+
+    private Set<String> serialNumbers;
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class ProductRequest {
 
     @NotNull
-    @NotBlank(message = "Product name can't blank")
+    @NotBlank(message = "Tên sản phẩm không được để trống!")
     @NotEmpty
     private String name;
 
