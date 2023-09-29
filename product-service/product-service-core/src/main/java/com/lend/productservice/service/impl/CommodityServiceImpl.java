@@ -3,7 +3,6 @@ package com.lend.productservice.service.impl;
 import com.lend.productservice.configuration.CustomUserDetail;
 import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
-import com.lend.productservice.entity.ProductResource;
 import com.lend.productservice.exception.APIException;
 import com.lend.productservice.exception.ResourceNotFoundException;
 import com.lend.productservice.mapper.CommodityMapper;
@@ -19,6 +18,7 @@ import com.lend.baseservice.payload.response.ResponseFactory;
 import com.lend.productserviceshare.payload.request.CommodityRequest;
 import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.productserviceshare.payload.response.ProductResponse;
+import com.lend.productserviceshare.payload.response.SerialNumber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
@@ -29,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +46,11 @@ public class CommodityServiceImpl implements CommodityService {
     @Override
     public ResponseEntity<BaseResponse<CommodityResponse>> create(CommodityRequest request) {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!validateUnique(request.getSerialNumbers())) {
+            throw new APIException(HttpStatus.BAD_REQUEST, "Serial number không được trùng nhau");
+        }
+
         Commodity commodity = commodityMapper.requestToEntity(request);
         commodity = commodityRepository.save(commodity);
 
@@ -58,7 +61,7 @@ public class CommodityServiceImpl implements CommodityService {
         CommodityResponse response = commodityMapper
                 .entityToResponse(commodityRepository
                         .save(commodity));
-        response.setProductResponse(productMapper.entityToResponse(product));
+        response.setProduct(productMapper.entityToResponse(product));
 
         return responseFactory.success("Tạo thành công", response);
     }
@@ -74,16 +77,22 @@ public class CommodityServiceImpl implements CommodityService {
 
         commodityMapper.requestToEntity(request, commodity);
         CommodityResponse response = commodityMapper.entityToResponse(commodityRepository.save(commodity));
-        response.setProductResponse(productMapper.entityToResponse(product));
+        response.setProduct(productMapper.entityToResponse(product));
 
         return responseFactory.success("Cập nhật thành công", response);
     }
 
-    private Set<String> generateUUIDSet(Set<String> serialNumbers) {
+    private boolean validateUnique(List<String> serialNumber) {
+        Set<String> set = new HashSet<>(serialNumber);
+        return serialNumber.size() == set.size();
+    }
+
+    private Set<SerialNumber> generateUUIDSet(List<String> serialNumbers) {
         return serialNumbers.stream()
 //                .filter(Objects::isNull)
-                .map(seri -> Optional.ofNullable(seri)
-                        .orElse("s_" + UUID.randomUUID().toString().substring(0, 7)))
+                .map(seri -> new SerialNumber(Optional.ofNullable(seri)
+                            .orElse("s_" + UUID.randomUUID().toString().substring(0, 7)), Status.ACTIVE)
+                )
                 .collect(Collectors.toSet());
     }
 
@@ -146,7 +155,7 @@ public class CommodityServiceImpl implements CommodityService {
         CommodityResponse response = commodityMapper.entityToResponse(commodity);
         ProductResponse productResponse = productMapper.entityToResponse(commodity.getProduct());
         productResponse.setResources(productResourceService.getImageUrls(productResponse.getId()));
-        response.setProductResponse(productResponse);
+        response.setProduct(productResponse);
 
         return response;
     }

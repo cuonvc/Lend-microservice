@@ -4,8 +4,10 @@ import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.productserviceshare.enumerate.LendType;
 import com.lend.productserviceshare.enumerate.ProductState;
 import com.lend.productserviceshare.enumerate.TimeFrame;
+import com.lend.productserviceshare.payload.response.SerialNumber;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -80,6 +82,6 @@ public class Commodity {
     private Product product;
 
     @Field("serial_numbers")
-    private Set<String> serialNumbers = new HashSet<>();
+    private Set<SerialNumber> serialNumbers = new HashSet<>();
 
 }

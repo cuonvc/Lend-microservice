@@ -47,7 +47,7 @@ public class CommodityResponse {
 
     private Double depositAmount;
 
-    private ProductResponse productResponse;
+    private ProductResponse product;
 
-    private Set<String> serialNumbers;
+    private List<SerialNumber> serialNumbers;
 }

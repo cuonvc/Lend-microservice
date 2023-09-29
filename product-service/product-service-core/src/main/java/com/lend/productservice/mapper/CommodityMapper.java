@@ -37,7 +37,7 @@ public interface CommodityMapper {
     CommodityResponse entityToResponse(Commodity commodity);
 
     @Named("getRemaining")
-    static Integer getRemaining(Set<String> serialNumbers) {
+    static Integer getRemaining(List<String> serialNumbers) {
         return serialNumbers.size();
     }
 
