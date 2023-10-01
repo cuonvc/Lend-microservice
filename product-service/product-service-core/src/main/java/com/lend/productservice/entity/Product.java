@@ -1,5 +1,6 @@
 package com.lend.productservice.entity;
 
+import com.lend.authserviceshare.payload.response.UserResponse;
 import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.productserviceshare.enumerate.ProductState;
 import lombok.AllArgsConstructor;
@@ -35,8 +36,8 @@ public class Product {
     @Field("commodity_id")
     private String commodityId;
 
-    @Field("user_id")
-    private String userId;
+    @Field("user")
+    private UserResponse user;
 
     @Field("resources")
     private Set<ProductResource> resources = new HashSet<>();

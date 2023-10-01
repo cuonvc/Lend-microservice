@@ -1,5 +1,6 @@
 package com.lend.productserviceshare.payload.response;
 
+import com.lend.authserviceshare.payload.response.UserResponse;
 import com.lend.productserviceshare.payload.CategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,5 @@ public class ProductResponse {
     private String brand;
     private Set<CategoryDto> categories;
     private String commodityId;
+    private UserResponse user;
 }

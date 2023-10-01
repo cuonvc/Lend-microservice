@@ -50,4 +50,6 @@ public class CommodityResponse {
     private ProductResponse product;
 
     private List<SerialNumber> serialNumbers;
+
+    private String userId;
 }

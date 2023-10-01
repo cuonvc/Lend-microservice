@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/transaction")
 @RequiredArgsConstructor
-public class LenderController {
+public class LessorController {
 
     private final LenderService lenderService;
 

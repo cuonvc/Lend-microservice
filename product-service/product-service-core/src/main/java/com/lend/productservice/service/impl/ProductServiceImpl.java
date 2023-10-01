@@ -1,5 +1,6 @@
 package com.lend.productservice.service.impl;
 
+import com.lend.authserviceshare.payload.response.UserResponse;
 import com.lend.productservice.configuration.CustomUserDetail;
 import com.lend.productservice.entity.Category;
 import com.lend.productservice.entity.Commodity;
@@ -23,10 +24,12 @@ import com.lend.productserviceshare.payload.response.PageResponseProduct;
 import com.lend.productserviceshare.payload.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -35,6 +38,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ResponseFactory responseFactory;
     private final StreamBridge streamBridge;
+    private final RestTemplate restTemplate;
 
     @Override
     @Transactional
@@ -66,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
         product.setCommodityId(commodity.getId());
-        product.setUserId(userId);
+        product.setUser(getUserInfo(userId));
         productRepository.save(product);
 
         List<ProductResource> resources = resourceService.initResources(product);
@@ -75,6 +80,17 @@ public class ProductServiceImpl implements ProductService {
         product.setResources(new HashSet<>(resources));
         product.getResources().forEach(resource -> resource.setImageUrl(""));
         return productRepository.save(product);
+    }
+
+    private UserResponse getUserInfo(String userId) {
+        return Optional
+                .ofNullable(restTemplate.exchange(
+                        "http://AUTH-SERVICE/api/auth/account/" + userId,  //http or https???
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<BaseResponse<UserResponse>>() {}
+                ).getBody().getData())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
     @Override
