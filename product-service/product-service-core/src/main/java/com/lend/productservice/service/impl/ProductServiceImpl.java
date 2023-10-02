@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.requestToEntity(request);
         product.setCategories(categories);
         product.setCommodityId(commodity.getId());
-        product.setUser(getUserInfo(userId));
+        product.setUserId(userId);
         productRepository.save(product);
 
         List<ProductResource> resources = resourceService.initResources(product);
@@ -80,17 +80,6 @@ public class ProductServiceImpl implements ProductService {
         product.setResources(new HashSet<>(resources));
         product.getResources().forEach(resource -> resource.setImageUrl(""));
         return productRepository.save(product);
-    }
-
-    private UserResponse getUserInfo(String userId) {
-        return Optional
-                .ofNullable(restTemplate.exchange(
-                        "http://AUTH-SERVICE/api/auth/account/" + userId,  //http or https???
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<BaseResponse<UserResponse>>() {}
-                ).getBody().getData())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
     @Override
@@ -148,6 +137,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
         ProductResponse response = productMapper.entityToResponse(product);
         response.setResources(resourceService.getImageUrls(response.getId()));
+        response.setUser(getUserInfo(product.getUserId()));
 
         return responseFactory.success("Success", response);
     }
@@ -190,6 +180,17 @@ public class ProductServiceImpl implements ProductService {
         return responseFactory.success("Success", paging(productPage));
     }
 
+    private UserResponse getUserInfo(String userId) {
+        return Optional
+                .ofNullable(restTemplate.exchange(
+                        "http://AUTH-SERVICE/api/auth/account/" + userId,  //http or https???
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<BaseResponse<UserResponse>>() {}
+                ).getBody().getData())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    }
+
     //    @Override
 //    public ResponseEntity<BaseResponse<String>> delete(String id) {
 //
@@ -219,6 +220,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(product -> {
                     ProductResponse response = productMapper.entityToResponse(product);
                     response.setResources(resourceService.getImageUrls(response.getId()));
+                    response.setUser(getUserInfo(product.getUserId()));
                     return response;
                 })
                 .toList();

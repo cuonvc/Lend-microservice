@@ -58,10 +58,10 @@ public class CommodityServiceImpl implements CommodityService {
         commodity.setUserId(userDetail.getId());
         commodity.setProduct(product);
         commodity.setSerialNumbers(generateUUIDSet(request.getSerialNumbers()));
-        CommodityResponse response = commodityMapper
-                .entityToResponse(commodityRepository
-                        .save(commodity));
-        response.setProduct(productMapper.entityToResponse(product));
+        CommodityResponse response = mappingResponse(commodityRepository
+                .save(commodity));
+
+
 
         return responseFactory.success("Tạo thành công", response);
     }
