@@ -18,9 +18,9 @@ public class TransactionResponseRaw {
 
     private String id;
 
-    private String lenderId;
+    private String lessorId;
 
-    private String borrowerId;
+    private String lesseeId;
 
     private String productId;
 

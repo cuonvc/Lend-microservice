@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface LenderService {
+public interface LessorService {
 
     ResponseEntity<BaseResponse<TransactionResponseRaw>> acceptTransaction(String id, String action);
 

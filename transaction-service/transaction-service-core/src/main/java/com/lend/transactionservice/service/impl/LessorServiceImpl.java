@@ -16,7 +16,7 @@ import com.lend.transactionservice.response.TransactionResponseDetail;
 import com.lend.transactionservice.response.TransactionResponseRaw;
 import com.lend.transactionservice.response.TransactionResponseView;
 import com.lend.transactionservice.service.CommonTransactionService;
-import com.lend.transactionservice.service.LenderService;
+import com.lend.transactionservice.service.LessorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class LenderServiceImpl implements LenderService {
+public class LessorServiceImpl implements LessorService {
 
     private final TransactionRepository repository;
     private final ResponseFactory responseFactory;
@@ -38,7 +38,7 @@ public class LenderServiceImpl implements LenderService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> acceptTransaction(String id, String action) {
-        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwner(id, ClientRole.LENDER))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwner(id, ClientRole.LESSOR))
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
         switch (action) {
             case "ACCEPT" -> transaction.setAcceptedDate(LocalDateTime.now());
@@ -51,7 +51,7 @@ public class LenderServiceImpl implements LenderService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id) {
-        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LENDER))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LESSOR))
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         TransactionResponseDetail detail = commonTransactionService.convertEntityToDetail(transaction);
@@ -61,7 +61,7 @@ public class LenderServiceImpl implements LenderService {
     @Override
     public ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLender() {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<TransactionResponseView> transactions = repository.findByLender(userDetail.getId())
+        List<TransactionResponseView> transactions = repository.findAllByLessorId(userDetail.getId())
                 .stream().map(commonTransactionService::convertEntityToView)
                 .toList();
 

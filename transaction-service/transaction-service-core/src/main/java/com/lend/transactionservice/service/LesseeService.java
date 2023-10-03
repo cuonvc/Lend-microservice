@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface BorrowerService {
+public interface LesseeService {
 
     ResponseEntity<BaseResponse<TransactionResponseRaw>> initTransaction(TransactionRequest request);
 

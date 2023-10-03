@@ -1,5 +1,6 @@
 package com.lend.transactionservice.service.impl;
 
+import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.transactionservice.entity.Transaction;
 import com.lend.transactionservice.exception.APIException;
 import com.lend.transactionservice.service.CommonTransactionService;
@@ -36,7 +37,7 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
     public Transaction authorizeOwner(String id, ClientRole clientRole) {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
+        Transaction transaction = repository.findByIdAndIsActive(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Giao dịch", "id", id));
 
         if (!getClientRequestId(clientRole, transaction).equals(userDetail.getId())) {
@@ -47,7 +48,7 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
 
     @Override
     public Transaction authorizeOwnerAndManager(String id, ClientRole clientRole) {
-        Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
+        Transaction transaction = repository.findByIdAndIsActive(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Giao dịch", "id", id));
 
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -61,10 +62,10 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
     }
 
     private String getClientRequestId(ClientRole clientRole, Transaction transaction) {
-        if (clientRole.equals(ClientRole.BORROWER)) {
-            return transaction.getBorrowerId();
-        } else if (clientRole.equals(ClientRole.LENDER)) {
-            return transaction.getLenderId();
+        if (clientRole.equals(ClientRole.LESSEE)) {
+            return transaction.getLesseeId();
+        } else if (clientRole.equals(ClientRole.LESSOR)) {
+            return transaction.getLessorId();
         } else {
             throw new APIException(HttpStatus.UNAUTHORIZED, "Không biết tại sao lỗi, vui lòng liên hệ Admin :D");
         }
@@ -73,18 +74,18 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
     @Override
     public TransactionResponseView convertEntityToView(Transaction transaction) {
         TransactionResponseView view = transactionMapper.entityToView(transaction);
-        view.setBorrowerName(getUserName(transaction.getBorrowerId()));
-        view.setLenderName(getUserName(transaction.getLenderId()));
-        view.setProductName(getProductInfo(transaction.getProductId()).getName());
+        view.setLesseeName(getUserName(transaction.getLesseeId()));
+        view.setLessorName(getUserName(transaction.getLessorId()));
+        view.setProductName(getProductInfo(transaction.getCommodityId()).getProduct().getName());
         return view;
     }
 
     @Override
     public TransactionResponseDetail convertEntityToDetail(Transaction transaction) {
         TransactionResponseDetail detail = transactionMapper.entityToDetail(transaction);
-        detail.setBorrower(getUserInfo(transaction.getBorrowerId()));
-        detail.setLender(getUserInfo(transaction.getLenderId()));
-        detail.setProduct(getProductInfo(transaction.getProductId()));
+        detail.setLessee(getUserInfo(transaction.getLesseeId()));
+        detail.setLessor(getUserInfo(transaction.getLessorId()));
+        detail.setProduct(getProductInfo(transaction.getCommodityId()).getProduct());
         return detail;
     }
 
@@ -104,14 +105,14 @@ public class CommonTransactionServiceImpl implements CommonTransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
-    private ProductResponse getProductInfo(String id) {
+    private CommodityResponse getProductInfo(String id) {
         return Optional
                 .ofNullable(restTemplate.exchange(
-                        "http://PRODUCT-SERVICE/api/internal/product/" + id,
+                        "http://PRODUCT-SERVICE/api/internal/commodity/" + id,
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<BaseResponse<ProductResponse>>() {}
+                        new ParameterizedTypeReference<BaseResponse<CommodityResponse>>() {}
                 ).getBody().getData())
-                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", id));
     }
 }

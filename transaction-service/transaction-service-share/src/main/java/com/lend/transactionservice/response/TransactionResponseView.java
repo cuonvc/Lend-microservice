@@ -18,11 +18,11 @@ public class TransactionResponseView {
 
     private String id;
 
-    private String lenderName;
+    private String lessorName;
 
-    private String borrowerName;
+    private String lesseeName;
 
-    private String borrowerAddress;
+    private String lesseeAddress;
 
     private String productName;
 

@@ -1,0 +1,6 @@
+EUREKA_CLIENT_HOST: localhost
+EUREKA_CLIENT_PORT: 8761
+
+DB_HOST: localhost
+DB_PORT: 27017
+DB_NAME: lend_history

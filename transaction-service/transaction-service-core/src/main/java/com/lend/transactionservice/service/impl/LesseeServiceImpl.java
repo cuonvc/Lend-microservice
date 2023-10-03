@@ -1,5 +1,6 @@
 package com.lend.transactionservice.service.impl;
 
+import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.transactionservice.entity.Transaction;
 import com.lend.transactionservice.exception.APIException;
 import com.lend.transactionservice.mapper.TransactionMapper;
@@ -19,7 +20,7 @@ import com.lend.transactionservice.repository.TransactionRepository;
 import com.lend.transactionservice.response.TransactionResponseDetail;
 import com.lend.transactionservice.response.TransactionResponseRaw;
 import com.lend.transactionservice.response.TransactionResponseView;
-import com.lend.transactionservice.service.BorrowerService;
+import com.lend.transactionservice.service.LesseeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class BorrowerServiceImpl implements BorrowerService {
+public class LesseeServiceImpl implements LesseeService {
 
     private final TransactionRepository repository;
     private final RestTemplate restTemplate;
@@ -50,7 +51,7 @@ public class BorrowerServiceImpl implements BorrowerService {
         CustomUserDetail owner = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Transaction transaction = new Transaction();
-        transaction.setBorrowerId(owner.getId());
+        transaction.setLesseeId(owner.getId());
         mapTransaction(transaction, request);
 
         return responseFactory.success("Success",
@@ -61,16 +62,16 @@ public class BorrowerServiceImpl implements BorrowerService {
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> editTransaction(String id, TransactionRequest request) {
         CustomUserDetail owner = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Transaction transaction = repository.findByIdAndStatus(id, Status.ACTIVE)
+        Transaction transaction = repository.findByIdAndIsActive(id, Status.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Giao dịch", "id", id));
 
-        if (!owner.getId().equals(transaction.getBorrowerId())) {
+        if (!owner.getId().equals(transaction.getLesseeId())) {
             return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Không được phép truy cập", null);
         } else if (transaction.getAcceptedDate() != null) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể chỉnh sửa khi người cho thuê đã tiếp nhận giao dịch", null);
         }
 
-        transaction.setBorrowerId(owner.getId());
+//        transaction.setLesseeId(owner.getId());
         mapTransaction(transaction, request);
 
         return responseFactory.success("Success",
@@ -79,7 +80,7 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> cancelTransaction(String id) {
-        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LESSEE))
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         if (transaction.getAcceptedDate() != null) {
@@ -93,7 +94,7 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     @Override
     public ResponseEntity<BaseResponse<String>> removeById(String id) {
-        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LESSEE))
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
@@ -111,7 +112,7 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id) {
-        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.BORROWER))
+        Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LESSEE))
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         TransactionResponseDetail detail = commonTransactionService.convertEntityToDetail(transaction);
@@ -130,7 +131,8 @@ public class BorrowerServiceImpl implements BorrowerService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Trạng thái giao dich không hợp lệ", new ArrayList<>());
         }
 
-        List<TransactionResponseView> transactions = repository.findByBorrowerAndStatus(userDetail.getId(), TransactionStatus.valueOf(status))
+        List<TransactionResponseView> transactions = repository
+                .findAllByLesseeIdAndTransactionStatus(userDetail.getId(), TransactionStatus.valueOf(status))
                 .stream().map(commonTransactionService::convertEntityToView)
                 .toList();
 
@@ -143,22 +145,22 @@ public class BorrowerServiceImpl implements BorrowerService {
 
     private void mapTransaction(Transaction transaction, TransactionRequest request) {
 
-//        ProductResponse product = Optional
-//                .ofNullable(restTemplate.exchange(
-//                        "http://PRODUCT-SERVICE/api/internal/product/" + request.getProductId(),
-//                        HttpMethod.GET,
-//                        null,
-//                        new ParameterizedTypeReference<BaseResponse<ProductResponse>>() {}
-//                ).getBody().getData())
-//                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm", "id", request.getProductId()));
-//
-//        transaction.setLenderId(product.getUserId());
-//        transaction.setProductId(product.getId());
-//        transaction.setTransactionStatus(TransactionStatus.PENDING);
-//        transaction.setPaymentStatus(PaymentStatus.UNPAID);
-//        transaction.setQuantity(request.getQuantity());
-//        transaction.setAmount(product.getStandardPrice() * request.getQuantity());
-//        transaction.setBillCode(getBillCode());
-//        transaction.setBorrowerAddress(request.getBorrowerAddress());
+        CommodityResponse commodity = Optional
+                .ofNullable(restTemplate.exchange(
+                        "http://PRODUCT-SERVICE/api/internal/commodity/" + request.getCommodityId(),
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<BaseResponse<CommodityResponse>>() {}
+                ).getBody().getData())
+                .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", request.getCommodityId()));
+
+        transaction.setLessorId(commodity.getUserId());
+        transaction.setCommodityId(commodity.getId());
+        transaction.setTransactionStatus(TransactionStatus.PENDING);
+        transaction.setPaymentStatus(PaymentStatus.UNPAID);
+        transaction.setSerialNumbers(request.getSerialNumbers());
+        transaction.setAmount(commodity.getStandardPrice() * request.getSerialNumbers().size());
+        transaction.setBillCode(getBillCode());
+        transaction.setLesseeAddress(request.getBorrowerAddress());
     }
 }

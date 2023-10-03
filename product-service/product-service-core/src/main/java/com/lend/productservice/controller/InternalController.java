@@ -1,10 +1,13 @@
 package com.lend.productservice.controller;
 
+import com.lend.productservice.entity.Commodity;
 import com.lend.productservice.entity.Product;
 import com.lend.productservice.mapper.ProductMapper;
 import com.lend.productservice.repository.ProductRepository;
 import com.lend.baseservice.payload.response.BaseResponse;
 import com.lend.baseservice.payload.response.ResponseFactory;
+import com.lend.productservice.service.CommodityService;
+import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.productserviceshare.payload.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +23,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InternalController {
 
-    private final ProductRepository productRepository;
-    private final ResponseFactory responseFactory;
-    private final ProductMapper productMapper;
+    private final CommodityService commodityService;
 
-    @GetMapping("/product/{productId}")
-    public ResponseEntity<BaseResponse<ProductResponse>> getDetail(@PathVariable("productId") String id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) {
-            return responseFactory.success("Not found", null);
-        }
-
-        return responseFactory.success("Success", productMapper.entityToResponse(product.get()));
+    @GetMapping("/commodity/{id}")
+    public ResponseEntity<BaseResponse<CommodityResponse>> getDetail(@PathVariable("id") String id) {
+        return commodityService.getById(id);
     }
 }

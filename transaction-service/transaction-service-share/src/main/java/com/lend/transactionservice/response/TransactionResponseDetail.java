@@ -20,9 +20,9 @@ public class TransactionResponseDetail {
 
     private String id;
 
-    private UserResponse lender;
+    private UserResponse lessor;
 
-    private UserResponse borrower;
+    private UserResponse lessee;
 
     private ProductResponse product;
 

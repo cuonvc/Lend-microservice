@@ -4,24 +4,19 @@ import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.transactionservice.enumerate.PaymentStatus;
 import com.lend.transactionservice.enumerate.PaymentType;
 import com.lend.transactionservice.enumerate.TransactionStatus;
-import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
-@Entity
-@Table(name = "transaction_tbl", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"bill_code"})
-})
-@SQLDelete(sql = "UPDATE transaction_tbl SET is_active = 'INACTIVE' WHERE id=?")
-@FilterDef(name = "deleteTransactionFilter",
-        parameters = @ParamDef(name = "status", type = String.class))
-@Filter(name = "deleteTransactionFilter", condition = "is_active = :status")
+@Document("transaction")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,53 +24,47 @@ import java.time.LocalDateTime;
 public class Transaction {
 
     @Id
-    @GenericGenerator(name = "custom_trans_id", strategy = "com.lend.transactionservice.util.CustomTransactionIdGenerator")
-    @GeneratedValue(generator = "custom_trans_id")
     private String id;
 
-    @Column(name = "lender_id", nullable = false)
-    private String lenderId;
+    @Field(name = "lender_id")
+    private String lessorId;
 
-    @Column(name = "borrower_id", nullable = false)
-    private String borrowerId;
+    @Field(name = "borrower_id")
+    private String lesseeId;
 
-    @Column(name = "borrower_address", nullable = false, columnDefinition = "TEXT")
-    private String borrowerAddress;
+    @Field(name = "borrower_address")
+    private String lesseeAddress;
 
-    @Column(name = "product_id", nullable = false)
-    private String productId;
+    @Field(name = "product_id")
+    private String commodityId;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Field(name = "quantity")
+    private List<String> serialNumbers;  //list or single
 
-    @Column(name = "amount", nullable = false)
+    @Field(name = "amount")
     private Double amount;
 
-    @Column(name = "payment_type")
-    @Enumerated(EnumType.STRING)
+    @Field(name = "payment_type")
     private PaymentType paymentType = PaymentType.COD;
 
-    @Column(name = "payment_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Field(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @Column(name = "transaction_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Field(name = "transaction_status")
     private TransactionStatus transactionStatus = TransactionStatus.PENDING;
 
-    @Column(name = "bill_code", nullable = false)
+    @Field(name = "bill_code")
     private String billCode;
 
-    @Column(name = "created_date")
+    @Field(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "modified_date")
+    @Field(name = "modified_date")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    @Column(name = "accepted_date")
+    @Field(name = "accepted_date")
     private LocalDateTime acceptedDate;
 
-    @Column(name = "is_active")
-    @Enumerated(EnumType.STRING)
+    @Field(name = "is_active")
     private Status isActive = Status.ACTIVE;
 }
