@@ -29,5 +29,5 @@ public class TransactionRequest {
     @NotNull
     @NotBlank
     @NotEmpty
-    private String borrowerAddress;
+    private String lesseeAddress;
 }

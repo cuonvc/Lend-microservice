@@ -105,6 +105,18 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
+    public void deactivateSerialNumbers(String commodityId, Set<String> serialNumbers) {
+        Commodity commodity = commodityRepository.findById(commodityId)
+                .orElseThrow(() -> new ResourceNotFoundException("Commodity", "id", commodityId));
+
+        commodity.getSerialNumbers().stream()
+                .filter(s -> serialNumbers.contains(s.getValue()))
+                .forEach(s -> s.setStatus(Status.INACTIVE));
+
+        commodityRepository.save(commodity);
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<BaseResponse<String>> deleteById(String id) {
         Commodity commodity = commodityRepository.findByIdAndIsActive(id, Status.ACTIVE)

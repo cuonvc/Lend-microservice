@@ -26,20 +26,20 @@ public class Transaction {
     @Id
     private String id;
 
-    @Field(name = "lender_id")
+    @Field(name = "lessor_id")
     private String lessorId;
 
-    @Field(name = "borrower_id")
+    @Field(name = "lessee_id")
     private String lesseeId;
 
-    @Field(name = "borrower_address")
+    @Field(name = "lessee_address")
     private String lesseeAddress;
 
-    @Field(name = "product_id")
+    @Field(name = "commodity_id")
     private String commodityId;
 
-    @Field(name = "quantity")
-    private List<String> serialNumbers;  //list or single
+    @Field(name = "serial_numbers")
+    private Set<String> serialNumbers;  //list or single
 
     @Field(name = "amount")
     private Double amount;

@@ -1,6 +1,9 @@
 package com.lend.transactionservice.service.impl;
 
+import com.lend.productserviceshare.payload.request.CommodityRequest;
 import com.lend.productserviceshare.payload.response.CommodityResponse;
+import com.lend.productserviceshare.payload.response.SerialListValue;
+import com.lend.productserviceshare.payload.response.SerialNumber;
 import com.lend.transactionservice.entity.Transaction;
 import com.lend.transactionservice.exception.APIException;
 import com.lend.transactionservice.mapper.TransactionMapper;
@@ -22,22 +25,27 @@ import com.lend.transactionservice.response.TransactionResponseRaw;
 import com.lend.transactionservice.response.TransactionResponseView;
 import com.lend.transactionservice.service.LesseeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.Serial;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LesseeServiceImpl implements LesseeService {
 
     private final TransactionRepository repository;
@@ -45,6 +53,7 @@ public class LesseeServiceImpl implements LesseeService {
     private final TransactionMapper transactionMapper;
     private final ResponseFactory responseFactory;
     private final CommonTransactionService commonTransactionService;
+    private final StreamBridge streamBridge;
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> initTransaction(TransactionRequest request) {
@@ -68,7 +77,7 @@ public class LesseeServiceImpl implements LesseeService {
         if (!owner.getId().equals(transaction.getLesseeId())) {
             return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Không được phép truy cập", null);
         } else if (transaction.getAcceptedDate() != null) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể chỉnh sửa khi người cho thuê đã tiếp nhận giao dịch", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể chỉnh sửa khi giao dịch đã được tiếp nhận", null);
         }
 
 //        transaction.setLesseeId(owner.getId());
@@ -84,7 +93,7 @@ public class LesseeServiceImpl implements LesseeService {
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         if (transaction.getAcceptedDate() != null) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể hủy khi người cho thuê đã tiếp nhận giao dịch", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể hủy khi giao dịch đã được tiếp nhận", null);
         }
 
         transaction.setTransactionStatus(TransactionStatus.CANCELED);
@@ -144,6 +153,7 @@ public class LesseeServiceImpl implements LesseeService {
     }
 
     private void mapTransaction(Transaction transaction, TransactionRequest request) {
+        Set<String> serialNumbers = new HashSet<>(request.getSerialNumbers());
 
         CommodityResponse commodity = Optional
                 .ofNullable(restTemplate.exchange(
@@ -154,13 +164,34 @@ public class LesseeServiceImpl implements LesseeService {
                 ).getBody().getData())
                 .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", request.getCommodityId()));
 
+        Set<String> validNumbers = commodity.getSerialNumbers().stream()
+                .filter(number -> number.getStatus().equals(Status.ACTIVE))
+                .map(SerialNumber::getValue)
+                .collect(Collectors.toSet());
+
+        Set<String> acceptedNumbers = serialNumbers.stream().map(number -> {
+            if (!validNumbers.contains(number)) {
+                throw new APIException(HttpStatus.BAD_REQUEST, "Mã Sản phẩm " + number + " không tồn tại");
+            }
+            return number;
+        }).collect(Collectors.toSet());
+        log.info("Trigger - {}", acceptedNumbers);
+
         transaction.setLessorId(commodity.getUserId());
         transaction.setCommodityId(commodity.getId());
         transaction.setTransactionStatus(TransactionStatus.PENDING);
         transaction.setPaymentStatus(PaymentStatus.UNPAID);
-        transaction.setSerialNumbers(request.getSerialNumbers());
-        transaction.setAmount(commodity.getStandardPrice() * request.getSerialNumbers().size());
+        transaction.setSerialNumbers(acceptedNumbers);
+        transaction.setAmount(commodity.getStandardPrice() * acceptedNumbers.size());
         transaction.setBillCode(getBillCode());
-        transaction.setLesseeAddress(request.getBorrowerAddress());
+        transaction.setLesseeAddress(request.getLesseeAddress());
+
+        Message<SerialListValue> message = MessageBuilder.withPayload(SerialListValue.builder()
+                        .list(acceptedNumbers)
+                        .build())
+                .setHeader(KafkaHeaders.KEY, commodity.getId().getBytes())
+                .build();
+
+        streamBridge.send("serials-inactive-request", message);
     }
 }

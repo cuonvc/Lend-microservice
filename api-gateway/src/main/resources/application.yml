@@ -40,7 +40,12 @@ spring:
         - id: history-service
           uri: lb://HISTORY-SERVICE
           predicates:
-            - Path=/history/**
+            - Path=/api/history/**
+
+        - id: transaction-service
+          uri: lb://TRANSACTION-SERVICE
+          predicates:
+            - Path=/api/transaction/**
 
     compatibility-verifier:
       enabled: false

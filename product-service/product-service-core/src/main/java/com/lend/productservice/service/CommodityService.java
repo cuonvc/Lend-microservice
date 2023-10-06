@@ -7,6 +7,9 @@ import com.lend.productserviceshare.payload.response.CommodityResponse;
 import com.lend.productserviceshare.payload.response.PageResponseCommodity;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+import java.util.Set;
+
 public interface CommodityService {
 
     ResponseEntity<BaseResponse<CommodityResponse>> create(CommodityRequest request);
@@ -18,6 +21,8 @@ public interface CommodityService {
 //    ResponseEntity<BaseResponse<PageResponseCommodity>> findAllByActive(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 //
 //    ResponseEntity<BaseResponse<PageResponseCommodity>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
+
+    void deactivateSerialNumbers(String commodityId, Set<String> serialNumbers);
 
     ResponseEntity<BaseResponse<String>> deleteById(String id);
 
