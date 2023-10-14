@@ -25,14 +25,14 @@ public class LessorController {
         return lessorService.acceptTransaction(id, action.toUpperCase());
     }
 
-    @GetMapping("/detail/{id}/lender")
+    @GetMapping("/detail/{id}/lessor")
     public ResponseEntity<BaseResponse<TransactionResponseDetail>> detail(@PathVariable("id") String id) {
         return lessorService.detailById(id);
     }
 
-    @GetMapping("/all/lender")
-    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> viewAllByLender() {
-        return lessorService.getByLender();
+    @GetMapping("/all/lessor")
+    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> viewAllByLessor() {
+        return lessorService.getByLessor();
     }
 
 }

@@ -83,7 +83,7 @@ public class LessorServiceImpl implements LessorService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLender() {
+    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLessor() {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<TransactionResponseView> transactions = repository.findAllByLessorId(userDetail.getId())
                 .stream().map(commonTransactionService::convertEntityToView)

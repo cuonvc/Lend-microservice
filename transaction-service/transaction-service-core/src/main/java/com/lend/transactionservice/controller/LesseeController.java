@@ -49,13 +49,13 @@ public class LesseeController {
         return null;
     }
 
-    @GetMapping("/detail/{id}/borrower")
+    @GetMapping("/detail/{id}/lessee")
     public ResponseEntity<BaseResponse<TransactionResponseDetail>> detail(@PathVariable("id") String id) {
         return lesseeService.detailById(id);
     }
 
-    @GetMapping("/all/borrower")
-    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> viewAllByBorrower(@RequestParam(value = "status") String status) {
+    @GetMapping("/all/lessee")
+    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> viewAllByLessee(@RequestParam(value = "status") String status) {
         return lesseeService.getByBorrower(status.toUpperCase());
     }
 

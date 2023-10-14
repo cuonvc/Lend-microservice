@@ -14,6 +14,6 @@ public interface LessorService {
 
     ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id);
 
-    ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLender();
+    ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLessor();
 
 }
