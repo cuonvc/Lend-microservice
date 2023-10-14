@@ -5,6 +5,7 @@ import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.baseservice.payload.response.BaseResponse;
 import com.lend.baseservice.payload.response.ResponseFactory;
 import com.lend.productserviceshare.payload.response.ProductResponse;
+import com.lend.productserviceshare.payload.response.SerialListValue;
 import com.lend.transactionservice.configuration.CustomUserDetail;
 import com.lend.transactionservice.entity.Transaction;
 import com.lend.transactionservice.enumerate.ClientRole;
@@ -18,8 +19,12 @@ import com.lend.transactionservice.response.TransactionResponseView;
 import com.lend.transactionservice.service.CommonTransactionService;
 import com.lend.transactionservice.service.LessorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -35,15 +40,34 @@ public class LessorServiceImpl implements LessorService {
     private final ResponseFactory responseFactory;
     private final TransactionMapper transactionMapper;
     private final CommonTransactionService commonTransactionService;
+    private final StreamBridge streamBridge;
 
     @Override
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> acceptTransaction(String id, String action) {
         Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwner(id, ClientRole.LESSOR))
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
+
+        if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Mặt hàng không có sẵn", null);
+        }
+
         switch (action) {
-            case "ACCEPT" -> transaction.setAcceptedDate(LocalDateTime.now());
-            case "REJECT" -> transaction.setTransactionStatus(TransactionStatus.REJECTED);
-            default -> responseFactory.fail(HttpStatus.BAD_REQUEST, "Hành động không phù hợp", null);
+            case "ACCEPT" -> {
+                transaction.setAcceptedDate(LocalDateTime.now());
+                transaction.setTransactionStatus(TransactionStatus.ACCEPTED);
+            }
+            case "REJECT" -> {
+                transaction.setTransactionStatus(TransactionStatus.REJECTED);
+
+                Message<SerialListValue> message = MessageBuilder.withPayload(SerialListValue.builder()
+                                .list(transaction.getSerialNumbers())
+                                .status(Status.ACTIVE)
+                                .build())
+                        .setHeader(KafkaHeaders.KEY, transaction.getCommodityId().getBytes())
+                        .build();
+                streamBridge.send("serials-action-request", message);
+            }
+            default -> throw new APIException(HttpStatus.BAD_REQUEST, "Phương thức không hợp lệ");
         }
 
         return responseFactory.success("Success", transactionMapper.entityToRaw(repository.save(transaction)));

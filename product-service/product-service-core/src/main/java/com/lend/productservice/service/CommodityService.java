@@ -1,5 +1,6 @@
 package com.lend.productservice.service;
 
+import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.baseservice.payload.response.BaseResponse;
 import com.lend.productservice.entity.Product;
 import com.lend.productserviceshare.payload.request.CommodityRequest;
@@ -22,7 +23,7 @@ public interface CommodityService {
 //
 //    ResponseEntity<BaseResponse<PageResponseCommodity>> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDir);
 
-    void deactivateSerialNumbers(String commodityId, Set<String> serialNumbers);
+    void setStatusSerialNumbers(String commodityId, Set<String> serialNumbers, Status status);
 
     ResponseEntity<BaseResponse<String>> deleteById(String id);
 

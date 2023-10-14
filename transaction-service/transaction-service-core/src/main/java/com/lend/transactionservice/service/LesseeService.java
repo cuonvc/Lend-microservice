@@ -2,6 +2,7 @@ package com.lend.transactionservice.service;
 
 import com.lend.transactionservice.payload.request.TransactionRequest;
 import com.lend.baseservice.payload.response.BaseResponse;
+import com.lend.transactionservice.payload.request.TransactionUpdateRequest;
 import com.lend.transactionservice.response.TransactionResponseDetail;
 import com.lend.transactionservice.response.TransactionResponseRaw;
 import com.lend.transactionservice.response.TransactionResponseView;
@@ -13,7 +14,7 @@ public interface LesseeService {
 
     ResponseEntity<BaseResponse<TransactionResponseRaw>> initTransaction(TransactionRequest request);
 
-    ResponseEntity<BaseResponse<TransactionResponseRaw>> editTransaction(String id, TransactionRequest request);
+    ResponseEntity<BaseResponse<TransactionResponseRaw>> editTransaction(String id, TransactionUpdateRequest request);
 
     ResponseEntity<BaseResponse<TransactionResponseRaw>> cancelTransaction(String id);
 

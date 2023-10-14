@@ -1,5 +1,6 @@
 package com.lend.productservice.kafkaHandler;
 
+import com.lend.baseservice.constant.enumerate.Status;
 import com.lend.productservice.service.CommodityService;
 import com.lend.productserviceshare.payload.response.SerialListValue;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,26 @@ public class SerialNumberHandler {
     private final CommodityService commodityService;
 
     @Bean
-    public Consumer<Message<SerialListValue>> serialNumberDeactivate() {
+    public Consumer<Message<SerialListValue>> serialNumberAction() {
         return response -> {
             String key = new String((byte[]) Optional
                     .ofNullable(response.getHeaders().get(KafkaHeaders.RECEIVED_KEY))
                     .orElse(""));
             log.info("triggerr - key - {} - value - {}", key, response.getPayload());
 
-            commodityService.deactivateSerialNumbers(key, response.getPayload().getList());
+            commodityService.setStatusSerialNumbers(key, response.getPayload().getList(), response.getPayload().getStatus());
         };
     }
+
+//    @Bean
+//    public Consumer<Message<SerialListValue>> serialNumberReEnable() {
+//        return response -> {
+//            String key = new String((byte[]) Optional
+//                    .ofNullable(response.getHeaders().get(KafkaHeaders.RECEIVED_KEY))
+//                    .orElse(""));
+//            log.info("Reactive trigger key - {} - value - {}", key, response.getPayload());
+//
+//            commodityService.setStatusSerialNumbers(key, response.getPayload().getList(), Status.ACTIVE);
+//        };
+//    }
 }

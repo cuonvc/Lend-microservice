@@ -8,6 +8,7 @@ import com.lend.transactionservice.entity.Transaction;
 import com.lend.transactionservice.exception.APIException;
 import com.lend.transactionservice.mapper.TransactionMapper;
 import com.lend.transactionservice.payload.request.TransactionRequest;
+import com.lend.transactionservice.payload.request.TransactionUpdateRequest;
 import com.lend.transactionservice.service.CommonTransactionService;
 import com.lend.authserviceshare.payload.response.UserResponse;
 import com.lend.baseservice.constant.enumerate.Status;
@@ -68,7 +69,7 @@ public class LesseeServiceImpl implements LesseeService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<TransactionResponseRaw>> editTransaction(String id, TransactionRequest request) {
+    public ResponseEntity<BaseResponse<TransactionResponseRaw>> editTransaction(String id, TransactionUpdateRequest request) {
         CustomUserDetail owner = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Transaction transaction = repository.findByIdAndIsActive(id, Status.ACTIVE)
@@ -80,9 +81,7 @@ public class LesseeServiceImpl implements LesseeService {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể chỉnh sửa khi giao dịch đã được tiếp nhận", null);
         }
 
-//        transaction.setLesseeId(owner.getId());
-        mapTransaction(transaction, request);
-
+        transaction.setLesseeAddress(request.getLesseeAddress());
         return responseFactory.success("Success",
                 transactionMapper.entityToRaw(repository.save(transaction)));
     }
@@ -164,6 +163,10 @@ public class LesseeServiceImpl implements LesseeService {
                 ).getBody().getData())
                 .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", request.getCommodityId()));
 
+        if (commodity.getUserId().equals(transaction.getLesseeId())) {
+            throw new APIException(HttpStatus.BAD_REQUEST, "Bạn không thể order mặt hàng của mình");
+        }
+
         Set<String> validNumbers = commodity.getSerialNumbers().stream()
                 .filter(number -> number.getStatus().equals(Status.ACTIVE))
                 .map(SerialNumber::getValue)
@@ -188,10 +191,11 @@ public class LesseeServiceImpl implements LesseeService {
 
         Message<SerialListValue> message = MessageBuilder.withPayload(SerialListValue.builder()
                         .list(acceptedNumbers)
+                        .status(Status.INACTIVE)
                         .build())
                 .setHeader(KafkaHeaders.KEY, commodity.getId().getBytes())
                 .build();
 
-        streamBridge.send("serials-inactive-request", message);
+        streamBridge.send("serials-action-request", message);
     }
 }

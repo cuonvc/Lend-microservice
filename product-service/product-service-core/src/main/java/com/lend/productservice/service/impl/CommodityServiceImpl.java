@@ -105,13 +105,13 @@ public class CommodityServiceImpl implements CommodityService {
     }
 
     @Override
-    public void deactivateSerialNumbers(String commodityId, Set<String> serialNumbers) {
+    public void setStatusSerialNumbers(String commodityId, Set<String> serialNumbers, Status status) {
         Commodity commodity = commodityRepository.findById(commodityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Commodity", "id", commodityId));
 
         commodity.getSerialNumbers().stream()
                 .filter(s -> serialNumbers.contains(s.getValue()))
-                .forEach(s -> s.setStatus(Status.INACTIVE));
+                .forEach(s -> s.setStatus(status));
 
         commodityRepository.save(commodity);
     }

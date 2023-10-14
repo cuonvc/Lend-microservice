@@ -1,5 +1,6 @@
 package com.lend.productserviceshare.payload.response;
 
+import com.lend.baseservice.constant.enumerate.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,4 +14,5 @@ import java.util.Set;
 @Builder(toBuilder = true)
 public class SerialListValue {
     private Set<String> list;
+    private Status status;
 }

@@ -2,6 +2,7 @@ package com.lend.transactionservice.controller;
 
 import com.lend.transactionservice.payload.request.TransactionRequest;
 import com.lend.baseservice.payload.response.BaseResponse;
+import com.lend.transactionservice.payload.request.TransactionUpdateRequest;
 import com.lend.transactionservice.response.TransactionResponseDetail;
 import com.lend.transactionservice.response.TransactionResponseRaw;
 import com.lend.transactionservice.response.TransactionResponseView;
@@ -29,7 +30,7 @@ public class LesseeController {
     //only owner
     @PutMapping("/edit/{id}")
     public ResponseEntity<BaseResponse<TransactionResponseRaw>> edit(@PathVariable("id") String id,
-                                                                                @Valid @RequestBody TransactionRequest request) {
+                                                                                @Valid @RequestBody TransactionUpdateRequest request) {
         return lesseeService.editTransaction(id, request);
     }
 

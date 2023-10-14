@@ -20,14 +20,14 @@ spring:
     function:
       definition:
         "productImageProcess;\
-        serialNumberDeactivate"
+        serialNumberAction"
     stream:
       bindings:
         productImageProcess-in-0:
           destination: product-image-response
           content-type: application/json
-        serialNumberDeactivate-in-0:
-          destination: serials-inactive-request
+        serialNumberAction-in-0:
+          destination: serials-action-request
           content-type: application/json
       kafka:
         binder:
