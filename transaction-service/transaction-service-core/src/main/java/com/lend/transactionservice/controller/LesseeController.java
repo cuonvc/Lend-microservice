@@ -56,7 +56,7 @@ public class LesseeController {
 
     @GetMapping("/all/lessee")
     public ResponseEntity<BaseResponse<List<TransactionResponseView>>> viewAllByLessee(@RequestParam(value = "status") String status) {
-        return lesseeService.getByBorrower(status.toUpperCase());
+        return lesseeService.getByLessee(status.toUpperCase());
     }
 
 }

@@ -37,6 +37,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serial;
@@ -77,8 +78,8 @@ public class LesseeServiceImpl implements LesseeService {
 
         if (!owner.getId().equals(transaction.getLesseeId())) {
             return responseFactory.fail(HttpStatus.UNAUTHORIZED, "Không được phép truy cập", null);
-        } else if (transaction.getAcceptedDate() != null) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể chỉnh sửa khi giao dịch đã được tiếp nhận", null);
+        } else if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn chỉ được phép chỉnh sửa khi giao dịch ỏ trạng thái chờ", null);
         }
 
         transaction.setLesseeAddress(request.getLesseeAddress());
@@ -92,7 +93,7 @@ public class LesseeServiceImpl implements LesseeService {
                         .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
         if (transaction.getAcceptedDate() != null) {
-            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn không thể hủy khi giao dịch đã được tiếp nhận", null);
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn chỉ được phép hủy khi giao dịch ỏ trạng thái chờ", null);
         }
 
         transaction.setTransactionStatus(TransactionStatus.CANCELED);
@@ -105,11 +106,12 @@ public class LesseeServiceImpl implements LesseeService {
         Transaction transaction = Optional.ofNullable(commonTransactionService.authorizeOwnerAndManager(id, ClientRole.LESSEE))
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
 
-        if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
+        if (transaction.getTransactionStatus().equals(TransactionStatus.PENDING)) {
             return responseFactory.fail(HttpStatus.BAD_REQUEST, "Bạn phải hủy giao dịch trước", null);
         }
 
-        repository.delete(transaction);
+        transaction.setIsActive(Status.INACTIVE);
+        repository.save(transaction);
         return responseFactory.success("Success", "Xóa thành công");
     }
 
@@ -128,7 +130,7 @@ public class LesseeServiceImpl implements LesseeService {
     }
 
     @Override
-    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByBorrower(String status) {
+    public ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLessee(String status) {
         CustomUserDetail userDetail = (CustomUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         boolean statusMatch = Stream.of(TransactionStatus.values())
@@ -154,48 +156,50 @@ public class LesseeServiceImpl implements LesseeService {
     private void mapTransaction(Transaction transaction, TransactionRequest request) {
         Set<String> serialNumbers = new HashSet<>(request.getSerialNumbers());
 
-        CommodityResponse commodity = Optional
-                .ofNullable(restTemplate.exchange(
-                        "http://PRODUCT-SERVICE/api/internal/commodity/" + request.getCommodityId(),
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<BaseResponse<CommodityResponse>>() {}
-                ).getBody().getData())
-                .orElseThrow(() -> new ResourceNotFoundException("Mặt hàng", "id", request.getCommodityId()));
+        try {
+            CommodityResponse commodity = restTemplate.exchange(
+                    "http://PRODUCT-SERVICE/api/internal/commodity/" + request.getCommodityId(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<BaseResponse<CommodityResponse>>() {}
+            ).getBody().getData();
 
-        if (commodity.getUserId().equals(transaction.getLesseeId())) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Bạn không thể order mặt hàng của mình");
-        }
-
-        Set<String> validNumbers = commodity.getSerialNumbers().stream()
-                .filter(number -> number.getStatus().equals(Status.ACTIVE))
-                .map(SerialNumber::getValue)
-                .collect(Collectors.toSet());
-
-        Set<String> acceptedNumbers = serialNumbers.stream().map(number -> {
-            if (!validNumbers.contains(number)) {
-                throw new APIException(HttpStatus.BAD_REQUEST, "Mã Sản phẩm " + number + " không tồn tại");
+            if (commodity.getUserId().equals(transaction.getLesseeId())) {
+                throw new APIException(HttpStatus.BAD_REQUEST, "Bạn không thể order mặt hàng của mình");
             }
-            return number;
-        }).collect(Collectors.toSet());
-        log.info("Trigger - {}", acceptedNumbers);
 
-        transaction.setLessorId(commodity.getUserId());
-        transaction.setCommodityId(commodity.getId());
-        transaction.setTransactionStatus(TransactionStatus.PENDING);
-        transaction.setPaymentStatus(PaymentStatus.UNPAID);
-        transaction.setSerialNumbers(acceptedNumbers);
-        transaction.setAmount(commodity.getStandardPrice() * acceptedNumbers.size());
-        transaction.setBillCode(getBillCode());
-        transaction.setLesseeAddress(request.getLesseeAddress());
+            Set<String> validNumbers = commodity.getSerialNumbers().stream()
+                    .filter(number -> number.getStatus().equals(Status.ACTIVE))
+                    .map(SerialNumber::getValue)
+                    .collect(Collectors.toSet());
 
-        Message<SerialListValue> message = MessageBuilder.withPayload(SerialListValue.builder()
-                        .list(acceptedNumbers)
-                        .status(Status.INACTIVE)
-                        .build())
-                .setHeader(KafkaHeaders.KEY, commodity.getId().getBytes())
-                .build();
+            Set<String> acceptedNumbers = serialNumbers.stream().map(number -> {
+                if (!validNumbers.contains(number)) {
+                    throw new APIException(HttpStatus.BAD_REQUEST, "Mã Sản phẩm " + number + " không tồn tại");
+                }
+                return number;
+            }).collect(Collectors.toSet());
+            log.info("Trigger - {}", acceptedNumbers);
 
-        streamBridge.send("serials-action-request", message);
+            transaction.setLessorId(commodity.getUserId());
+            transaction.setCommodityId(commodity.getId());
+            transaction.setTransactionStatus(TransactionStatus.PENDING);
+            transaction.setPaymentStatus(PaymentStatus.UNPAID);
+            transaction.setSerialNumbers(acceptedNumbers);
+            transaction.setAmount(commodity.getStandardPrice() * acceptedNumbers.size());
+            transaction.setBillCode(getBillCode());
+            transaction.setLesseeAddress(request.getLesseeAddress());
+
+            Message<SerialListValue> message = MessageBuilder.withPayload(SerialListValue.builder()
+                            .list(acceptedNumbers)
+                            .status(Status.INACTIVE)
+                            .build())
+                    .setHeader(KafkaHeaders.KEY, commodity.getId().getBytes())
+                    .build();
+
+            streamBridge.send("serials-action-request", message);
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new ResourceNotFoundException("Mặt hàng", "id", request.getCommodityId());
+        }
     }
 }

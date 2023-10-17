@@ -91,6 +91,20 @@
       SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
       SPRING_DATA_MONGODB_URI: mongodb://database-product:27017/product-db
 
+  transaction-service:
+    container_name: transaction-service
+    image: cuonvc/transaction-service:v1.0
+    networks:
+      - lend-network
+    ports:
+      - "8085:8085"
+    depends_on:
+      - database-transaction
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: kafka:9092
+      SPRING_DATA_MONGODB_URI: mongodb://database-transaction:27017/transaction-db
+
   mail-service:
     container_name: mail-service
     image: cuonvc/mail-service:v1.0
@@ -138,6 +152,15 @@
         - lend-network
       ports:
         - "27017:27017"
+
+  database-transaction:
+    image: mongo:6.0
+    container_name: database-transaction
+    networks:
+      - lend-network
+    ports:
+      - "27018:27017"
+
 
  volumes:
   redis_data:

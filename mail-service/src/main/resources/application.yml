@@ -8,7 +8,7 @@ eureka:
 
 spring:
   application:
-    name: EMAIL-SERVICE
+    name: MAIL-SERVICE
   mail:
     host: smtp.gmail.com
     port: 587

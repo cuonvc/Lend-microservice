@@ -24,5 +24,5 @@ public interface LesseeService {
 
     ResponseEntity<BaseResponse<TransactionResponseDetail>> detailById(String id);
 
-    ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByBorrower(String status);
+    ResponseEntity<BaseResponse<List<TransactionResponseView>>> getByLessee(String status);
 }
