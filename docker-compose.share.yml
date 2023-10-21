@@ -5,36 +5,64 @@
 
  services:
   eureka-server:
-    image: cuonvc/eureka-server:v1.0
+    image: cuonvc/eureka-server:arm64
     container_name: eureka-server
     networks:
       - lend-network
     ports:
       - "8761:8761"
 
+  # zookeeper:
+  #   image: wurstmeister/zookeeper
+  #   container_name: zookeeper
+  #   networks:
+  #     - lend-network
+  #   ports:
+  #     - "2181:2181"
+
+  # kafka:
+  #   image: wurstmeister/kafka
+  #   container_name: kafka
+  #   networks:
+  #     - lend-network
+  #   depends_on:
+  #     - zookeeper
+  #   ports:
+  #     - "9092:9092"
+  #   links:
+  #     - zookeeper
+  #   environment:
+  #     KAFKA_ADVERTISED_HOST_NAME: kafka
+  #     #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
   zookeeper:
-    image: wurstmeister/zookeeper
     container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
     networks:
       - lend-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "2181:2181"
+      - 2181:2181
 
   kafka:
-    image: wurstmeister/kafka
     container_name: kafka
-    networks:
-      - lend-network
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
+    networks:
+      - lend-network
     ports:
-      - "9092:9092"
-    links:
-      - zookeeper
+      - 9092:9092
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092, PLAINTEXT://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   redis:
     container_name: redis
@@ -49,7 +77,7 @@
 
   api-gateway:
     container_name: api-gateway
-    image: cuonvc/api-gateway:v1.0
+    image: cuonvc/api-gateway:arm64
     networks:
       - lend-network
     ports:
@@ -57,7 +85,7 @@
 
   auth-service:
     container_name: auth-service
-    image: cuonvc/auth-service:v1.0
+    image: cuonvc/auth-service:arm64
     networks:
       - lend-network
     ports:
@@ -79,7 +107,7 @@
 
   product-service:
     container_name: product-service
-    image: cuonvc/product-service:v1.0
+    image: cuonvc/product-service:arm64
     networks:
       - lend-network
     ports:
@@ -93,7 +121,7 @@
 
   transaction-service:
     container_name: transaction-service
-    image: cuonvc/transaction-service:v1.0
+    image: cuonvc/transaction-service:arm64
     networks:
       - lend-network
     ports:
@@ -107,7 +135,7 @@
 
   mail-service:
     container_name: mail-service
-    image: cuonvc/mail-service:v1.0
+    image: cuonvc/mail-service:arm64
     networks:
       - lend-network
     ports:
@@ -122,7 +150,7 @@
 
   resource-service:
     container_name: resource-service
-    image: cuonvc/resource-service:v1.0
+    image: cuonvc/resource-service:arm64
     networks:
       - lend-network
     ports:

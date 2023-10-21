@@ -16,17 +16,17 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    cloud:
-      function:
-        definition: abc
-      stream:
-        bindings:
-          abc-in-0:
-            destination:
-            content-type: application/json
-        kafka:
-          binder:
-            brokers: ${KAFKA_HOST}:${KAFKA_PORT}
+  cloud:
+    function:
+      definition: abc
+    stream:
+      bindings:
+        abc-in-0:
+          destination:
+          content-type: application/json
+      kafka:
+        binder:
+          brokers: ${KAFKA_HOST}:${KAFKA_PORT}
 
-      compatibility-verifier:
-        enabled: false
+    compatibility-verifier:
+      enabled: false
