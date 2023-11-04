@@ -31,13 +31,7 @@ public class CommodityRequest {
     private ProductState state;
 
     @NotNull
-    private Double standardPrice;
-
-    @NotNull
     private LocalDateTime availableDate;
-
-    @NotNull
-    private LocalDateTime expireDate;
 
     @Size(min = 1)
     private List<TimeFrame> timeFrames;

@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +30,17 @@ public class Product {
     private String description;
 
     private String brand;
+
+    @Field("standard_price")
+    private Double standardPrice;
+
+    @Field("sale_price")
+    private Double salePrice;
+
+    @Field("sale_expire_at")
+    private LocalDateTime saleExpireAt;
+
+    private Integer remaining = 0;
 
     @Field("is_active")
     private Status isActive = Status.ACTIVE;

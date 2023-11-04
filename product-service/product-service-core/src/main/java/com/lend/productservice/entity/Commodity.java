@@ -30,17 +30,6 @@ public class Commodity {
 
     private ProductState state = ProductState.OLD;
 
-    @Field("standard_price")
-    private Double standardPrice;
-
-    @Field("sale_price")
-    private Double salePrice;
-
-    @Field("sale_expire_at")
-    private LocalDateTime saleExpireAt;
-
-    private Integer remaining = 0;
-
     @Field("is_active")
     private Status isActive = Status.ACTIVE;
 

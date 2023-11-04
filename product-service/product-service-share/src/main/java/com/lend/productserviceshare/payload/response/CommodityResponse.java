@@ -25,10 +25,6 @@ public class CommodityResponse {
 
     private ProductState state;
 
-    private Double standardPrice;
-
-    private Integer remaining;
-
     private LocalDateTime availableDate;
 
     private LocalDateTime expireDate;

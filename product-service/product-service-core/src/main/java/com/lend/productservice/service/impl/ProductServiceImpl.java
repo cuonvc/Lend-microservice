@@ -18,6 +18,7 @@ import com.lend.baseservice.payload.response.ResponseFactory;
 import com.lend.productservice.entity.ProductResource;
 import com.lend.productservice.exception.APIException;
 import com.lend.productservice.exception.ResourceNotFoundException;
+import com.lend.productserviceshare.payload.request.CommodityRequest;
 import com.lend.productserviceshare.payload.request.ProductRequest;
 import com.lend.productserviceshare.payload.request.ProductResourceRequest;
 import com.lend.productserviceshare.payload.response.PageResponseProduct;
@@ -61,21 +62,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product create(Commodity commodity, ProductRequest request, String userId) {
+    public Product create(Commodity commodity, CommodityRequest request, String userId) {
 
-        Set<Category> categories = request.getCategoryIds().stream()
+        Set<Category> categories = request.getProductRequest().getCategoryIds().stream()
                 .map(categoryId -> categoryRepository.findByIdAndIsActive(categoryId, Status.ACTIVE)
                         .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
                 .collect(Collectors.toSet());
 
-        Product product = productMapper.requestToEntity(request);
+        Product product = productMapper.requestToEntity(request.getProductRequest());
+        product.setRemaining(request.getSerialNumbers().size());
         product.setCategories(categories);
         product.setCommodityId(commodity.getId());
         product.setUserId(userId);
         productRepository.save(product);
 
         List<ProductResource> resources = resourceService.initResources(product);
-        handleMapResource(request, product, resources);
+        handleMapResource(request.getProductRequest(), product, resources);
 
         product.setResources(new HashSet<>(resources));
         product.getResources().forEach(resource -> resource.setImageUrl(""));

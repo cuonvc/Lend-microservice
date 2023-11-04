@@ -24,7 +24,6 @@ public interface CommodityMapper {
     @Mapping(source = "transactionMethods", target = "transactionMethods", qualifiedByName = "transactionMethodsToString")
     @Mapping(source = "state", target = "code", qualifiedByName = "generateCode")
     @Mapping(source = "serialNumbers", target = "serialNumbers", ignore = true)
-    @Mapping(source = "serialNumbers", target = "remaining", qualifiedByName = "getRemaining")
     Commodity requestToEntity(CommodityRequest commodityRequest);
 
     @Mapping(source = "timeFrames", target = "timeFrames", qualifiedByName = "timeFramestoString")
@@ -35,11 +34,6 @@ public interface CommodityMapper {
     @Mapping(source = "timeFrames", target = "timeFrames", qualifiedByName = "timeFramesToList")
     @Mapping(source = "transactionMethods", target = "transactionMethods", qualifiedByName = "transactionMethodsToList")
     CommodityResponse entityToResponse(Commodity commodity);
-
-    @Named("getRemaining")
-    static Integer getRemaining(List<String> serialNumbers) {
-        return serialNumbers.size();
-    }
 
     @Named("generateCode")
     static String generateProductCode(ProductState state) {

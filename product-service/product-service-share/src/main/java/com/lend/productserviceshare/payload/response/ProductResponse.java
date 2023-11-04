@@ -18,6 +18,8 @@ public class ProductResponse {
 
     private String id;
     private String name;
+    private Double standardPrice;
+    private Double salePrice;
     private String description;
     private List<ProductResourceResponse> resources;
     private String brand;

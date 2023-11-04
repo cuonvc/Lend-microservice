@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54691a07-e194-4a61-acb2-c1c620d57203" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../api-gateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../api-gateway/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../auth-service/auth-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../auth-service/auth-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.share.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.share.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../eureka-server/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../eureka-server/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mail-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../mail-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../product-service/product-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../product-service/product-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resource-service/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../resource-service/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../transaction-service/transaction-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../transaction-service/transaction-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../transaction-service/transaction-service-core/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../transaction-service/transaction-service-core/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,21 +31,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mongo-integrate&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Workspace/Java/Lend-microservice/kafka-server&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;40f5e615a1bec16cf0a3e453ff493aed&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "mongo-integrate",
+    "last_opened_file_path": "D:/Workspace/Java/gs-messaging-stomp-websocket",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "spring.configuration.checksum": "40f5e615a1bec16cf0a3e453ff493aed",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -69,6 +58,9 @@
       <workItem from="1689648710882" duration="848000" />
       <workItem from="1689654349031" duration="609000" />
       <workItem from="1697816218468" duration="2871000" />
+      <workItem from="1697855443782" duration="1986000" />
+      <workItem from="1698053939541" duration="463000" />
+      <workItem from="1698241242403" duration="179000" />
     </task>
     <servers />
   </component>
