@@ -186,7 +186,7 @@ public class LesseeServiceImpl implements LesseeService {
             transaction.setTransactionStatus(TransactionStatus.PENDING);
             transaction.setPaymentStatus(PaymentStatus.UNPAID);
             transaction.setSerialNumbers(acceptedNumbers);
-            transaction.setAmount(commodity.getStandardPrice() * acceptedNumbers.size());
+            transaction.setAmount(commodity.getProduct().getStandardPrice() * acceptedNumbers.size());
             transaction.setBillCode(getBillCode());
             transaction.setLesseeAddress(request.getLesseeAddress());
 

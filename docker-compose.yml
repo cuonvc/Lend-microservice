@@ -5,8 +5,7 @@ networks:
 
 services:
   eureka-server:
-    image: cuonvc/eureka-server:arm64
-    platform: linux/arm64
+    image: eureka-server
     build: ./eureka-server
     container_name: eureka-server
     networks:
@@ -60,19 +59,17 @@ services:
 
   api-gateway:
     container_name: api-gateway
-    image: cuonvc/api-gateway:arm64
-    platform: linux/arm64
+    image: api-gateway
+    build: ./api-gateway
     networks:
       - lend-network
-    build: ./api-gateway
     ports:
       - "8080:8080"
 
 
   auth-service:
     container_name: auth-service
-    image: cuonvc/auth-service:arm64
-    platform: linux/arm64
+    image: auth-service
     build: ./auth-service/auth-service-core
     networks:
       - lend-network
@@ -95,8 +92,7 @@ services:
 
   product-service:
     container_name: product-service
-    image: cuonvc/product-service:arm64
-    platform: linux/arm64
+    image: product-service
     build: ./product-service/product-service-core
     networks:
       - lend-network
@@ -111,8 +107,7 @@ services:
 
   transaction-service:
     container_name: transaction-service
-    image: cuonvc/transaction-service:arm64
-    platform: linux/arm64
+    image: transaction-service
     build: ./transaction-service/transaction-service-core
     networks:
       - lend-network
@@ -127,8 +122,7 @@ services:
 
   mail-service:
     container_name: mail-service
-    image: cuonvc/mail-service:arm64
-    platform: linux/arm64
+    image: mail-service
     build: ./mail-service
     networks:
       - lend-network
@@ -144,8 +138,7 @@ services:
 
   resource-service:
     container_name: resource-service
-    image: cuonvc/resource-service:arm64
-    platform: linux/arm64
+    image: resource-service
     build: ./resource-service
     networks:
       - lend-network
