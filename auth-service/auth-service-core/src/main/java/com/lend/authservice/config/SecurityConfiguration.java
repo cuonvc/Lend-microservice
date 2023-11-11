@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/auth/admin/*").hasAnyAuthority("ROOT", "ADMIN")
                         .requestMatchers("/api/auth/root/*").hasAnyAuthority("ROOT")
                         .requestMatchers(HttpMethod.GET, "/api/auth/account/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/token/renew").permitAll()
                         .anyRequest()
                         .authenticated())
                         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

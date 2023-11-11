@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c97edea-cc30-4e12-b54c-68ab34fc82c5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/auth-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/auth-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mail-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/mail-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/product-service/product-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/product-service/product-service-core/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resource-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/resource-service/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transaction-service/transaction-service-core/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/transaction-service/transaction-service-core/Dockerfile" afterDir="false" />
-    </list>
+    <list default="true" id="8c97edea-cc30-4e12-b54c-68ab34fc82c5" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,9 +16,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2Vdw8He1mqtiIvd0aT6IEmqx4Lx" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -39,7 +30,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "mongo-integrate",
-    "last_opened_file_path": "D:/Workspace/Java/Lend-microservice/base-service",
+    "last_opened_file_path": "D:/Workspace/Java/Lend-microservice/transaction-service/transaction-service-core",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -60,6 +51,7 @@
       <workItem from="1695205456632" duration="857000" />
       <workItem from="1695206434294" duration="506000" />
       <workItem from="1699450211343" duration="552000" />
+      <workItem from="1699451354407" duration="3400000" />
     </task>
     <servers />
   </component>
