@@ -27,6 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,12 @@ public class CommodityServiceImpl implements CommodityService {
             throw new APIException(HttpStatus.BAD_REQUEST, "Serial number không được trùng nhau");
         }
 
+        request.getProductRequest().getResources().forEach(image -> {
+            if (!isBase64Image(image.getImageValue())) {
+                throw new APIException(HttpStatus.BAD_REQUEST, "Invalid base64 image");
+            }
+        });
+
         Commodity commodity = commodityMapper.requestToEntity(request);
         commodity = commodityRepository.save(commodity);
 
@@ -71,6 +80,12 @@ public class CommodityServiceImpl implements CommodityService {
         CustomUserDetail userDetail = (CustomUserDetail)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        request.getProductRequest().getResources().forEach(image -> {
+            if (!isBase64Image(image.getImageValue())) {
+                throw new APIException(HttpStatus.BAD_REQUEST, "Invalid base64 image");
+            }
+        });
+
         Commodity commodity = commodityRepository.findByIdAndUserId(id, userDetail.getId())
                 .orElseThrow(() -> new APIException(HttpStatus.UNAUTHORIZED, "Không được phép truy cập"));
         Product product = productService.update(commodity.getProduct(), request.getProductRequest());
@@ -80,6 +95,15 @@ public class CommodityServiceImpl implements CommodityService {
         response.setProduct(productMapper.entityToResponse(product));
 
         return responseFactory.success("Cập nhật thành công", response);
+    }
+
+    private boolean isBase64Image(String data) {
+        try {
+            byte[] decoded = Base64.getDecoder().decode(data);
+            return ImageIO.read(new ByteArrayInputStream(decoded)) != null;
+        } catch (Exception e) {
+            throw new APIException(HttpStatus.BAD_REQUEST, "Invalid base64 image");
+        }
     }
 
     private boolean validateUnique(List<String> serialNumber) {

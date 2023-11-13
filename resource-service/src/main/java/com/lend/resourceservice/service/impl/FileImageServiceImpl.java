@@ -34,6 +34,13 @@ public class FileImageServiceImpl implements FileImageService {
     }
 
     @Override
+    public String saveCategoryImage(String key, byte[] fileBytes) {
+        String uploadDir = "image/category/" + key;
+        Path path = fileUploadUtils.saveFile(uploadDir, fileBytes);
+        return path.toString().replace("\\", "/");
+    }
+
+    @Override
     public byte[] readFileContent(Path path) {
         try {
             Resource resource = new UrlResource(path.toUri());

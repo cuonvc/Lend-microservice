@@ -28,6 +28,8 @@ public class Category {
 
     private String description;
 
+    private String imageUrl;
+
     @Field("is_active")
     private Status isActive = Status.ACTIVE;
 

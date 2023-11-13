@@ -14,7 +14,7 @@ public interface ProductResourceService {
 
     List<ProductResource> getByProduct(Product product);
 
-    void storeImagePath(String resourceId, String path);
+    void storeImagePath(String id, String field, String path);
 
 //    void clearImagePath(String productId);
 }

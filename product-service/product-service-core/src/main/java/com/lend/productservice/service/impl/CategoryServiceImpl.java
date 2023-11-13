@@ -1,5 +1,6 @@
 package com.lend.productservice.service.impl;
 
+import com.lend.baseservice.payload.request.FileObjectRequest;
 import com.lend.productservice.entity.Category;
 import com.lend.productservice.mapper.CategoryMapper;
 import com.lend.productservice.repository.CategoryRepository;
@@ -14,27 +15,35 @@ import com.lend.productserviceshare.payload.CategoryDto;
 import com.lend.productserviceshare.payload.response.CategoryResponse;
 import com.lend.productserviceshare.payload.response.PageResponseCategory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+    private static final String CATEGORY_IMAGE_REQUEST = "category-image-request";
+
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ResponseFactory responseFactory;
     private final CategoryCustomRepository categoryCustomRepository;
+    private final StreamBridge streamBridge;
 
     @Override
     public ResponseEntity<BaseResponse<CategoryResponse>> create(CategoryDto dto) {
@@ -43,9 +52,13 @@ public class CategoryServiceImpl implements CategoryService {
             validateCategory("id", dto.getParentId());
         }
 
+        if (!isBase64Image(dto.getImageValue())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Base64 image invalid", null);
+        }
         Category category = categoryRepository.save(categoryMapper.dtoToEntity(dto));
         CategoryResponse response = categoryMapper.entityToResponse(category);
 
+        storeImage(category.getId(), dto.getImageValue());
         return responseFactory.success("Success", response);
     }
 
@@ -57,12 +70,37 @@ public class CategoryServiceImpl implements CategoryService {
             categoryDto.setParentId(null);
         }
 
+        if (!isBase64Image(categoryDto.getImageValue())) {
+            return responseFactory.fail(HttpStatus.BAD_REQUEST, "Base64 image invalid", null);
+        }
+
         categoryMapper.dtoToEntity(categoryDto, category);
         category = categoryRepository.save(category);
         CategoryResponse response = categoryMapper.entityToResponse(category);
         response.setChildren(getResponseWithChildren(category.getId()));
 
+        storeImage(category.getId(), categoryDto.getImageValue());
         return responseFactory.success("Success", response);
+    }
+
+    private boolean isBase64Image(String data) {
+        try {
+            byte[] decoded = Base64.getDecoder().decode(data);
+            return ImageIO.read(new ByteArrayInputStream(decoded)) != null;
+        } catch (IOException e) {
+            throw new APIException(HttpStatus.BAD_REQUEST, "Base64 Image invalid");
+        }
+    }
+
+    private void storeImage(String categoryId, String base64Image) {
+        Message<FileObjectRequest> message = MessageBuilder
+                .withPayload(FileObjectRequest.builder()
+                        .fileBytes(Base64.getDecoder().decode(base64Image))
+                        .build())
+                .setHeader(KafkaHeaders.KEY, categoryId.getBytes())
+                .build();
+
+        streamBridge.send(CATEGORY_IMAGE_REQUEST, message);
     }
 
     private Category validateCategory(String field, String value) {

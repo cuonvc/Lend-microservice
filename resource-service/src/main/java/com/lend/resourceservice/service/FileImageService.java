@@ -8,5 +8,7 @@ public interface FileImageService {
 
     String saveProductImage(String key, String field, byte[] fileBytes);
 
+    String saveCategoryImage(String key, byte[] fileBytes);
+
     byte[] readFileContent(Path path);
 }

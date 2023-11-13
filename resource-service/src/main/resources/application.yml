@@ -18,7 +18,8 @@ spring:
     function:
       definition:
         "userAvatarHandle;\
-          productImageHandle"
+          productImageHandle;\
+          categoryImageHandle"
     stream:
       bindings:
         userAvatarHandle-in-0:
@@ -29,6 +30,10 @@ spring:
           destination: product-image-request
         productImageHandle-out-0:
           destination: product-image-response
+        categoryImageHandle-in-0:
+          destination: category-image-request
+        categoryImageHandle-out-0:
+          destination: category-image-response
       #        testHandler-in-0:
       #          destination: file-topic-after
       kafka:

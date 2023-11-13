@@ -20,7 +20,8 @@ spring:
     function:
       definition:
         "productImageProcess;\
-        serialNumberAction"
+        serialNumberAction;\
+        categoryImageProcess"
     stream:
       bindings:
         productImageProcess-in-0:
@@ -28,6 +29,9 @@ spring:
           content-type: application/json
         serialNumberAction-in-0:
           destination: serials-action-request
+          content-type: application/json
+        categoryImageProcess-in-0:
+          destination: category-image-response
           content-type: application/json
       kafka:
         binder:

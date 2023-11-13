@@ -1,6 +1,8 @@
 package com.lend.productservice.service.impl;
 
+import com.lend.productservice.entity.Category;
 import com.lend.productservice.entity.Commodity;
+import com.lend.productservice.repository.CategoryRepository;
 import com.lend.productservice.repository.CommodityRepository;
 import com.lend.productservice.repository.ProductRepository;
 import com.lend.productservice.repository.custom.ResourceCustomRepository;
@@ -29,6 +31,7 @@ public class ProductResourceServiceImpl implements ProductResourceService {
     private final ProductResourceRepository resourceRepository;
     private final ProductRepository productRepository;
     private final CommodityRepository commodityRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
@@ -49,13 +52,28 @@ public class ProductResourceServiceImpl implements ProductResourceService {
     }
 
     @Override
-    public void storeImagePath(String resourceId, String path) {
-        ProductResource resource = resourceRepository.findById(resourceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ảnh sản phẩm", "id", resourceId)); //not happen
+    public void storeImagePath(String id, String field, String path) {
+        switch (field) {
+            case "PRODUCT" -> {
+                ProductResource resource = resourceRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Ảnh sản phẩm", "id", id)); //not happen
 
-        resource.setImageUrl(path);
-        resourceRepository.save(resource);
-        updateResourceInProduct(resource);
+                resource.setImageUrl(path);
+                resourceRepository.save(resource);
+                updateResourceInProduct(resource);
+            }
+
+            case "CATEGORY" -> {
+                Category category = categoryRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+
+                category.setImageUrl(path);
+                categoryRepository.save(category);
+            }
+
+            default -> System.out.println("Not trigger");
+        }
+
     }
 
     private void updateResourceInProduct(ProductResource resource) {

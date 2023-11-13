@@ -48,9 +48,27 @@ public class FileHandler {
 
             return MessageBuilder.withPayload(FileObjectResponse.builder()
                             .path(imagePath)
-                            .field(value.getField())
+                            .field("PRODUCT")
                             .build())
                     .setHeader(KafkaHeaders.KEY, key.split("/")[1])
+                    .build();
+        };
+    }
+
+    @Bean
+    public Function<Message<FileObjectRequest>, Message<FileObjectResponse>> categoryImageHandle() {
+        return request -> {
+            String key = new String((byte[]) request.getHeaders().get(KafkaHeaders.RECEIVED_KEY));
+            log.info("Category trigger - {} - {}", key, request.getPayload());
+
+            FileObjectRequest value = request.getPayload();
+            String imagePath = fileImageService.saveCategoryImage(key, value.getFileBytes());
+
+            return MessageBuilder.withPayload(FileObjectResponse.builder()
+                            .path(imagePath)
+                            .field("CATEGORY")
+                            .build())
+                    .setHeader(KafkaHeaders.KEY, key)
                     .build();
         };
     }

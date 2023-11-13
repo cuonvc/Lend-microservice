@@ -41,6 +41,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -118,19 +121,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void uploadImage(String productId, String resourceId, String imageValue) {
-        try {
-            Message<FileObjectRequest> message = MessageBuilder
-                    .withPayload(FileObjectRequest.builder()
-                            .field(THUMB)
-                            .fileBytes(Base64.getDecoder().decode(imageValue))
-                            .build())
-                    .setHeader(KafkaHeaders.KEY, (productId + "/" + resourceId).getBytes())
-                    .build();
+        Message<FileObjectRequest> message = MessageBuilder
+                .withPayload(FileObjectRequest.builder()
+                        .field(THUMB)
+                        .fileBytes(Base64.getDecoder().decode(imageValue))
+                        .build())
+                .setHeader(KafkaHeaders.KEY, (productId + "/" + resourceId).getBytes())
+                .build();
 
-            streamBridge.send("product-image-request", message);
-        } catch (Exception e) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Invalid image base64 data");
-        }
+        streamBridge.send("product-image-request", message);
     }
 
     @Override

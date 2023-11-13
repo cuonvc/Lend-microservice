@@ -28,9 +28,19 @@ public class FileHandler {
             String key = new String((byte[]) response.getHeaders().get(KafkaHeaders.RECEIVED_KEY));
             log.info("triggerr - key - {} - value - {}", key, response.getPayload());
 
-            resourceService.storeImagePath(key, response.getPayload().getPath());
+            resourceService.storeImagePath(key, response.getPayload().getField(), response.getPayload().getPath());
 
 //            FileObjectResponse objectResponse = response.getPayload();
+        };
+    }
+
+    @Bean
+    public Consumer<Message<FileObjectResponse>> categoryImageProcess() {
+        return response -> {
+            String key = new String((byte[]) response.getHeaders().get(KafkaHeaders.RECEIVED_KEY));
+            log.info("Trigger category - {} - {}", key, response.getPayload());
+
+            resourceService.storeImagePath(key, response.getPayload().getField(), response.getPayload().getPath());
         };
     }
 

@@ -20,11 +20,16 @@ public class CategoryDto {
     private String parentId;
 
     @NotNull
-    @NotBlank(message = "Name can't blank")
+    @NotBlank(message = "Tên không được để trống")
     @NotEmpty
     private String name;
 
     private String description;
+
+    @NotNull
+    @NotBlank(message = "Ảnh không được để trống")
+    @NotEmpty
+    private String imageValue;
 
     private Status isActive;
 }
