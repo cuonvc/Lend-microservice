@@ -25,7 +25,7 @@ public class CategoryController {
         return categoryService.create(categoryDto);
     }
 
-    //just update name and description
+    //just update name, thumbnail and description
     @PutMapping("/moderator/{categoryId}")
     public ResponseEntity<BaseResponse<CategoryResponse>> update(@PathVariable("categoryId") String id,
                                                             @Valid @RequestBody CategoryDto categoryDto) {

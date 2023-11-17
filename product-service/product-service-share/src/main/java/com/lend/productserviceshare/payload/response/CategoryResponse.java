@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -25,4 +26,11 @@ public class CategoryResponse {
     private String imageUrl;
 
     private Status isActive;
+
+    public void addChildren(CategoryResponse child) {
+        if (children == null) {
+            children = new HashSet<>();
+        }
+        children.add(child);
+    }
 }

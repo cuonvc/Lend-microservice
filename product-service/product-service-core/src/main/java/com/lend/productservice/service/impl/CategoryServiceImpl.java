@@ -194,10 +194,29 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private PageResponseCategory paging(Page<Category> categoryPage) {
-        List<CategoryResponse> responseList = categoryPage.getContent().stream()
+        List<Category> categories = categoryPage.getContent();
+        Map<String, CategoryResponse> responseMap = new HashMap<>();
+
+        categories.forEach(category
+                -> responseMap.put(category.getId(), categoryMapper.entityToResponse(category))
+        );
+
+        List<Category> topLevel = new ArrayList<>();
+        categories.forEach(category -> {
+            String parentId = category.getParentId();
+            if (parentId == null || parentId.isEmpty()) {
+                topLevel.add(category);
+            } else {
+                CategoryResponse response = responseMap.get(parentId);
+                if (response != null) {
+                    response.addChildren(categoryMapper.entityToResponse(category));
+                }
+            }
+        });
+
+        List<CategoryResponse> responseList = topLevel.stream()
                 .map(entity -> {
                     CategoryResponse response = categoryMapper.entityToResponse(entity);
-//                    response.setParent(categoryMapper.entityToResponse(validateCategory("id", entity.getId())));
                     response.setChildren(getResponseWithChildren(entity.getId()));
                     return response;
                 })
